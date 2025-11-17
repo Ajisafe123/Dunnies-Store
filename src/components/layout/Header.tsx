@@ -5,86 +5,82 @@ import Link from 'next/link'
 import {
   Menu,
   X,
-  Search,
+  User,
   Heart,
   ShoppingBag,
   ChevronDown,
   Gift,
-  Grid3x3,
-  HelpCircle,
+  ShoppingCart,
+  Package,
+  Home,
+  Info,
   Phone,
+  Search,
+  MapPin,
 } from 'lucide-react'
-import SearchBar from './SearchBar'
-import Button from '@/components/ui/Button'
 
-interface NavDropdownItem {
-  label: string
-  href: string
-}
+export default function EcommerceNavbar() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
-interface NavItem {
-  label: string
-  href?: string
-  icon?: React.ReactNode
-  children?: NavDropdownItem[]
-}
-
-interface HeaderProps {
-  navItems?: NavItem[]
-  logo?: string
-  companyName?: string
-}
-
-export default function Header({
-  navItems = [
+  const navItems = [
     {
       label: 'Home',
       href: '/',
-      icon: <Menu className="w-5 h-5" />,
+      icon: <Home className="w-4 h-4" />,
     },
     {
-      label: 'Gifts Collections',
-      icon: <Gift className="w-5 h-5" />,
+      label: 'Gifts',
+      icon: <Gift className="w-4 h-4" />,
       children: [
-        { label: 'Birthday Gifts', href: '/categories/birthday' },
-        { label: 'Wedding Gifts', href: '/categories/wedding' },
-        { label: 'Anniversary Gifts', href: '/categories/anniversary' },
-        { label: 'Corporate Gifts', href: '/categories/corporate' },
+        { label: 'Birthday Gifts', href: '/gifts/birthday' },
+        { label: 'Wedding Gifts', href: '/gifts/wedding' },
+        { label: 'Anniversary Gifts', href: '/gifts/anniversary' },
+        { label: 'Corporate Gifts', href: '/gifts/corporate' },
+        { label: 'Baby Shower', href: '/gifts/baby-shower' },
+      ],
+    },
+    {
+      label: 'Groceries',
+      icon: <ShoppingCart className="w-4 h-4" />,
+      children: [
+        { label: 'Fresh Produce', href: '/groceries/produce' },
+        { label: 'Dairy & Eggs', href: '/groceries/dairy' },
+        { label: 'Meat & Seafood', href: '/groceries/meat' },
+        { label: 'Bakery', href: '/groceries/bakery' },
+        { label: 'Beverages', href: '/groceries/beverages' },
       ],
     },
     {
       label: 'Categories',
-      icon: <Grid3x3 className="w-5 h-5" />,
+      icon: <Package className="w-4 h-4" />,
       children: [
-        { label: 'Birthday Gifts', href: '/categories/birthday' },
         { label: 'Jewelry', href: '/categories/jewelry' },
-        { label: 'Bags', href: '/categories/bags' },
-        { label: 'Plushies', href: '/categories/plushies' },
+        { label: 'Toys & Games', href: '/categories/toys' },
+        { label: 'Home Decor', href: '/categories/decor' },
+        { label: 'Fashion', href: '/categories/fashion' },
       ],
     },
     {
       label: 'About',
       href: '/about',
+      icon: <Info className="w-4 h-4" />,
     },
     {
       label: 'Contact',
-      href: '/',
-      icon: <Phone className="w-5 h-5" />,
+      href: '/contact',
+      icon: <Phone className="w-4 h-4" />,
     },
-    {
-      label: 'Help Center',
-      href: '/help',
-      icon: <HelpCircle className="w-5 h-5" />,
-    },
-  ],
-  logo,
-  companyName = 'Gifts & Goodies',
-}: HeaderProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  ]
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
+    if (isMobileMenuOpen) {
+      setOpenDropdown(null)
+    }
+    setIsUserDropdownOpen(false)
   }
 
   const handleDropdownToggle = (label: string) => {
@@ -93,153 +89,228 @@ export default function Header({
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white shadow-sm border-b border-purple-50">
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between text-xs sm:text-sm">
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-1">
+              <MapPin className="w-3 h-3" />
+              <span className="hidden sm:inline">Deliver to Lagos, Nigeria</span>
+              <span className="sm:hidden">Lagos, NG</span>
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Link href="/track" className="hover:underline hidden sm:inline">Track Order</Link>
+            <Link href="/help" className="hover:underline">Help</Link>
+          </div>
+        </div>
+      </div>
+
+      <header className="sticky top-0 z-50 bg-white shadow-md border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20 sm:h-24">
-            <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
-              {logo ? (
-                <img
-                  src={logo}
-                  alt={companyName}
-                  className="h-10 sm:h-12 w-auto"
-                />
-              ) : (
-                <div className="w-10 sm:w-12 h-10 sm:h-12 bg-linear-to-br from-purple-600 to-purple-700 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg sm:text-xl">G</span>
+          <div className="flex items-center justify-between h-16 sm:h-20">
+            
+            <Link href="/" className="flex items-center space-x-3 group shrink-0">
+              <div className="relative">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+                  <Gift className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-              )}
-              <span className="font-bold text-purple-600 text-lg sm:text-2xl group-hover:text-purple-700 transition-colors">
-                {companyName}
-              </span>
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full border-2 border-white"></div>
+              </div>
+              <div className="hidden sm:block">
+                <span className="font-bold text-xl text-gray-800 group-hover:text-purple-600 transition-colors">
+                  Gifts & Goodies
+                </span>
+                <p className="text-xs text-gray-500">Your one-stop shop</p>
+              </div>
             </Link>
 
-            <nav className="hidden md:flex items-center space-x-1 flex-1 justify-center px-8">
-              {navItems.map((item) => (
-                <div key={item.label} className="relative group">
-                  {item.children ? (
-                    <>
-                      <button
-                        className="px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-purple-50 hover:text-purple-600 transition-all duration-200 flex items-center space-x-2 group"
-                        aria-expanded={false}
-                        aria-haspopup="true"
-                      >
-                        {item.icon && <span className="text-gray-700 group-hover:text-purple-600">{item.icon}</span>}
-                        <span>{item.label}</span>
-                        <ChevronDown className="w-4 h-4 group-hover:text-purple-600 transition-transform duration-200 group-hover:rotate-180" />
-                      </button>
+            <div className="hidden md:flex flex-1 max-w-2xl mx-8">
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  placeholder="Search for gifts, groceries, and more..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full px-4 py-3 pl-12 pr-4 rounded-full border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-all duration-200 text-sm"
+                />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-1.5 rounded-full hover:shadow-lg transition-all duration-200 text-sm font-medium">
+                  Search
+                </button>
+              </div>
+            </div>
 
-                      <div className="absolute left-0 mt-2 w-56 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-3 border border-purple-100 overflow-hidden">
-                        <div className="px-4 py-2 bg-linear-to-r from-purple-50 to-purple-100 border-b border-purple-100">
-                          <p className="text-xs font-semibold text-purple-700 uppercase tracking-wider">
-                            {item.label}
-                          </p>
-                        </div>
-                        <div className="py-1">
-                          {item.children.map((child, index) => (
-                            <Link
-                              key={child.label}
-                              href={child.href}
-                              className="block px-4 py-3 text-gray-700 hover:text-purple-600 hover:bg-purple-50 transition-colors duration-150 text-sm font-medium group/item"
-                            >
-                              <span className="flex items-center justify-between">
-                                <span>{child.label}</span>
-                                <span className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200 text-purple-600">
-                                  →
-                                </span>
-                              </span>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <Link
-                      href={item.href || '#'}
-                      className="px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-purple-50 hover:text-purple-600 transition-all duration-200 flex items-center space-x-2"
-                    >
-                      {item.icon && <span className="text-gray-700 hover:text-purple-600">{item.icon}</span>}
-                      <span>{item.label}</span>
-                    </Link>
-                  )}
+            <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+              
+              <div className="relative hidden lg:block">
+                <button
+                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
+                >
+                  <User className="w-5 h-5 text-gray-700 group-hover:text-purple-600" />
+                  <div className="hidden xl:block text-left">
+                    <p className="text-xs text-gray-500">Hello, Guest</p>
+                    <p className="text-sm font-semibold text-gray-700 group-hover:text-purple-600">Account</p>
+                  </div>
+                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                </button>
+                
+                <div 
+                  className={`absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl py-2 border border-gray-100 transition-all duration-200 ${
+                    isUserDropdownOpen 
+                      ? 'opacity-100 visible translate-y-0' 
+                      : 'opacity-0 invisible -translate-y-2 pointer-events-none'
+                  }`}
+                >
+                  <Link href="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors font-medium">
+                    Login
+                  </Link>
+                  <Link href="/signup" className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors font-medium">
+                    Sign Up
+                  </Link>
+                  <hr className="my-2 border-gray-100" />
+                  <Link href="/orders" className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors">
+                    My Orders
+                  </Link>
+                  <Link href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors">
+                    Profile
+                  </Link>
                 </div>
-              ))}
-            </nav>
+              </div>
 
-            <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
-              <SearchBar placeholder="Search gifts..." />
-
-              <button
-                className="p-2 rounded-lg text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all duration-200 hidden sm:block"
-                aria-label="Wishlist"
+              <Link
+                href="/wishlist"
+                className="relative p-2 sm:p-2.5 rounded-lg hover:bg-gray-100 transition-all duration-200 group hidden sm:block"
               >
-                <Heart className="w-5 h-5" />
-              </button>
+                <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 group-hover:text-red-500 group-hover:fill-red-500 transition-all duration-200" />
+                <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
+                  3
+                </span>
+              </Link>
 
               <Link
                 href="/cart"
-                className="p-2 rounded-lg text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all duration-200 relative"
+                className="relative p-2 sm:p-2.5 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
               >
-                <ShoppingBag className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-purple-600 rounded-full"></span>
+                <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 group-hover:text-purple-600 transition-colors" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
+                  5
+                </span>
               </Link>
 
-              <div className="hidden md:flex items-center space-x-2">
-                <Link href="/login">
-                  <Button variant="outline" size="small">
-                    Login
-                  </Button>
-                </Link>
-                <Link href="/signup">
-                  <Button variant="primary" size="small">
-                    Sign Up
-                  </Button>
-                </Link>
-              </div>
-
               <button
-                className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all duration-200"
+                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-all duration-200"
                 onClick={toggleMobileMenu}
-                aria-label="Toggle menu"
               >
                 {isMobileMenuOpen ? (
-                  <X className="w-6 h-6" />
+                  <X className="w-6 h-6 text-gray-700" />
                 ) : (
-                  <Menu className="w-6 h-6" />
+                  <Menu className="w-6 h-6 text-gray-700" />
                 )}
               </button>
             </div>
           </div>
+
+          <nav className="hidden lg:flex items-center space-x-1 pb-3 border-t border-gray-100 pt-3">
+            {navItems.map((item) => (
+              <div key={item.label} className="relative group">
+                {item.children ? (
+                  <>
+                    <button className="flex items-center space-x-1 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-purple-50 hover:text-purple-600 transition-all duration-200">
+                      {item.icon}
+                      <span>{item.label}</span>
+                      <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
+                    </button>
+
+                    <div className="absolute left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 py-2 border border-gray-100">
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.label}
+                          href={child.href || '#'}
+                          className="block px-4 py-2.5 text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors text-sm font-medium"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <Link
+                    href={item.href || '#'}
+                    className="flex items-center space-x-1 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-purple-50 hover:text-purple-600 transition-all duration-200"
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </Link>
+                )}
+              </div>
+            ))}
+          </nav>
+        </div>
+
+        <div className="md:hidden px-4 pb-3 border-t border-gray-100 pt-3">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 pl-10 rounded-lg border border-gray-200 focus:border-purple-500 focus:outline-none text-sm"
+            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          </div>
         </div>
       </header>
 
-      
       <div
-        className={`fixed inset-0 z-30 md:hidden transition-opacity duration-300 ${
-          isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        className={`fixed inset-0 z-40 lg:hidden transition-opacity duration-300 ${
+          isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setIsMobileMenuOpen(false)}
       >
-        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
       </div>
 
       <nav
-        className={`fixed top-16 left-0 right-0 bottom-0 z-30 md:hidden bg-white shadow-2xl transform transition-transform duration-300 overflow-y-auto ${
+        className={`fixed left-0 top-0 bottom-0 w-80 max-w-[85vw] z-50 lg:hidden bg-white shadow-2xl transform transition-transform duration-300 overflow-y-auto ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
-        style={{ maxWidth: '100%', width: '100%' }}
       >
-        <div className="p-4 pt-10 space-y-2">
+        <div className="p-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">Menu</h2>
+            <button onClick={toggleMobileMenu} className="p-1">
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+              <User className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="font-semibold">Hello, Guest</p>
+              <Link href="/login" className="text-sm text-purple-100 hover:underline">
+                Login or Sign Up
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4 space-y-2">
           {navItems.map((item) => (
             <div key={item.label}>
               {item.children ? (
                 <>
                   <button
                     onClick={() => handleDropdownToggle(item.label)}
-                    className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-gray-700 font-medium hover:bg-purple-50 hover:text-purple-600 transition-all duration-200"
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-lg hover:bg-gray-100 transition-all duration-200"
                   >
-                    <span>{item.label}</span>
+                    <span className="flex items-center space-x-3">
+                      {item.icon}
+                      <span className="font-medium text-gray-700">{item.label}</span>
+                    </span>
                     <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-300 ${
+                      className={`w-4 h-4 text-gray-500 transition-transform duration-300 ${
                         openDropdown === item.label ? 'rotate-180' : ''
                       }`}
                     />
@@ -250,12 +321,12 @@ export default function Header({
                       openDropdown === item.label ? 'max-h-96' : 'max-h-0'
                     }`}
                   >
-                    <div className="pl-4 space-y-1 pt-2">
+                    <div className="pl-12 space-y-1 py-2">
                       {item.children.map((child) => (
                         <Link
                           key={child.label}
-                          href={child.href}
-                          className="block px-4 py-2.5 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors duration-150"
+                          href={child.href || '#'}
+                          className="block px-4 py-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors text-sm"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           {child.label}
@@ -267,26 +338,36 @@ export default function Header({
               ) : (
                 <Link
                   href={item.href || '#'}
-                  className="block px-4 py-3 rounded-lg text-gray-700 font-medium hover:bg-purple-50 hover:text-purple-600 transition-all duration-200"
+                  className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 transition-all duration-200"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  {item.label}
+                  {item.icon}
+                  <span className="font-medium text-gray-700">{item.label}</span>
                 </Link>
               )}
             </div>
           ))}
 
-         
-          <div className="mt-6 pt-6 border-t border-gray-100 space-y-3 flex flex-col">
-            <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="w-full">
-              <Button variant="outline" size="medium" fullWidth>
-                Login
-              </Button>
+          <div className="pt-4 mt-4 border-t border-gray-200 space-y-2">
+            <Link
+              href="/wishlist"
+              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 transition-all duration-200"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <Heart className="w-5 h-5 text-gray-700" />
+              <span className="font-medium text-gray-700">Wishlist</span>
+              <span className="ml-auto bg-red-100 text-red-600 px-2 py-1 rounded-full text-xs font-semibold">
+                3
+              </span>
             </Link>
-            <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="w-full">
-              <Button variant="primary" size="medium" fullWidth>
-                Sign Up
-              </Button>
+
+            <Link
+              href="/orders"
+              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 transition-all duration-200"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <Package className="w-5 h-5 text-gray-700" />
+              <span className="font-medium text-gray-700">My Orders</span>
             </Link>
           </div>
         </div>
