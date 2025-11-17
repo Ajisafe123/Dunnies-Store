@@ -9,30 +9,33 @@ const slides = [
     title: "Special Holiday Gifts",
     subtitle: "Make every moment memorable",
     description: "Discover unique gifts for your loved ones",
-    image: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=1200&q=80",
     cta: "Shop Gifts",
     href: "/gifts",
-    tag: "New Arrivals"
+    tag: "New Arrivals",
   },
   {
     title: "Thoughtful Gift Collections",
     subtitle: "Handpicked with love",
     description: "Perfect presents for every occasion",
-    image: "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=300&h=300&fit=crop&auto=format",
     cta: "Explore Gifts",
     href: "/gifts",
-    tag: "Best Sellers"
+    tag: "Best Sellers",
   },
   {
     title: "Luxury Gift Experiences",
     subtitle: "Celebrate in style",
     description: "Premium selections for those who matter most",
-    image: "https://images.unsplash.com/photo-1543512214-318c7553f230?w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1543512214-318c7553f230?w=1200&q=80",
     cta: "Shop Now",
     href: "/gifts",
-    tag: "Exclusive"
-  }
-]
+    tag: "Exclusive",
+  },
+];
 
 export default function HeroSlider() {
   const [current, setCurrent] = useState(0)

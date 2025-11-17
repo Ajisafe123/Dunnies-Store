@@ -7,19 +7,6 @@ import ProductList from "@/components/product/ProductList";
 const products = [
   {
     id: 1,
-    name: "Premium Gift Basket",
-    price: 89900,
-    originalPrice: 129900,
-    rating: 4.8,
-    reviews: 124,
-    image:
-      "https://images.unsplash.com/photo-1558298827-1f7a3b6d865d?w=400&q=80",
-    tag: "Best Seller",
-    discount: 31,
-    href: "/product/premium-gift-basket",
-  },
-  {
-    id: 2,
     name: "Organic Fruit Box",
     price: 34900,
     originalPrice: 44900,
@@ -32,7 +19,7 @@ const products = [
     href: "/product/organic-fruit-box",
   },
   {
-    id: 3,
+    id: 2,
     name: "Luxury Jewelry Set",
     price: 199900,
     originalPrice: 299900,
@@ -43,45 +30,6 @@ const products = [
     tag: "Premium",
     discount: 33,
     href: "/product/luxury-jewelry-set",
-  },
-  {
-    id: 4,
-    name: "Artisan Cheese Collection",
-    price: 49900,
-    originalPrice: 64900,
-    rating: 4.6,
-    reviews: 92,
-    image:
-      "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=400&q=80",
-    tag: "Gourmet",
-    discount: 23,
-    href: "/product/artisan-cheese-collection",
-  },
-  {
-    id: 5,
-    name: "Spa Gift Set",
-    price: 79900,
-    originalPrice: 109900,
-    rating: 4.9,
-    reviews: 145,
-    image:
-      "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=400&q=80",
-    tag: "Popular",
-    discount: 27,
-    href: "/product/spa-gift-set",
-  },
-  {
-    id: 6,
-    name: "Fresh Meat Bundle",
-    price: 54900,
-    originalPrice: 69900,
-    rating: 4.8,
-    reviews: 78,
-    image:
-      "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400&q=80",
-    tag: "Quality",
-    discount: 21,
-    href: "/product/fresh-meat-bundle",
   },
 ];
 

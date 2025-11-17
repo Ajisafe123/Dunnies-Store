@@ -43,7 +43,7 @@ export default function ProductCard({
   return (
     <CardWrapper>
       <div className="group bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-violet-200 relative flex flex-col h-full">
-        <div className="relative overflow-hidden bg-gray-50 aspect-[4/3] sm:aspect-square md:aspect-video lg:aspect-[4/3] xl:aspect-square">
+        <div className="relative overflow-hidden bg-gray-50 aspect-[16/9] sm:aspect-[3/2] md:aspect-[16/9] lg:aspect-[4/3] xl:aspect-[16/9]">
           <img
             src={image}
             alt={name}
