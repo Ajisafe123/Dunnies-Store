@@ -42,12 +42,12 @@ export default function ProductCard({
 
   return (
     <CardWrapper>
-      <div className="group bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-violet-300 relative max-w-sm mx-auto">
-        <div className="relative overflow-hidden bg-gray-50 h-56 sm:h-64 aspect-square">
+      <div className="group bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-violet-200 relative flex flex-col h-full">
+        <div className="relative overflow-hidden bg-gray-50 aspect-[4/3] sm:aspect-square md:aspect-video lg:aspect-[4/3] xl:aspect-square">
           <img
             src={image}
             alt={name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
 
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -58,21 +58,21 @@ export default function ProductCard({
             </div>
           )}
 
-          <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-violet-600 px-3 py-1 text-xs font-bold rounded-full shadow-md border border-violet-100">
+          <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-violet-600 px-3 py-1 text-xs font-bold rounded-full shadow-sm border border-violet-100">
             {tag}
           </div>
 
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100">
             <button
               onClick={(e) => e.preventDefault()}
-              className="bg-white text-gray-700 p-2.5 rounded-full hover:bg-violet-600 hover:text-white transition-all duration-200 shadow-xl hover:scale-110"
+              className="bg-white text-gray-700 p-2.5 rounded-full hover:bg-violet-600 hover:text-white transition-all duration-200 shadow-lg hover:scale-110"
               aria-label="Add to wishlist"
             >
               <Heart className="w-4 h-4" />
             </button>
             <button
               onClick={(e) => e.preventDefault()}
-              className="bg-white text-gray-700 p-2.5 rounded-full hover:bg-violet-600 hover:text-white transition-all duration-200 shadow-xl hover:scale-110"
+              className="bg-white text-gray-700 p-2.5 rounded-full hover:bg-violet-600 hover:text-white transition-all duration-200 shadow-lg hover:scale-110"
               aria-label="Quick view"
             >
               <Eye className="w-4 h-4" />
@@ -80,12 +80,12 @@ export default function ProductCard({
           </div>
         </div>
 
-        <div className="p-4 sm:p-5">
-          <div className="flex items-center gap-1 mb-1.5">
+        <div className="p-4 flex flex-col flex-grow">
+          <div className="flex items-center gap-1 mb-1">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                className={`w-3.5 h-3.5 ${
+                className={`w-3 h-3 ${
                   i < Math.floor(rating)
                     ? "text-amber-400 fill-amber-400"
                     : "text-gray-300 fill-gray-300"
@@ -97,16 +97,16 @@ export default function ProductCard({
             </span>
           </div>
 
-          <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-1 group-hover:text-violet-600 transition-colors line-clamp-2 leading-tight">
+          <h3 className="font-semibold text-base text-gray-900 mb-1 group-hover:text-violet-600 transition-colors line-clamp-2 leading-snug">
             {name}
           </h3>
 
-          <p className="text-gray-500 text-xs sm:text-sm mb-3 line-clamp-2 leading-relaxed">
+          <p className="text-gray-500 text-xs mb-3 line-clamp-2 leading-tight flex-grow">
             {description}
           </p>
 
           <div className="flex items-baseline gap-2 mb-3">
-            <span className="text-xl sm:text-2xl font-bold text-gray-900">
+            <span className="text-xl font-bold text-gray-900">
               {formattedPrice}
             </span>
             {formattedOriginal && (
@@ -118,7 +118,7 @@ export default function ProductCard({
 
           <button
             onClick={(e) => e.preventDefault()}
-            className="w-full bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 text-white py-2.5 rounded-xl font-semibold text-sm hover:shadow-lg hover:scale-[1.01] transition-all duration-200 flex items-center justify-center gap-2 group/btn"
+            className="w-full bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:shadow-lg hover:scale-[1.01] transition-all duration-200 flex items-center justify-center gap-2 group/btn"
           >
             <ShoppingCart className="w-4 h-4 group-hover/btn:animate-bounce" />
             <span>Add to Cart</span>
