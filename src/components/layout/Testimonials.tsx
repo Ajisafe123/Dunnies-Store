@@ -42,8 +42,8 @@ const testimonials = [
 export default function Testimonials() {
   return (
     <section className="py-16 bg-gradient-to-b from-violet-50 via-white to-violet-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-14">
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-14 max-w-7xl mx-auto">
           <div className="inline-block bg-violet-100 text-violet-700 px-4 py-2 rounded-full text-sm font-bold mb-4">
             CUSTOMER REVIEWS
           </div>
@@ -55,7 +55,7 @@ export default function Testimonials() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {testimonials.map((t, index) => (
             <div
               key={t.name}
@@ -98,23 +98,23 @@ export default function Testimonials() {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-8 bg-white rounded-2xl px-8 py-6 shadow-lg border border-gray-100">
-            <div className="text-center">
+        <div className="mt-12 text-center max-w-7xl mx-auto">
+          <div className="inline-flex flex-wrap justify-center items-center gap-6 sm:gap-8 bg-white rounded-2xl px-6 sm:px-8 py-6 shadow-lg border border-gray-100 max-w-full">
+            <div className="text-center min-w-[120px]">
               <div className="text-3xl font-black text-violet-600">5,000+</div>
               <div className="text-sm text-gray-600 font-medium">
                 Happy Customers
               </div>
             </div>
-            <div className="w-px h-12 bg-gray-200" />
-            <div className="text-center">
+            <div className="w-px h-12 bg-gray-200 hidden sm:block" />
+            <div className="text-center min-w-[120px]">
               <div className="text-3xl font-black text-violet-600">4.9★</div>
               <div className="text-sm text-gray-600 font-medium">
                 Average Rating
               </div>
             </div>
-            <div className="w-px h-12 bg-gray-200" />
-            <div className="text-center">
+            <div className="w-px h-12 bg-gray-200 hidden sm:block" />
+            <div className="text-center min-w-[120px]">
               <div className="text-3xl font-black text-violet-600">10,000+</div>
               <div className="text-sm text-gray-600 font-medium">
                 Orders Delivered
