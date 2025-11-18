@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Heart, ShoppingCart, Star, Eye } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/hooks/useWishlist";
 
 interface ProductProps {
   id: number;
@@ -32,6 +33,7 @@ export default function ProductCard({
   href = "#",
 }: ProductProps) {
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
   const formattedPrice = `₦${Number(price).toLocaleString()}`;
   const formattedOriginal = originalPrice
@@ -43,6 +45,14 @@ export default function ProductCard({
     e.stopPropagation();
     addToCart({ id, name, price, image });
   };
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist({ id, name, price, image, href });
+  };
+
+  const wishlisted = isInWishlist(id);
 
   const CardWrapper = ({ children }: { children: React.ReactNode }) => {
     if (!href || href === "#")
@@ -74,11 +84,19 @@ export default function ProductCard({
 
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100">
             <button
-              onClick={(e) => e.preventDefault()}
-              className="bg-white text-gray-700 p-2.5 rounded-full hover:bg-violet-600 hover:text-white transition-all duration-200 shadow-lg hover:scale-110"
+              onClick={handleToggleWishlist}
+              className={`bg-white p-2.5 rounded-full transition-all duration-200 shadow-lg hover:scale-110 ${
+                wishlisted
+                  ? "text-red-500 hover:bg-red-100"
+                  : "text-gray-700 hover:bg-violet-600 hover:text-white"
+              }`}
               aria-label="Add to wishlist"
             >
-              <Heart className="w-4 h-4" />
+              <Heart
+                className={`w-4 h-4 ${
+                  wishlisted ? "fill-red-500" : "fill-transparent"
+                }`}
+              />
             </button>
             <button
               onClick={(e) => e.preventDefault()}

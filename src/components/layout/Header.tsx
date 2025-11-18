@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { getCurrentUser } from "@/services/auth";
+import { useWishlist } from "@/hooks/useWishlist";
 import LogoutModal from "./LogoutModal";
 import {
   Menu,
@@ -60,6 +61,7 @@ export default function Header() {
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const pathname = usePathname();
+  const { items: wishlistItems } = useWishlist();
 
   const { totalItems } = useCart();
 
@@ -150,7 +152,7 @@ export default function Header() {
 
   return (
     <>
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4">
+      <div className="bg-linear-to-r from-purple-600 to-pink-600 text-white py-2 px-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between text-xs sm:text-sm">
           <div className="flex items-center space-x-1">
             <Globe className="w-3 h-3" />
@@ -175,7 +177,7 @@ export default function Header() {
               className="flex items-center space-x-3 group shrink-0"
             >
               <div className="relative">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-300">
                   <Gift className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full border-2 border-white"></div>
@@ -198,7 +200,7 @@ export default function Header() {
                   className="w-full px-4 py-3 pl-12 pr-4 rounded-full border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-all duration-200 text-sm"
                 />
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-1.5 rounded-full hover:shadow-lg transition-all duration-200 text-sm font-medium">
+                <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-linear-to-r from-purple-600 to-pink-600 text-white px-6 py-1.5 rounded-full hover:shadow-lg transition-all duration-200 text-sm font-medium">
                   Search
                 </button>
               </div>
@@ -208,9 +210,11 @@ export default function Header() {
               <div className="relative hidden lg:block">
                 <button
                   onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
+                  className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
                 >
-                  <User className="w-5 h-5 text-gray-700 group-hover:text-purple-600" />
+                  <span className="flex items-center justify-center w-11 h-11 rounded-full border border-gray-200 bg-gray-50 group-hover:border-purple-200">
+                    <User className="w-5 h-5 text-gray-700 group-hover:text-purple-600" />
+                  </span>
                   <div className="hidden xl:block text-left">
                     <p className="text-xs text-gray-500">Hello {greetingName}</p>
                     <p className="text-sm font-semibold text-gray-700 group-hover:text-purple-600">
@@ -288,10 +292,18 @@ export default function Header() {
                 href="/wishlist"
                 className="relative p-2 sm:p-2.5 rounded-lg hover:bg-gray-100 transition-all duration-200 group hidden sm:block"
               >
-                <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 group-hover:text-red-500 group-hover:fill-red-500 transition-all duration-200" />
-                <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
-                  3
-                </span>
+                <Heart
+                  className={`w-5 h-5 sm:w-6 sm:h-6 ${
+                    wishlistItems.length
+                      ? "text-red-500 fill-red-500"
+                      : "text-gray-700"
+                  } group-hover:text-red-500 group-hover:fill-red-500 transition-all duration-200`}
+                />
+                {wishlistItems.length > 0 && (
+                  <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
+                    {wishlistItems.length}
+                  </span>
+                )}
               </Link>
 
               <Link
@@ -300,7 +312,7 @@ export default function Header() {
               >
                 <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 group-hover:text-purple-600 transition-colors" />
                 {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-linear-to-r from-purple-600 to-pink-600 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
                     {totalItems}
                   </span>
                 )}
@@ -382,7 +394,7 @@ export default function Header() {
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="p-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+        <div className="p-6 bg-linear-to-r from-purple-600 to-pink-600 text-white">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">Menu</h2>
             <button onClick={toggleMobileMenu} className="p-1">
@@ -391,20 +403,29 @@ export default function Header() {
           </div>
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-              <User className="w-6 h-6" />
+              <User className="w-7 h-7" />
             </div>
             <div>
               <p className="font-semibold">Hello {greetingName}</p>
               {user ? (
-                <button
-                  onClick={() => {
-                    closeMobileMenu();
-                    setShowLogoutModal(true);
-                  }}
-                  className="text-purple-100 hover:underline text-sm mt-1"
-                >
-                  Logout
-                </button>
+                  <div className="flex flex-col gap-2 mt-1 text-sm">
+                    <Link
+                      href={profileHref}
+                      onClick={closeMobileMenu}
+                      className="text-white font-medium bg-white/20 hover:bg-white/30 rounded-full px-4 py-1 transition"
+                    >
+                      Go to Profile
+                    </Link>
+                    <button
+                      onClick={() => {
+                        closeMobileMenu();
+                        setShowLogoutModal(true);
+                      }}
+                      className="text-purple-100 hover:underline text-left"
+                    >
+                      Logout
+                    </button>
+                  </div>
               ) : (
                 <div className="flex flex-row gap-3 text-sm">
                   <Link
