@@ -1,7 +1,7 @@
 import ProductCard from "./ProductCard";
 
 interface Product {
-  id: number;
+  id: number | string;
   name: string;
   description?: string;
   price: number;

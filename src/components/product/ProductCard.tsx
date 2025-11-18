@@ -6,7 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/hooks/useWishlist";
 
 interface ProductProps {
-  id: number;
+  id: number | string;
   name: string;
   description?: string;
   price: number;
@@ -49,31 +49,34 @@ export default function ProductCard({
   const handleToggleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toggleWishlist({ id, name, price, image, href });
+    toggleWishlist({ id, name, price, image, href: computedHref });
   };
 
   const wishlisted = isInWishlist(id);
 
+  const computedHref =
+    href && href !== "#" ? href : typeof id === "string" ? `/product/${id}` : "#";
+
   const CardWrapper = ({ children }: { children: React.ReactNode }) => {
-    if (!href || href === "#")
+    if (!computedHref || computedHref === "#")
       return <div className="cursor-default">{children}</div>;
-    return <Link href={href}>{children}</Link>;
+    return <Link href={computedHref}>{children}</Link>;
   };
 
   return (
     <CardWrapper>
       <div className="group bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-violet-200 relative flex flex-col h-full">
-        <div className="relative overflow-hidden bg-gray-50 aspect-[16/9] sm:aspect-[3/2] md:aspect-[16/9] lg:aspect-[4/3] xl:aspect-[16/9]">
+        <div className="relative overflow-hidden bg-gray-50 aspect-video sm:aspect-3/2 md:aspect-video lg:aspect-4/3 xl:aspect-video">
           <img
             src={image}
             alt={name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           {discount > 0 && (
-            <div className="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 text-xs font-bold rounded-full shadow-md">
+            <div className="absolute top-3 left-3 bg-linear-to-r from-red-500 to-pink-500 text-white px-3 py-1 text-xs font-bold rounded-full shadow-md">
               -{discount}% OFF
             </div>
           )}
@@ -108,7 +111,7 @@ export default function ProductCard({
           </div>
         </div>
 
-        <div className="p-4 flex flex-col flex-grow">
+        <div className="p-4 flex flex-col grow">
           <div className="flex items-center gap-1 mb-1">
             {[...Array(5)].map((_, i) => (
               <Star
@@ -129,7 +132,7 @@ export default function ProductCard({
             {name}
           </h3>
 
-          <p className="text-gray-500 text-xs mb-3 line-clamp-2 leading-tight flex-grow">
+          <p className="text-gray-500 text-xs mb-3 line-clamp-2 leading-tight grow">
             {description}
           </p>
 
@@ -146,7 +149,7 @@ export default function ProductCard({
 
           <button
             onClick={handleAddToCart}
-            className="w-full bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:shadow-lg hover:scale-[1.01] transition-all duration-200 flex items-center justify-center gap-2 group/btn"
+            className="w-full bg-linear-to-r from-violet-600 via-purple-600 to-fuchsia-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:shadow-lg hover:scale-[1.01] transition-all duration-200 flex items-center justify-center gap-2 group/btn"
           >
             <ShoppingCart className="w-4 h-4 group-hover/btn:animate-bounce" />
             <span>Add to Cart</span>

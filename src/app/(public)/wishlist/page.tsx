@@ -122,14 +122,18 @@ export default function WishlistPage() {
                     <ShoppingCart className="w-4 h-4" />
                     Move to cart
                   </button>
-                  {item.href && (
-                    <Link
-                      href={item.href}
-                      className="inline-flex items-center gap-2 rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
-                    >
-                      View details
-                    </Link>
-                  )}
+                  <Link
+                    href={
+                      item.href && item.href !== "#"
+                        ? item.href
+                        : typeof item.id === "string"
+                        ? `/product/${item.id}`
+                        : "/product"
+                    }
+                    className="inline-flex items-center gap-2 rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
+                  >
+                    View details
+                  </Link>
                 </div>
               </div>
             </div>

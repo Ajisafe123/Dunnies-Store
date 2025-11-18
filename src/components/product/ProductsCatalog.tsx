@@ -3,28 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import ProductList from "@/components/product/ProductList";
-import {
-  Search,
-  SlidersHorizontal,
-  Grid,
-  List,
-} from "lucide-react";
-
-type CatalogProduct = {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  originalPrice?: number;
-  rating: number;
-  reviews: number;
-  image: string;
-  tag: string;
-  href: string;
-};
+import { ProductRecord } from "@/data/products";
+import { Search, SlidersHorizontal, Grid, List } from "lucide-react";
 
 interface ProductsCatalogProps {
-  products: CatalogProduct[];
+  products: ProductRecord[];
 }
 
 export default function ProductsCatalog({ products }: ProductsCatalogProps) {
@@ -85,13 +68,28 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
       </div>
 
       {layout === "grid" ? (
-        <ProductList products={products} cols={3} gap={6} />
+        <ProductList
+          products={products.map((product) => ({
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            originalPrice: product.originalPrice,
+            rating: product.rating,
+            reviews: product.reviewsCount,
+            image: product.image,
+            tag: product.tag,
+            href: product.href,
+          }))}
+          cols={3}
+          gap={6}
+        />
       ) : (
         <div className="space-y-4">
-          {products.map((product) => (
+            {products.map((product) => (
             <Link
-              key={product.id}
-              href={product.href || "#"}
+                key={product.id}
+                href={product.href || "#"}
               className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm flex flex-col gap-4 md:flex-row md:items-center hover:shadow-lg transition"
             >
               <div className="w-full md:w-48 h-48 bg-gray-50 rounded-2xl overflow-hidden">

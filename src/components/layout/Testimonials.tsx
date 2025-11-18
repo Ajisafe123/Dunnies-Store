@@ -28,15 +28,6 @@ const testimonials = [
     avatar:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80",
   },
-  {
-    name: "Tunde Adeyemi",
-    role: "Wedding Planner",
-    content:
-      "I recommend this store to all my clients for wedding gifts and souvenirs. The variety is incredible and they handle bulk orders professionally. Great value for money!",
-    rating: 5,
-    avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80",
-  },
 ];
 
 export default function Testimonials() {

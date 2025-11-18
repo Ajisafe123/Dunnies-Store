@@ -1,13 +1,23 @@
-export default function ProductDetail({ params }: { params: { id: string } }) {
+import { notFound } from "next/navigation";
+import ProductDetail from "@/components/product/ProductDetail";
+import { getProductById } from "@/data/products";
+
+export default function ProductDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const product = getProductById(params.id);
+
+  if (!product) {
+    return notFound();
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">Product {params.id}</h1>
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        <p className="text-gray-600 mb-4">Product details</p>
-        <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-          Add to Cart
-        </button>
+    <section className="bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        <ProductDetail product={product} />
       </div>
-    </div>
-  )
+    </section>
+  );
 }

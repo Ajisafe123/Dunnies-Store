@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { getCurrentUser } from "@/services/auth";
@@ -94,54 +95,89 @@ export default function Header() {
     user?.email?.split("@")[0];
   const greetingName = userFirstName || "Guest";
   const profileHref = getProfileDestination(user);
+  const avatarUrl = useMemo(() => {
+    if (!user) return "";
+    if (user.email) {
+      return `https://unavatar.io/${encodeURIComponent(user.email)}`;
+    }
+    if (user.fullName) {
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        user.fullName
+      )}&background=8b5cf6&color=fff`;
+    }
+    return "";
+  }, [user?.fullName, user?.email]);
 
-  const navItems = [
-    { label: "Home", href: "/", icon: <Home className="w-4 h-4" /> },
-    {
-      label: "Products",
-      href: "/product",
-      icon: <Package className="w-4 h-4" />,
-    },
-    {
-      label: "Gifts",
-      icon: <Gift className="w-4 h-4" />,
-      children: [
-        { label: "Birthday Gifts", href: "/gifts/birthday" },
-        { label: "Wedding Gifts", href: "/gifts/wedding" },
-        { label: "Anniversary Gifts", href: "/gifts/anniversary" },
-        { label: "Corporate Gifts", href: "/gifts/corporate" },
-        { label: "Baby Shower", href: "/gifts/baby-shower" },
-      ],
-    },
-    {
-      label: "Groceries",
-      icon: <ShoppingCart className="w-4 h-4" />,
-      children: [
-        { label: "Fresh Produce", href: "/groceries/produce" },
-        { label: "Dairy & Eggs", href: "/groceries/dairy" },
-        { label: "Meat & Seafood", href: "/groceries/meat" },
-        { label: "Bakery", href: "/groceries/bakery" },
-        { label: "Beverages", href: "/groceries/beverages" },
-      ],
-    },
-    {
-      label: "Categories",
-      icon: <Package className="w-4 h-4" />,
-      children: [
-        { label: "Jewelry", href: "/categories/jewelry" },
-        { label: "Toys & Games", href: "/categories/toys" },
-        { label: "Home Decor", href: "/categories/decor" },
-        { label: "Fashion", href: "/categories/fashion" },
-      ],
-    },
-    { label: "About", href: "/about", icon: <Info className="w-4 h-4" /> },
-    {
-      label: "Help Center",
-      href: "/help",
-      icon: <HelpCircle className="w-4 h-4" />,
-    },
-    { label: "Contact", href: "/contact", icon: <Phone className="w-4 h-4" /> },
-  ];
+  const wishlistCount = wishlistItems.length;
+
+  const navItems = useMemo(
+    () => [
+      { label: "Home", href: "/", icon: <Home className="w-4 h-4" /> },
+      {
+        label: "Products",
+        href: "/product",
+        icon: <Package className="w-4 h-4" />,
+      },
+      {
+        label: "Wishlist",
+        href: "/wishlist",
+        icon: (
+          <span className="relative">
+            <Heart
+              className={`w-4 h-4 ${
+                wishlistCount ? "text-red-500 fill-red-500" : ""
+              }`}
+            />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-2 -right-2 text-[10px] font-semibold text-red-600">
+                {wishlistCount}
+              </span>
+            )}
+          </span>
+        ),
+      },
+      {
+        label: "Gifts",
+        icon: <Gift className="w-4 h-4" />,
+        children: [
+          { label: "Birthday Gifts", href: "/gifts/birthday" },
+          { label: "Wedding Gifts", href: "/gifts/wedding" },
+          { label: "Anniversary Gifts", href: "/gifts/anniversary" },
+          { label: "Corporate Gifts", href: "/gifts/corporate" },
+          { label: "Baby Shower", href: "/gifts/baby-shower" },
+        ],
+      },
+      {
+        label: "Groceries",
+        icon: <ShoppingCart className="w-4 h-4" />,
+        children: [
+          { label: "Fresh Produce", href: "/groceries/produce" },
+          { label: "Dairy & Eggs", href: "/groceries/dairy" },
+          { label: "Meat & Seafood", href: "/groceries/meat" },
+          { label: "Bakery", href: "/groceries/bakery" },
+          { label: "Beverages", href: "/groceries/beverages" },
+        ],
+      },
+      {
+        label: "Categories",
+        icon: <Package className="w-4 h-4" />,
+        children: [
+          { label: "Jewelry", href: "/categories/jewelry" },
+          { label: "Toys & Games", href: "/categories/toys" },
+          { label: "Home Decor", href: "/categories/decor" },
+          { label: "Fashion", href: "/categories/fashion" },
+        ],
+      },
+      { label: "About", href: "/about", icon: <Info className="w-4 h-4" /> },
+      {
+        label: "Help Center",
+        href: "/help",
+        icon: <HelpCircle className="w-4 h-4" />,
+      },
+      { label: "Contact", href: "/contact", icon: <Phone className="w-4 h-4" /> },
+    ],
+    [wishlistCount]
+  );
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -173,6 +209,13 @@ export default function Header() {
           </div>
         </div>
       </div>
+
+      {isUserDropdownOpen && (
+        <div
+          className="hidden lg:block fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+          onClick={() => setIsUserDropdownOpen(false)}
+        />
+      )}
 
       <header className="sticky top-0 z-50 bg-white shadow-md border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -217,8 +260,19 @@ export default function Header() {
                   onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
                   className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
                 >
-                  <span className="flex items-center justify-center w-11 h-11 rounded-full border border-gray-200 bg-gray-50 group-hover:border-purple-200">
-                    <User className="w-5 h-5 text-gray-700 group-hover:text-purple-600" />
+                  <span className="flex items-center justify-center w-11 h-11 rounded-full border border-gray-200 bg-gray-50 group-hover:border-purple-200 overflow-hidden">
+                    {user && avatarUrl ? (
+                      <Image
+                        src={avatarUrl}
+                        alt={user.fullName}
+                        width={44}
+                        height={44}
+                        className="object-cover"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <User className="w-5 h-5 text-gray-700 group-hover:text-purple-600" />
+                    )}
                   </span>
                   <div className="hidden xl:block text-left">
                     <p className="text-xs text-gray-500">Hello {greetingName}</p>
@@ -230,7 +284,7 @@ export default function Header() {
                 </button>
 
                 <div
-                  className={`absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl py-2 border border-gray-100 transition-all duration-200 ${
+                  className={`absolute right-0 mt-2 w-52 bg-white/95 backdrop-blur rounded-2xl shadow-2xl py-3 border border-gray-100 transition-all duration-200 z-50 ${
                     isUserDropdownOpen
                       ? "opacity-100 visible translate-y-0"
                       : "opacity-0 invisible -translate-y-2 pointer-events-none"
@@ -295,7 +349,7 @@ export default function Header() {
 
               <Link
                 href="/wishlist"
-                className="relative p-2 sm:p-2.5 rounded-lg hover:bg-gray-100 transition-all duration-200 group hidden sm:block"
+                className="relative p-2 sm:p-2.5 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
               >
                 <Heart
                   className={`w-5 h-5 sm:w-6 sm:h-6 ${
@@ -407,8 +461,19 @@ export default function Header() {
             </button>
           </div>
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-              <User className="w-7 h-7" />
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center overflow-hidden">
+              {user && avatarUrl ? (
+                <Image
+                  src={avatarUrl}
+                  alt={user.fullName}
+                  width={48}
+                  height={48}
+                  className="object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <User className="w-7 h-7" />
+              )}
             </div>
             <div>
               <p className="font-semibold">Hello {greetingName}</p>
@@ -513,11 +578,17 @@ export default function Header() {
               className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 transition-all duration-200"
               onClick={closeMobileMenu}
             >
-              <Heart className="w-5 h-5 text-gray-700" />
+              <Heart
+                className={`w-5 h-5 ${
+                  wishlistCount ? "text-red-500 fill-red-500" : "text-gray-700"
+                }`}
+              />
               <span className="font-medium text-gray-700">Wishlist</span>
-              <span className="ml-auto bg-red-100 text-red-600 px-2 py-1 rounded-full text-xs font-semibold">
-                3
-              </span>
+              {wishlistCount > 0 && (
+                <span className="ml-auto bg-red-100 text-red-600 px-2 py-1 rounded-full text-xs font-semibold">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
             <Link
               href="/orders"

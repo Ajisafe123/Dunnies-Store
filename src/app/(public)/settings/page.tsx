@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -222,9 +223,11 @@ export default function ProfileSettingsPage() {
                 {/* Avatar Section */}
                 <div className="flex items-center space-x-6 mb-8 pb-8 border-b border-gray-200">
                   <div className="relative">
-                    <img
+                    <Image
                       src={avatar}
-                      alt="Profile"
+                      alt={userFullName}
+                      width={96}
+                      height={96}
                       className="w-24 h-24 rounded-full object-cover border-4 border-gray-200"
                       referrerPolicy="no-referrer"
                     />
