@@ -24,12 +24,15 @@ export default function CartPage() {
   if (totalItems === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-violet-50 to-fuchsia-50 py-16 flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center p-4">
           <ShoppingCart className="w-24 h-24 text-gray-300 mx-auto mb-6" />
           <h2 className="text-3xl font-bold text-gray-700 mb-4">
             Your cart is empty
           </h2>
-          <Link href="/" className="text-violet-600 font-bold underline">
+          <Link
+            href="/"
+            className="text-violet-600 font-bold underline hover:text-violet-800 transition-colors"
+          >
             Continue Shopping
           </Link>
         </div>
@@ -39,8 +42,8 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 to-fuchsia-50 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-4xl font-black text-gray-900 mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl font-black text-gray-900 mb-8 sm:mb-10">
           Shopping Cart
         </h1>
 
@@ -49,57 +52,63 @@ export default function CartPage() {
             {cartItems.map((item) => (
               <div
                 key={item.id}
-                className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all"
+                className="bg-white rounded-3xl p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all"
               >
-                <div className="flex gap-6">
-                  <div className="w-24 h-24 rounded-2xl overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:gap-6">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl sm:rounded-2xl overflow-hidden flex-shrink-0 mb-4 sm:mb-0">
                     <Image
                       src={item.image}
                       alt={item.name}
                       width={96}
                       height={96}
-                      className="object-cover"
+                      className="object-cover w-full h-full"
                       unoptimized
                     />
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-lg mb-2">{item.name}</h3>
-                    <p className="text-2xl font-black text-violet-600 mb-4">
+
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-lg mb-1 truncate">
+                      {item.name}
+                    </h3>
+                    <p className="text-xl sm:text-2xl font-black text-violet-600 mb-3 sm:mb-4">
                       {formatPrice(item.price)}
                     </p>
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center bg-gray-100 rounded-xl px-4 py-2">
+
+                    <div className="flex flex-wrap items-center gap-4">
+                      <div className="flex items-center bg-gray-100 rounded-xl p-1 sm:px-2 sm:py-1">
                         <button
                           onClick={() =>
                             updateQuantity(item.id, item.quantity - 1)
                           }
-                          className="hover:text-violet-600"
+                          className="p-1 sm:p-2 hover:text-violet-600 disabled:opacity-50"
+                          disabled={item.quantity <= 1}
                         >
-                          <Minus className="w-5 h-5" />
+                          <Minus className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
-                        <span className="mx-4 font-bold w-8 text-center">
+                        <span className="mx-2 sm:mx-4 font-bold w-6 text-center text-sm sm:text-base">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() =>
                             updateQuantity(item.id, item.quantity + 1)
                           }
-                          className="hover:text-violet-600"
+                          className="p-1 sm:p-2 hover:text-violet-600"
                         >
-                          <Plus className="w-5 h-5" />
+                          <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
                       </div>
                       <button
                         onClick={() => removeFromCart(item.id)}
-                        className="text-red-500 flex items-center gap-2 text-sm font-semibold"
+                        className="text-red-500 flex items-center gap-1 sm:gap-2 text-sm font-semibold hover:text-red-700 transition-colors"
                       >
                         <Trash2 className="w-4 h-4" /> Remove
                       </button>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">Total</p>
-                    <p className="text-2xl font-black">
+
+                  <div className="text-right mt-4 sm:mt-0 flex flex-col justify-center">
+                    <p className="text-sm text-gray-500">Item Total</p>
+                    <p className="text-xl sm:text-2xl font-black">
                       {formatPrice(item.price * item.quantity)}
                     </p>
                   </div>
@@ -109,16 +118,20 @@ export default function CartPage() {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-3xl p-8 shadow-lg sticky top-8">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl lg:sticky lg:top-8">
               <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <strong>{formatPrice(subtotal)}</strong>
+                  <span className="text-gray-700">Subtotal</span>
+                  <strong className="text-gray-900">
+                    {formatPrice(subtotal)}
+                  </strong>
                 </div>
                 <div className="flex justify-between">
-                  <span>Delivery</span>
-                  <strong>{formatPrice(deliveryFee)}</strong>
+                  <span className="text-gray-700">Delivery</span>
+                  <strong className="text-gray-900">
+                    {formatPrice(deliveryFee)}
+                  </strong>
                 </div>
                 <div className="border-t-2 pt-4 flex justify-between text-xl font-black">
                   <span>Total</span>
@@ -127,7 +140,7 @@ export default function CartPage() {
               </div>
               <Link
                 href="/checkout"
-                className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white py-5 rounded-2xl font-bold flex items-center justify-center gap-3 hover:shadow-xl transition-all"
+                className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white py-4 sm:py-5 rounded-2xl font-bold flex items-center justify-center gap-3 hover:shadow-2xl hover:brightness-110 transition-all text-lg"
               >
                 Proceed to Checkout <ArrowRight className="w-5 h-5" />
               </Link>

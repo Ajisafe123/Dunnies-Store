@@ -1,45 +1,47 @@
-import axios, { AxiosError } from 'axios';
+import axios from "axios";
 
-const API_URL =
-  process.env.NODE_ENV === 'development'
-    ? process.env.NEXT_PUBLIC_LOCAL_URL || 'http://localhost:3000'
-    : process.env.NEXT_PUBLIC_DEPLOY_URL || 'https://dunnies-store.vercel.app';
+const api = axios.create({
+  baseURL: "",
+  withCredentials: true,
+  headers: { "Content-Type": "application/json" },
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      return Promise.reject(new Error("Incorrect email or password"));
+    }
+    if (!error.response) {
+      return Promise.reject(new Error("Network error. Please check your connection"));
+    }
+    const msg = error.response?.data?.error || error.response?.data?.message || "Something went wrong";
+    return Promise.reject(new Error(msg));
+  }
+);
 
 export const login = async (email: string, password: string) => {
-    try {
-        const response = await axios.post(`${API_URL}/api/auth/login`, { email, password });
-        return response.data;
-    } catch (error) {
-        const axiosError = error as AxiosError<{ message: string }>;
-        throw new Error(axiosError.response?.data?.message || 'Login failed');
-    }
+  const res = await api.post("/api/auth/login", {
+    email: email.trim().toLowerCase(),
+    password,
+  });
+  return res.data;
 };
 
-export const register = async (userData: any) => {
-    try {
-        const response = await axios.post(`${API_URL}/api/auth/register`, userData);
-        return response.data;
-    } catch (error) {
-        const axiosError = error as AxiosError<{ message: string }>;
-        throw new Error(axiosError.response?.data?.message || 'Registration failed');
-    }
+export const register = async (data: { name: string; email: string; password: string }) => {
+  const res = await api.post("/api/auth/register", {
+    name: data.name,
+    email: data.email.trim().toLowerCase(),
+    password: data.password,
+  });
+  return res.data;
 };
 
 export const logout = async () => {
-    try {
-        await axios.post(`${API_URL}/api/auth/logout`);
-    } catch (error) {
-        const axiosError = error as AxiosError<{ message: string }>;
-        throw new Error(axiosError.response?.data?.message || 'Logout failed');
-    }
+  await api.post("/api/auth/logout");
 };
 
 export const getCurrentUser = async () => {
-    try {
-        const response = await axios.get(`${API_URL}/api/auth/current`);
-        return response.data;
-    } catch (error) {
-        const axiosError = error as AxiosError<{ message: string }>;
-        throw new Error(axiosError.response?.data?.message || 'Failed to fetch current user');
-    }
+  const res = await api.get("/api/auth/current");
+  return res.data;
 };
