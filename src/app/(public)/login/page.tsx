@@ -119,7 +119,6 @@ export default function LoginPage() {
               variant="primary"
               fullWidth
               disabled={isLoading}
-              className="h-12 text-base font-semibold"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
