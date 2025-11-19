@@ -15,7 +15,7 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
 
   return (
     <>
-      <div className="rounded-3xl bg-white border border-gray-200 p-8 shadow-sm flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+      <div className="rounded-3xl bg-white/90 backdrop-blur border border-purple-100 p-8 shadow-lg flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-sm font-semibold text-purple-600 uppercase tracking-widest">
             Catalog
@@ -23,7 +23,7 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
           <h1 className="text-4xl font-bold text-gray-900 mt-1">
             Shop products
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-slate-600 mt-2">
             Browse curated collections of gifts, groceries, home goods, and more.
           </p>
         </div>
@@ -33,16 +33,16 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
             <input
               type="text"
               placeholder="Search items, categories, keywords..."
-              className="w-full rounded-full border border-gray-300 bg-white py-3 pl-12 pr-4 text-sm focus:border-purple-500 focus:outline-none"
+              className="w-full rounded-full border border-purple-200 bg-white py-3 pl-12 pr-4 text-sm focus:border-purple-500 focus:outline-none"
             />
           </div>
           <div className="flex gap-2 justify-end">
             <button
               onClick={() => setLayout("grid")}
-              className={`inline-flex items-center justify-center gap-2 rounded-full border border-gray-300 px-4 py-3 text-sm font-semibold transition ${
+              className={`inline-flex items-center justify-center gap-2 rounded-full border border-purple-200 px-4 py-3 text-sm font-semibold transition ${
                 layout === "grid"
                   ? "bg-purple-600 text-white border-purple-600"
-                  : "bg-white text-gray-700 hover:bg-gray-50"
+                  : "bg-white text-slate-700 hover:bg-purple-50"
               }`}
             >
               <Grid className="w-4 h-4" />
@@ -50,16 +50,16 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
             </button>
             <button
               onClick={() => setLayout("list")}
-              className={`inline-flex items-center justify-center gap-2 rounded-full border border-gray-300 px-4 py-3 text-sm font-semibold transition ${
+              className={`inline-flex items-center justify-center gap-2 rounded-full border border-purple-200 px-4 py-3 text-sm font-semibold transition ${
                 layout === "list"
                   ? "bg-purple-600 text-white border-purple-600"
-                  : "bg-white text-gray-700 hover:bg-gray-50"
+                  : "bg-white text-slate-700 hover:bg-purple-50"
               }`}
             >
               <List className="w-4 h-4" />
               List
             </button>
-            <button className="inline-flex items-center justify-center gap-2 rounded-full bg-gray-100 text-gray-700 px-4 py-3 font-semibold hover:bg-gray-200 transition">
+            <button className="inline-flex items-center justify-center gap-2 rounded-full bg-purple-50 text-purple-700 px-4 py-3 font-semibold hover:bg-purple-100 transition">
               <SlidersHorizontal className="w-4 h-4" />
               Filters
             </button>
@@ -90,9 +90,9 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
             <Link
                 key={product.id}
                 href={product.href || "#"}
-              className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm flex flex-col gap-4 md:flex-row md:items-center hover:shadow-lg transition"
+              className="bg-white border border-purple-100 rounded-3xl p-6 shadow-sm flex flex-col gap-4 md:flex-row md:items-center hover:shadow-lg transition"
             >
-              <div className="w-full md:w-48 h-48 bg-gray-50 rounded-2xl overflow-hidden">
+              <div className="w-full md:w-48 h-48 bg-purple-50 rounded-2xl overflow-hidden">
                 <img
                   src={product.image}
                   alt={product.name}

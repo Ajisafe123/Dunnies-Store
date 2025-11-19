@@ -16,16 +16,16 @@ interface Product {
 
 interface ProductListProps {
   products: Product[];
-  cols?: 2 | 3 | 4 | 5 | 6;
+  cols?: 1 | 3 | 4 | 5 | 6;
   gap?: 4 | 6 | 8 | 10 | 12;
 }
 
 const colsMap = {
-  2: "grid-cols-1 sm:grid-cols-2",
-  3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
-  4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
-  5: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5",
-  6: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6",
+  1: "md:grid-cols-1",
+  3: "md:grid-cols-2 lg:grid-cols-3",
+  4: "md:grid-cols-3 xl:grid-cols-4",
+  5: "md:grid-cols-3 xl:grid-cols-5",
+  6: "md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6",
 };
 
 const gapMap = {
@@ -42,7 +42,9 @@ export default function ProductList({
   gap = 6,
 }: ProductListProps) {
   return (
-    <div className={`grid ${colsMap[cols]} ${gapMap[gap]}`}>
+    <div
+      className={`grid grid-cols-1 min-[360px]:grid-cols-2 auto-rows-fr ${colsMap[cols]} ${gapMap[gap]} w-full`}
+    >
       {products.map((product) => (
         <ProductCard
           key={product.id}

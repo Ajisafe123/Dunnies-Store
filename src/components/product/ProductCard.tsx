@@ -55,7 +55,11 @@ export default function ProductCard({
   const wishlisted = isInWishlist(id);
 
   const computedHref =
-    href && href !== "#" ? href : typeof id === "string" ? `/product/${id}` : "#";
+    href && href !== "#"
+      ? href
+      : typeof id === "string"
+      ? `/product/${id}`
+      : "#";
 
   const CardWrapper = ({ children }: { children: React.ReactNode }) => {
     if (!computedHref || computedHref === "#")
@@ -83,8 +87,9 @@ export default function ProductCard({
 
   return (
     <CardWrapper>
-      <div className="group bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-violet-200 relative flex flex-col h-full">
-        <div className="relative overflow-hidden bg-gray-50 aspect-video sm:aspect-3/2 md:aspect-video lg:aspect-4/3 xl:aspect-video">
+      <div className="group bg-white/95 backdrop-blur rounded-2xl overflow-hidden shadow-lg hover:shadow-purple-200/80 transition-all duration-500 border border-purple-100 hover:border-purple-300 relative flex flex-col h-full">
+        {/* Changed aspect-video to aspect-square and removed all responsive aspect classes */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-white to-purple-100/40 aspect-square">
           <img
             src={image}
             alt={name}
@@ -103,7 +108,7 @@ export default function ProductCard({
             </div>
           )}
 
-          <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-violet-600 px-3 py-1 text-xs font-bold rounded-full shadow-sm border border-violet-100">
+          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-purple-600 px-3 py-1 text-xs font-bold rounded-full shadow-sm border border-purple-100">
             {tag}
           </div>
 

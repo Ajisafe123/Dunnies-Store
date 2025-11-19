@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   ShoppingBag,
@@ -200,16 +201,18 @@ export default function UsersInterfacePage() {
   }
 
   return (
-    <section className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <section className="bg-gradient-to-b from-purple-50 via-white to-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-10">
-        <div className="rounded-3xl bg-linear-to-r from-purple-600 to-pink-600 p-8 text-white relative overflow-hidden">
+        <div className="rounded-[36px] bg-linear-to-r from-purple-700 via-purple-600 to-fuchsia-600 p-8 text-white relative overflow-hidden shadow-2xl">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="flex items-center gap-5">
               <div className="relative">
                 <div className="w-20 h-20 rounded-2xl border-2 border-white/30 overflow-hidden shadow-lg">
-                  <img
+                  <Image
                     src={avatarUrl}
                     alt={`${greetingName} avatar`}
+                    width={80}
+                    height={80}
                     className="w-full h-full object-cover"
                     referrerPolicy="no-referrer"
                   />
@@ -223,9 +226,6 @@ export default function UsersInterfacePage() {
                 </Link>
               </div>
               <div>
-                <p className="text-sm uppercase tracking-wider text-purple-100 mb-1">
-                  User Interface
-                </p>
                 <h1 className="text-3xl sm:text-4xl font-bold mb-1">
                   Hello {greetingName},
                 </h1>
@@ -238,7 +238,7 @@ export default function UsersInterfacePage() {
             </div>
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/"
+                href="/product"
                 className="inline-flex items-center gap-2 rounded-full bg-white/15 px-6 py-3 text-white font-semibold hover:bg-white/25 transition"
               >
                 <Store className="w-5 h-5" />
@@ -260,7 +260,7 @@ export default function UsersInterfacePage() {
             <Link
               key={item.title}
               href={item.href}
-              className="group rounded-2xl bg-white border border-gray-200 p-6 shadow-sm hover:shadow-md transition flex items-start gap-4"
+              className="group rounded-2xl bg-white border border-purple-100 p-6 shadow-sm hover:shadow-lg transition flex items-start gap-4"
             >
               <span
                 className={`flex h-12 w-12 items-center justify-center rounded-xl ${item.accent}`}
@@ -285,7 +285,7 @@ export default function UsersInterfacePage() {
             <Link
               key={card.title}
               href={card.href}
-              className="rounded-2xl bg-white border border-gray-200 p-5 shadow-sm hover:shadow-md transition flex items-start gap-4"
+              className="rounded-2xl bg-white border border-purple-100 p-5 shadow-sm hover:shadow-lg transition flex items-start gap-4"
             >
               <span
                 className={`flex h-11 w-11 items-center justify-center rounded-xl ${card.accent}`}
@@ -302,7 +302,7 @@ export default function UsersInterfacePage() {
           ))}
         </div>
 
-        <div className="rounded-3xl bg-white border border-gray-200 p-8 shadow-sm">
+        <div className="rounded-3xl bg-white border border-purple-100 p-8 shadow-lg">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
               <p className="text-sm uppercase tracking-wider text-purple-600 font-semibold mb-1">

@@ -24,6 +24,8 @@ import {
   Search,
   Globe,
   HelpCircle,
+  Flame,
+  Sparkles,
 } from "lucide-react";
 
 type CurrentUser = {
@@ -112,16 +114,20 @@ export default function Header() {
 
   const navItems = useMemo(
     () => [
-      { label: "Home", href: "/", icon: <Home className="w-4 h-4" /> },
+      { label: "Home", href: "/", icon: <Home className="w-4 h-4 text-purple-500" /> },
       {
         label: "Products",
         href: "/product",
-        icon: <Package className="w-4 h-4" />,
+        icon: <Package className="w-4 h-4 text-purple-500" />,
       },
-
+      {
+        label: "Best Sellers",
+        href: "/best-sellers",
+        icon: <Flame className="w-4 h-4 text-purple-500" />,
+      },
       {
         label: "Gifts",
-        icon: <Gift className="w-4 h-4" />,
+        icon: <Gift className="w-4 h-4 text-purple-700" />,
         children: [
           { label: "Birthday Gifts", href: "/gifts/birthday" },
           { label: "Wedding Gifts", href: "/gifts/wedding" },
@@ -132,7 +138,7 @@ export default function Header() {
       },
       {
         label: "Groceries",
-        icon: <ShoppingCart className="w-4 h-4" />,
+        icon: <ShoppingCart className="w-4 h-4 text-purple-700" />,
         children: [
           { label: "Fresh Produce", href: "/groceries/produce" },
           { label: "Dairy & Eggs", href: "/groceries/dairy" },
@@ -143,7 +149,7 @@ export default function Header() {
       },
       {
         label: "Categories",
-        icon: <Package className="w-4 h-4" />,
+        icon: <Package className="w-4 h-4 text-purple-700" />,
         children: [
           { label: "Jewelry", href: "/categories/jewelry" },
           { label: "Toys & Games", href: "/categories/toys" },
@@ -151,13 +157,13 @@ export default function Header() {
           { label: "Fashion", href: "/categories/fashion" },
         ],
       },
-      { label: "About", href: "/about", icon: <Info className="w-4 h-4" /> },
+      { label: "About", href: "/about", icon: <Info className="w-4 h-4 text-purple-700" /> },
       {
         label: "Help Center",
         href: "/help",
-        icon: <HelpCircle className="w-4 h-4" />,
+        icon: <HelpCircle className="w-4 h-4 text-purple-700" />,
       },
-      { label: "Contact", href: "/contact", icon: <Phone className="w-4 h-4" /> },
+      { label: "Contact", href: "/contact", icon: <Phone className="w-4 h-4 text-purple-700" /> },
     ],
     [wishlistCount]
   );
@@ -335,7 +341,7 @@ export default function Header() {
                 className="relative p-2 sm:p-2.5 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
               >
                 <Heart
-                  className={`w-5 h-5 sm:w-6 sm:h-6 ${
+                  className={`w-5 h-5 sm:w-6 sm:h-6 text-red-500 ${
                     wishlistItems.length
                       ? "text-red-500 fill-red-500"
                       : "text-gray-700"
@@ -414,7 +420,7 @@ export default function Header() {
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 pl-10 rounded-lg border border-gray-200 focus:border-purple-500 focus:outline-none text-sm"
+              className="w-full px-4 py-2 pl-10 rounded-full ring-2 ring-purple-500 border border-gray-300 focus:border-purple-500 focus:outline-none text-sm"
             />
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           </div>

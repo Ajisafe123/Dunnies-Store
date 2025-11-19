@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -9,6 +11,7 @@ import {
   Users,
   Tags,
   Settings,
+  User,
 } from "lucide-react";
 
 const navItems = [
@@ -44,16 +47,60 @@ const navItems = [
   },
 ];
 
-export default function Sidebar() {
+type SidebarUser = {
+  fullName?: string;
+  email?: string;
+} | null;
+
+export default function Sidebar({ user }: { user: SidebarUser }) {
   const pathname = usePathname();
 
+  const avatarUrl = useMemo(() => {
+    if (!user) return "";
+    if (user.email) {
+      return `https://unavatar.io/${encodeURIComponent(user.email)}`;
+    }
+    if (user.fullName) {
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        user.fullName
+      )}&background=0f172a&color=fff`;
+    }
+    return "";
+  }, [user]);
+
   return (
-    <aside className="h-full w-72 bg-gradient-to-b from-purple-900 via-purple-800 to-purple-700 text-white flex flex-col border-r border-purple-950">
-      <div className="px-6 py-6 border-b border-white/10">
-        <p className="text-sm uppercase tracking-[0.3em] text-purple-300 mb-2">
+    <aside className="h-full w-72 bg-gradient-to-b from-purple-950 via-purple-900 to-purple-800 text-white flex flex-col border-r border-purple-950">
+      <div className="px-6 py-6 border-b border-white/10 space-y-4">
+        <p className="text-sm uppercase tracking-[0.3em] text-purple-300">
           Dunnis Admin
         </p>
         <h1 className="text-2xl font-bold">Control Center</h1>
+
+        <div className="flex items-center gap-3 rounded-2xl bg-white/5 border border-white/10 p-3 shadow-inner">
+          <div className="w-12 h-12 rounded-2xl overflow-hidden bg-white/10 flex items-center justify-center">
+            {avatarUrl ? (
+              <Image
+                src={avatarUrl}
+                alt={user?.fullName || "Admin avatar"}
+                width={48}
+                height={48}
+                className="object-cover"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <User className="w-5 h-5" />
+            )}
+          </div>
+          <div className="text-white">
+            <p className="text-sm text-purple-200">Signed in as</p>
+            <p className="font-semibold leading-tight">
+              {user?.fullName || "Admin"}
+            </p>
+            <p className="text-xs text-purple-200 truncate max-w-[11rem]">
+              {user?.email || "admin@dunnis.store"}
+            </p>
+          </div>
+        </div>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-2">
@@ -67,7 +114,7 @@ export default function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2 rounded-xl transition ${
                 isActive
-                  ? "bg-white/10 text-white"
+                  ? "bg-white/15 text-white shadow-lg shadow-purple-900/30"
                   : "text-gray-300 hover:bg-white/5"
               }`}
             >
@@ -78,7 +125,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="px-6 py-6 border-t border-white/10 text-xs text-gray-400">
+      <div className="px-6 py-6 border-t border-white/10 text-xs text-purple-200">
         © {new Date().getFullYear()} Dunnis Stores
       </div>
     </aside>

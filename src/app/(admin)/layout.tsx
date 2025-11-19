@@ -53,7 +53,7 @@ export default function AdminLayout({
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <Sidebar />
+        <Sidebar user={user} />
       </div>
 
       <div className="flex flex-1 flex-col overflow-hidden">
