@@ -118,24 +118,7 @@ export default function Header() {
         href: "/product",
         icon: <Package className="w-4 h-4" />,
       },
-      {
-        label: "Wishlist",
-        href: "/wishlist",
-        icon: (
-          <span className="relative">
-            <Heart
-              className={`w-4 h-4 ${
-                wishlistCount ? "text-red-500 fill-red-500" : ""
-              }`}
-            />
-            {wishlistCount > 0 && (
-              <span className="absolute -top-2 -right-2 text-[10px] font-semibold text-red-600">
-                {wishlistCount}
-              </span>
-            )}
-          </span>
-        ),
-      },
+
       {
         label: "Gifts",
         icon: <Gift className="w-4 h-4" />,

@@ -81,6 +81,28 @@ export const productsCatalog: ProductRecord[] = [
     ],
   },
   {
+    id: "organic-fruit-box",
+    name: "Organic Fruit Box",
+    description: "Seasonal organic fruits delivered fresh.",
+    longDescription:
+      "A selection of ethically sourced, seasonal organic fruits delivered weekly. Perfect for healthy snacking.",
+    price: 35000,
+    rating: 5.0,
+    reviewsCount: 15,
+    image:
+      "https://images.unsplash.com/photo-1542838132-92c7300c3b53?w=600&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1542838132-92c7300c3b53?w=800&q=80",
+    ],
+    tag: "Produce",
+    category: "Groceries",
+    href: "/product/organic-fruit-box",
+    stockStatus: "in-stock",
+    highlights: ["100% Organic", "Next-day delivery", "Seasonal variety"],
+    specs: [{ label: "Weight", value: "3kg" }],
+    reviews: [],
+  },
+  {
     id: "daily-essentials-pack",
     name: "Daily Essentials Pack",
     description: "Groceries and pantry staples bundled together.",
@@ -117,6 +139,48 @@ export const productsCatalog: ProductRecord[] = [
         date: "Nov 2, 2024",
         comment:
           "Great value. Produce was fresh and well packaged. Love the reusable tote.",
+      },
+    ],
+  },
+  {
+    id: "luxury-jewelry-set",
+    name: "Luxury Jewelry Set",
+    description: "Dazzling necklace and earrings with timeless appeal.",
+    longDescription:
+      "This coordinated jewelry set pairs a sculpted pendant necklace with matching earrings, all finished in 18k gold plating and handset cubic zirconia stones. Perfect for weddings, anniversaries, and black-tie events.",
+    price: 219900,
+    originalPrice: 279900,
+    rating: 4.9,
+    reviewsCount: 72,
+    image:
+      "https://images.unsplash.com/photo-1518544801958-efcbf8a7ec10?w=600&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1518544801958-efcbf8a7ec10?w=1000&q=80",
+      "https://images.unsplash.com/photo-1514996937319-344454492b37?w=1000&q=80",
+    ],
+    tag: "Jewelry",
+    category: "Fashion",
+    href: "/product/luxury-jewelry-set",
+    stockStatus: "in-stock",
+    highlights: [
+      "Coordinated necklace & earrings",
+      "18k gold-plated hardware",
+      "Hypoallergenic materials",
+    ],
+    specs: [
+      { label: "Stone", value: "AAA cubic zirconia" },
+      { label: "Finish", value: "18k gold plating" },
+      { label: "Warranty", value: "6 months" },
+    ],
+    reviews: [
+      {
+        id: "rev-7",
+        author: "Halima A.",
+        avatar: "https://i.pravatar.cc/100?img=21",
+        rating: 5,
+        date: "Nov 3, 2024",
+        comment:
+          "Bought this for a wedding and it stole the show. Packaging felt super premium.",
       },
     ],
   },
@@ -275,7 +339,36 @@ export const productsCatalog: ProductRecord[] = [
   },
 ];
 
-export const getProductById = (id: string) =>
-  productsCatalog.find((product) => product.id === id);
+const normalizeSlug = (value?: string) => {
+  if (!value) return undefined;
+  try {
+    return decodeURIComponent(value)
+      .trim()
+      .replace(/^\/+|\/+$/g, "")
+      .split("/")
+      .filter(Boolean)
+      .pop()
+      ?.toLowerCase();
+  } catch {
+    return value
+      .trim()
+      .replace(/^\/+|\/+$/g, "")
+      .split("/")
+      .filter(Boolean)
+      .pop()
+      ?.toLowerCase();
+  }
+};
 
+export const getProductById = (id: string) => {
+  const targetSlug = normalizeSlug(id);
+  if (!targetSlug) return undefined;
 
+  return productsCatalog.find((product) => {
+    const byId = normalizeSlug(product.id);
+    if (byId === targetSlug) return true;
+
+    const hrefSlug = normalizeSlug(product.href);
+    return hrefSlug === targetSlug;
+  });
+};

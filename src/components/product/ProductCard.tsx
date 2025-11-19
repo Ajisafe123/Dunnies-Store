@@ -63,6 +63,24 @@ export default function ProductCard({
     return <Link href={computedHref}>{children}</Link>;
   };
 
+  const WishlistButton = ({ className = "" }: { className?: string }) => (
+    <button
+      onClick={handleToggleWishlist}
+      className={`bg-white p-2.5 rounded-full transition-all duration-200 shadow-lg hover:scale-110 ${
+        wishlisted
+          ? "text-red-500 hover:bg-red-100"
+          : "text-gray-700 hover:bg-violet-600 hover:text-white"
+      } ${className}`}
+      aria-label="Add to wishlist"
+    >
+      <Heart
+        className={`w-4 h-4 ${
+          wishlisted ? "fill-red-500" : "fill-transparent"
+        }`}
+      />
+    </button>
+  );
+
   return (
     <CardWrapper>
       <div className="group bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-violet-200 relative flex flex-col h-full">
@@ -75,6 +93,10 @@ export default function ProductCard({
 
           <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
+          <div className="absolute bottom-3 right-3 z-10 flex gap-2 md:hidden">
+            <WishlistButton />
+          </div>
+
           {discount > 0 && (
             <div className="absolute top-3 left-3 bg-linear-to-r from-red-500 to-pink-500 text-white px-3 py-1 text-xs font-bold rounded-full shadow-md">
               -{discount}% OFF
@@ -85,22 +107,8 @@ export default function ProductCard({
             {tag}
           </div>
 
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100">
-            <button
-              onClick={handleToggleWishlist}
-              className={`bg-white p-2.5 rounded-full transition-all duration-200 shadow-lg hover:scale-110 ${
-                wishlisted
-                  ? "text-red-500 hover:bg-red-100"
-                  : "text-gray-700 hover:bg-violet-600 hover:text-white"
-              }`}
-              aria-label="Add to wishlist"
-            >
-              <Heart
-                className={`w-4 h-4 ${
-                  wishlisted ? "fill-red-500" : "fill-transparent"
-                }`}
-              />
-            </button>
+          <div className="absolute inset-0 z-10 hidden md:flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100">
+            <WishlistButton />
             <button
               onClick={(e) => e.preventDefault()}
               className="bg-white text-gray-700 p-2.5 rounded-full hover:bg-violet-600 hover:text-white transition-all duration-200 shadow-lg hover:scale-110"
