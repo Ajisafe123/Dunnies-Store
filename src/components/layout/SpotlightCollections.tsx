@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowRight, Flame, Sparkles } from "lucide-react";
 import ProductList from "@/components/product/ProductList";
-import { productsCatalog } from "@/data/products";
+import { productsCatalog } from "@/Data/products";
 
 const bestSellerCards = [...productsCatalog]
   .sort((a, b) => b.reviewsCount - a.reviewsCount)
