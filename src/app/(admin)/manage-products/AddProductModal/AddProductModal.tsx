@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { X, Loader2, Upload, ImageIcon } from "lucide-react";
 
 interface AddProductModalProps {
@@ -27,6 +27,27 @@ export default function AddProductModal({
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+
+  // Fetch categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/categories");
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data.categories || []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -257,11 +278,14 @@ export default function AddProductModal({
               value={formData.categoryId}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+              disabled={categoriesLoading}
             >
-              <option value="">Select a category</option>
-              <option value="gifts">Gifts</option>
-              <option value="groceries">Groceries</option>
-              <option value="wellness">Wellness</option>
+              <option value="">{categoriesLoading ? "Loading categories..." : "Select a category"}</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
             </select>
           </div>
 
