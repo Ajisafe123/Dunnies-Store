@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Trash2, Plus, Edit, Image as ImageIcon } from "lucide-react";
 import Loader from "@/components/ui/Loader";
 import AddProductModal from "./AddProductModal/AddProductModal";
+import DeleteModal from "@/components/ui/DeleteModal";
 
 interface Product {
   id: string;
@@ -20,6 +21,16 @@ export default function ManageProducts() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    productId: string | null;
+    productName: string;
+  }>({
+    isOpen: false,
+    productId: null,
+    productName: "",
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchProducts = async () => {
     try {
@@ -41,17 +52,29 @@ export default function ManageProducts() {
     fetchProducts();
   }, []);
 
-  const handleDeleteProduct = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
+  const openDeleteModal = (product: Product) => {
+    setDeleteModal({
+      isOpen: true,
+      productId: product.id,
+      productName: product.name,
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteModal.productId) return;
 
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      setIsDeleting(true);
+      const response = await fetch(`/api/products/${deleteModal.productId}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete product");
-      setProducts(products.filter((p) => p.id !== id));
+      setProducts(products.filter((p) => p.id !== deleteModal.productId));
+      setDeleteModal({ isOpen: false, productId: null, productName: "" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -158,7 +181,7 @@ export default function ManageProducts() {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDeleteProduct(product.id)}
+                    onClick={() => openDeleteModal(product)}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-red-200 text-red-600 rounded-full font-semibold hover:bg-red-50 transition"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -188,6 +211,18 @@ export default function ManageProducts() {
           }}
         />
       )}
+
+      <DeleteModal
+        isOpen={deleteModal.isOpen}
+        title="Delete Product"
+        message="Are you sure you want to delete this product? This action cannot be undone."
+        itemName={deleteModal.productName}
+        isLoading={isDeleting}
+        onConfirm={handleConfirmDelete}
+        onCancel={() =>
+          setDeleteModal({ isOpen: false, productId: null, productName: "" })
+        }
+      />
     </div>
   );
 }

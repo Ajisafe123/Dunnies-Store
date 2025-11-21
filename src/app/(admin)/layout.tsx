@@ -58,53 +58,54 @@ export default function AdminLayout({
       </div>
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex items-center justify-between bg-white/90 backdrop-blur border-b border-purple-100 px-4 sm:px-6 h-16">
-          <div className="flex items-center gap-3">
+        <header className="flex items-center justify-between bg-white/90 backdrop-blur border-b border-purple-100 px-2 sm:px-4 lg:px-6 h-14 sm:h-16 gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 min-w-0">
             <button
-              className="lg:hidden p-2 rounded-lg border border-gray-200"
+              className="lg:hidden p-1.5 sm:p-2 rounded-lg border border-gray-200 shrink-0"
               onClick={() => setIsSidebarOpen(true)}
             >
-              <Menu className="w-5 h-5 text-gray-700" />
+              <Menu className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
             </button>
-            <div className="hidden sm:flex items-center gap-2 text-sm text-gray-500">
-              <span>Admin</span>
-              <span className="text-gray-300">/</span>
-              <span className="font-semibold text-gray-800 capitalize">
+            <div className="hidden xs:flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-500 min-w-0">
+              <span className="hidden sm:inline">Admin</span>
+              <span className="text-gray-300 hidden sm:inline">/</span>
+              <span className="font-semibold text-gray-800 capitalize truncate">
                 Control Panel
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-3 flex-1 max-w-md">
-              <div className="w-full flex items-center bg-white border border-purple-100 rounded-full px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
-                <Search className="w-4 h-4 text-purple-400" />
-                <input
-                  type="search"
-                  placeholder="Search products, orders, users..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-transparent px-3 py-1 text-sm focus:outline-none w-full"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="text-gray-400 hover:text-gray-600 transition"
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+            <div className="flex items-center bg-linear-to-r from-purple-50 to-pink-50 border-2 border-purple-300 rounded-full px-2 sm:px-4 py-1.5 sm:py-2 shadow-sm hover:shadow-md transition-all flex-1 min-w-0">
+              <Search className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 shrink-0" />
+              <input
+                type="search"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-transparent px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-base focus:outline-none w-full text-gray-700 placeholder:text-gray-500"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="text-gray-400 hover:text-gray-600 transition shrink-0"
+                >
+                  ✕
+                </button>
+              )}
             </div>
-            <button className="relative p-2 text-purple-500 hover:text-purple-700">
-              <Bell className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto">
+            <button className="relative p-1.5 sm:p-2 text-purple-600 hover:text-purple-700 hover:bg-purple-100 rounded-full transition shrink-0">
+              <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full" />
             </button>
             <button
               onClick={() => setShowLogoutModal(true)}
-              className="flex items-center gap-2 rounded-full border border-purple-100 px-2 py-1 bg-white/80"
+              className="flex items-center gap-1 sm:gap-2 rounded-full border border-purple-100 px-1.5 sm:px-2.5 py-0.5 sm:py-1 bg-white/80 hover:bg-white/90 transition shrink-0"
             >
-              <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center shrink-0">
                 {user && avatarUrl ? (
                   <Image
                     src={avatarUrl}
@@ -115,12 +116,12 @@ export default function AdminLayout({
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <User className="w-4 h-4 text-gray-600" />
+                  <User className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
                 )}
               </div>
               <div className="hidden sm:flex flex-col text-left">
                 <span className="text-xs text-gray-500">Admin</span>
-                <span className="text-sm font-semibold text-gray-800">
+                <span className="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-1">
                   {user?.fullName || "Team"}
                 </span>
               </div>

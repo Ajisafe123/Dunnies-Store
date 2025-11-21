@@ -333,6 +333,23 @@ export default function Header() {
                       >
                         Profile
                       </Link>
+                      {user.role?.toLowerCase() === "admin" && (
+                        <>
+                          <hr className="my-2 border-gray-100" />
+                          <Link
+                            href="/manage-users"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors font-medium"
+                          >
+                            Manage Users
+                          </Link>
+                          <Link
+                            href="/dashboard"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors font-medium"
+                          >
+                            Admin Dashboard
+                          </Link>
+                        </>
+                      )}
                       <hr className="my-2 border-gray-100" />
                       <button
                         onClick={() => {

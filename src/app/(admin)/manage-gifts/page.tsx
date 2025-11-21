@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Trash2, Plus, Edit, Image as ImageIcon } from "lucide-react";
 import Loader from "@/components/ui/Loader";
 import AddGiftModal from "./AddGiftModal/AddGiftModal";
+import DeleteModal from "@/components/ui/DeleteModal";
 
 interface Gift {
   id: string;

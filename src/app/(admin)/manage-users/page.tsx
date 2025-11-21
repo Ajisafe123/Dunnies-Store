@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Trash2, Edit2 } from "lucide-react";
 import Loader from "@/components/ui/Loader";
+import DeleteModal from "@/components/ui/DeleteModal";
 
 interface User {
   id: string;
@@ -17,6 +18,9 @@ export default function ManageUsers() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -39,17 +43,28 @@ export default function ManageUsers() {
   }, []);
 
   const handleDeleteUser = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
-
+    setIsDeleting(true);
     try {
       const response = await fetch(`/api/users/${id}`, {
         method: "DELETE",
       });
-      if (!response.ok) throw new Error("Failed to delete user");
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to delete user");
+      }
       setUsers(users.filter((u) => u.id !== id));
+      setDeleteModalOpen(false);
+      setSelectedUser(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete");
+      setError(err instanceof Error ? err.message : "Failed to delete user");
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const openDeleteModal = (user: User) => {
+    setSelectedUser(user);
+    setDeleteModalOpen(true);
   };
 
   return (
@@ -127,7 +142,7 @@ export default function ManageUsers() {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDeleteUser(user.id)}
+                        onClick={() => openDeleteModal(user)}
                         className="text-sm text-red-600 hover:text-red-700 inline-flex items-center gap-1"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -141,6 +156,18 @@ export default function ManageUsers() {
           </div>
         )}
       </div>
+
+      <DeleteModal
+        isOpen={deleteModalOpen}
+        title="Remove User"
+        message={`Are you sure you want to remove ${selectedUser?.fullName}? This action cannot be undone.`}
+        onConfirm={() => selectedUser && handleDeleteUser(selectedUser.id)}
+        onCancel={() => {
+          setDeleteModalOpen(false);
+          setSelectedUser(null);
+        }}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

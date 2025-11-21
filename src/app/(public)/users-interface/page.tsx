@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/ui/Loader";
 import { getCurrentUser } from "@/services/auth";
+import { ShoppingBag, Heart, CreditCard, MapPin, Settings, MessageCircle, Truck, ShieldCheck, Store, Gift, ArrowRight, Sparkles } from "lucide-react";
 
 type CurrentUser = {
   id: string;

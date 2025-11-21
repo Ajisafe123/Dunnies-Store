@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Trash2, Edit2, Plus, Tag } from "lucide-react";
 import Loader from "@/components/ui/Loader";
 import AddCategoryModal from "./AddCategoryModal/AddCategoryModal";
+import DeleteModal from "@/components/ui/DeleteModal";
 
 interface Category {
   id: string;
@@ -21,6 +22,17 @@ export default function ManageCategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    categoryId: string | null;
+    categoryName: string;
+  }>({
+    isOpen: false,
+    categoryId: null,
+    categoryName: "",
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchCategories = async () => {
     try {
@@ -44,17 +56,37 @@ export default function ManageCategoriesPage() {
     fetchCategories();
   }, []);
 
-  const handleDeleteCategory = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this category?")) return;
+  const handleEditCategory = (category: Category) => {
+    setEditingCategory(category);
+    setIsModalOpen(true);
+  };
+
+  const openDeleteModal = (category: Category) => {
+    setDeleteModal({
+      isOpen: true,
+      categoryId: category.id,
+      categoryName: category.name,
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteModal.categoryId) return;
 
     try {
-      const response = await fetch(`/api/categories/${id}`, {
-        method: "DELETE",
-      });
+      setIsDeleting(true);
+      const response = await fetch(
+        `/api/categories/${deleteModal.categoryId}`,
+        {
+          method: "DELETE",
+        }
+      );
       if (!response.ok) throw new Error("Failed to delete category");
-      setCategories(categories.filter((c) => c.id !== id));
+      setCategories(categories.filter((c) => c.id !== deleteModal.categoryId));
+      setDeleteModal({ isOpen: false, categoryId: null, categoryName: "" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -141,12 +173,15 @@ export default function ManageCategoriesPage() {
                 )}
 
                 <div className="flex gap-2 pt-2">
-                  <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-purple-200 text-purple-600 rounded-full font-semibold hover:bg-purple-50 transition">
+                  <button
+                    onClick={() => handleEditCategory(category)}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-purple-200 text-purple-600 rounded-full font-semibold hover:bg-purple-50 transition"
+                  >
                     <Edit2 className="w-4 h-4" />
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDeleteCategory(category.id)}
+                    onClick={() => openDeleteModal(category)}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-red-200 text-red-600 rounded-full font-semibold hover:bg-red-50 transition"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -161,8 +196,24 @@ export default function ManageCategoriesPage() {
 
       <AddCategoryModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingCategory(null);
+        }}
         onSuccess={fetchCategories}
+        editingCategory={editingCategory}
+      />
+
+      <DeleteModal
+        isOpen={deleteModal.isOpen}
+        title="Delete Category"
+        message="Are you sure you want to delete this category? This action cannot be undone."
+        itemName={deleteModal.categoryName}
+        isLoading={isDeleting}
+        onConfirm={handleConfirmDelete}
+        onCancel={() =>
+          setDeleteModal({ isOpen: false, categoryId: null, categoryName: "" })
+        }
       />
     </div>
   );

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Trash2, Plus, Edit, Image as ImageIcon } from "lucide-react";
 import Loader from "@/components/ui/Loader";
 import AddGroceryModal from "./AddGroceryModal/AddGroceryModal";
+import DeleteModal from "@/components/ui/DeleteModal";
 
 interface Grocery {
   id: string;
@@ -20,6 +21,16 @@ export default function ManageGroceries() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingGroceryId, setEditingGroceryId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    groceryId: string | null;
+    groceryName: string;
+  }>({
+    isOpen: false,
+    groceryId: null,
+    groceryName: "",
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchGroceries = async () => {
     try {
@@ -41,17 +52,29 @@ export default function ManageGroceries() {
     fetchGroceries();
   }, []);
 
-  const handleDeleteGrocery = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this grocery item?")) return;
+  const openDeleteModal = (grocery: Grocery) => {
+    setDeleteModal({
+      isOpen: true,
+      groceryId: grocery.id,
+      groceryName: grocery.name,
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteModal.groceryId) return;
 
     try {
-      const response = await fetch(`/api/groceries/${id}`, {
+      setIsDeleting(true);
+      const response = await fetch(`/api/groceries/${deleteModal.groceryId}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete grocery");
-      setGroceries(groceries.filter((g) => g.id !== id));
+      setGroceries(groceries.filter((g) => g.id !== deleteModal.groceryId));
+      setDeleteModal({ isOpen: false, groceryId: null, groceryName: "" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -158,7 +181,7 @@ export default function ManageGroceries() {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDeleteGrocery(grocery.id)}
+                    onClick={() => openDeleteModal(grocery)}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-red-200 text-red-600 rounded-full font-semibold hover:bg-red-50 transition"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -188,6 +211,18 @@ export default function ManageGroceries() {
           }}
         />
       )}
+
+      <DeleteModal
+        isOpen={deleteModal.isOpen}
+        title="Delete Grocery Item"
+        message="Are you sure you want to delete this grocery item? This action cannot be undone."
+        itemName={deleteModal.groceryName}
+        isLoading={isDeleting}
+        onConfirm={handleConfirmDelete}
+        onCancel={() =>
+          setDeleteModal({ isOpen: false, groceryId: null, groceryName: "" })
+        }
+      />
     </div>
   );
 }

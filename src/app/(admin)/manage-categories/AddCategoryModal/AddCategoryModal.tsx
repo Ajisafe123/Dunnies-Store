@@ -1,18 +1,25 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { X, Loader2, Upload } from "lucide-react";
 
 interface AddCategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  editingCategory?: {
+    id: string;
+    name: string;
+    description: string | null;
+    imageUrl?: string;
+  } | null;
 }
 
 export default function AddCategoryModal({
   isOpen,
   onClose,
   onSuccess,
+  editingCategory = null,
 }: AddCategoryModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
@@ -24,6 +31,27 @@ export default function AddCategoryModal({
   const [imagePreview, setImagePreview] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (editingCategory) {
+      setFormData({
+        name: editingCategory.name,
+        description: editingCategory.description || "",
+        priority: "normal",
+      });
+      setImagePreview(editingCategory.imageUrl || "");
+      setImage(null);
+    } else {
+      setFormData({
+        name: "",
+        description: "",
+        priority: "normal",
+      });
+      setImagePreview("");
+      setImage(null);
+    }
+    setError(null);
+  }, [editingCategory, isOpen]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -63,7 +91,7 @@ export default function AddCategoryModal({
     setError(null);
 
     try {
-      if (!image) {
+      if (!image && !imagePreview) {
         throw new Error("Please select an image");
       }
 
@@ -71,16 +99,27 @@ export default function AddCategoryModal({
       formDataToSend.append("name", formData.name);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("priority", formData.priority);
-      formDataToSend.append("image", image);
 
-      const response = await fetch("/api/categories", {
-        method: "POST",
+      if (image) {
+        formDataToSend.append("image", image);
+      }
+
+      const url = editingCategory
+        ? `/api/categories/${editingCategory.id}`
+        : "/api/categories";
+      const method = editingCategory ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
         body: formDataToSend,
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Failed to create category");
+        throw new Error(
+          data.error ||
+            `Failed to ${editingCategory ? "update" : "create"} category`
+        );
       }
 
       setFormData({
@@ -105,7 +144,9 @@ export default function AddCategoryModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">Add Category</h2>
+          <h2 className="text-xl font-bold text-gray-900">
+            {editingCategory ? "Edit Category" : "Add Category"}
+          </h2>
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded-full transition"
@@ -218,11 +259,17 @@ export default function AddCategoryModal({
             </button>
             <button
               type="submit"
-              disabled={loading || !image}
+              disabled={loading || (!image && !imagePreview)}
               className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {loading ? "Creating..." : "Add Category"}
+              {loading
+                ? editingCategory
+                  ? "Updating..."
+                  : "Creating..."
+                : editingCategory
+                ? "Update Category"
+                : "Add Category"}
             </button>
           </div>
         </form>
