@@ -4,21 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import {
-  ShoppingBag,
-  Heart,
-  CreditCard,
-  MapPin,
-  ShieldCheck,
-  Gift,
-  Truck,
-  MessageCircle,
-  Sparkles,
-  Store,
-  Loader2,
-  ArrowRight,
-  Settings,
-} from "lucide-react";
+import Loader from "@/components/ui/Loader";
 import { getCurrentUser } from "@/services/auth";
 
 type CurrentUser = {
@@ -35,7 +21,9 @@ const getAvatarUrl = (fullName?: string, email?: string) => {
   }
 
   if (fullName) {
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=8b5cf6&color=fff`;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      fullName
+    )}&background=8b5cf6&color=fff`;
   }
 
   return "https://ui-avatars.com/api/?name=Dunnis+Stores&background=8b5cf6&color=fff";
@@ -188,10 +176,7 @@ export default function UsersInterfacePage() {
   if (loading) {
     return (
       <section className="min-h-[60vh] flex items-center justify-center">
-        <div className="flex items-center gap-3 text-gray-600">
-          <Loader2 className="w-5 h-5 animate-spin" />
-          <span>Loading your space…</span>
-        </div>
+        <Loader text="Loading your space…" />
       </section>
     );
   }
@@ -201,7 +186,7 @@ export default function UsersInterfacePage() {
   }
 
   return (
-    <section className="bg-gradient-to-b from-purple-50 via-white to-white py-12 px-4 sm:px-6 lg:px-8">
+    <section className="bg-linear-to-b from-purple-50 via-white to-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-10">
         <div className="rounded-[36px] bg-linear-to-r from-purple-700 via-purple-600 to-fuchsia-600 p-8 text-white relative overflow-hidden shadow-2xl">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -230,9 +215,9 @@ export default function UsersInterfacePage() {
                   Hello {greetingName},
                 </h1>
                 <p className="text-base text-purple-100 max-w-2xl">
-                  Everything tied to your Dunnis experience lives here—keep tabs on
-                  orders, wishlist, payment details, and pick up shopping right
-                  where you left it.
+                  Everything tied to your Dunnis experience lives here—keep tabs
+                  on orders, wishlist, payment details, and pick up shopping
+                  right where you left it.
                 </p>
               </div>
             </div>

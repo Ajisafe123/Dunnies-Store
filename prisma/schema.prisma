@@ -20,7 +20,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  orders    Order[]
+  orders         Order[]
+  comments       ProductComment[]
+  likes          ProductLike[]
 }
 
 model Category {
@@ -48,6 +50,28 @@ model Product {
   
   category    Category? @relation(fields: [categoryId], references: [id])
   orderItems  OrderItem[]
+  comments    ProductComment[]
+  likes       ProductLike[]
+}
+
+model Gift {
+  id          String   @id @default(cuid()) @map("_id")
+  name        String
+  description String?
+  price       Float
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Grocery {
+  id          String   @id @default(cuid()) @map("_id")
+  name        String
+  description String?
+  price       Float
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Order {
@@ -70,4 +94,34 @@ model OrderItem {
 
   order     Order    @relation(fields: [orderId], references: [id])
   product   Product  @relation(fields: [productId], references: [id])
+}
+
+model ProductComment {
+  id        String   @id @default(cuid()) @map("_id")
+  productId String
+  userId    String
+  text      String
+  rating    Int      @default(5) // 1-5 stars
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([userId])
+}
+
+model ProductLike {
+  id        String   @id @default(cuid()) @map("_id")
+  productId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, userId])
+  @@index([productId])
+  @@index([userId])
 }

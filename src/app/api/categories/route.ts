@@ -3,15 +3,20 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const priority = searchParams.get("priority");
+
+    const where: any = {};
+    if (priority) where.priority = priority;
+
     const categories = await prisma.category.findMany({
+      where,
       include: {
         _count: {
           select: { products: true },
         },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
     });
 
     return NextResponse.json({ categories });
@@ -27,7 +32,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, description, imageUrl } = body;
+    const { name, description, imageUrl, priority } = body;
 
     if (!name) {
       return NextResponse.json(
@@ -47,12 +52,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const categoryData: any = {
+      name,
+      description: description || null,
+      imageUrl: imageUrl || null,
+    };
+    
+    // Only include priority if it's provided
+    if (priority) categoryData.priority = priority;
+
     const category = await prisma.category.create({
-      data: {
-        name,
-        description: description || null,
-        imageUrl: imageUrl || null,
-      },
+      data: categoryData,
     });
 
     return NextResponse.json({ category }, { status: 201 });

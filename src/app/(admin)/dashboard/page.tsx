@@ -1,122 +1,238 @@
-const stats = [
-  { label: "Products live", value: "126", trend: "+8 this week", color: "text-violet-600" },
-  { label: "Orders pending", value: "42", trend: "12 awaiting fulfillment", color: "text-blue-600" },
-  { label: "Revenue (7d)", value: "₦4.8M", trend: "+14% vs last week", color: "text-emerald-600" },
-  { label: "New customers", value: "87", trend: "+23% MoM", color: "text-amber-600" },
-];
+"use client";
 
-const recentOrders = [
-  {
-    id: "#ORD-1042",
-    customer: "Chiamaka Obi",
-    total: "₦89,500",
-    status: "In transit",
-    date: "Nov 18",
-  },
-  {
-    id: "#ORD-1039",
-    customer: "Kelechi James",
-    total: "₦152,000",
-    status: "Processing",
-    date: "Nov 17",
-  },
-  {
-    id: "#ORD-1035",
-    customer: "Maya Bello",
-    total: "₦64,900",
-    status: "Delivered",
-    date: "Nov 16",
-  },
-];
+import { useEffect, useState } from "react";
+import { TrendingUp, Package, ShoppingCart, Users } from "lucide-react";
+import Loader from "@/components/ui/Loader";
 
-const bestSellers = [
-  { name: "Luxury Gift Basket", units: 42, revenue: "₦3.3M" },
-  { name: "Premium Coffee Kit", units: 28, revenue: "₦2.1M" },
-  { name: "Wellness Gift Set", units: 33, revenue: "₦1.8M" },
-];
+interface DashboardData {
+  totalProducts: number;
+  totalOrders: number;
+  totalRevenue: number;
+  totalCustomers: number;
+  recentOrders: any[];
+  bestSellers: any[];
+}
 
 export default function AdminDashboard() {
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch products
+        const productsRes = await fetch("/api/products");
+        const productsData = productsRes.ok ? await productsRes.json() : { products: [] };
+        
+        // Fetch orders
+        const ordersRes = await fetch("/api/orders");
+        const ordersData = ordersRes.ok ? await ordersRes.json() : { orders: [] };
+        
+        // Fetch users
+        const usersRes = await fetch("/api/users");
+        const usersData = usersRes.ok ? await usersRes.json() : { users: [] };
+        
+        const orders = ordersData.orders || [];
+        const products = productsData.products || [];
+        const users = usersData.users || [];
+        
+        // Calculate metrics
+        const totalRevenue = orders.reduce((sum: number, order: any) => sum + (order.total || 0), 0);
+        
+        // Sort orders by date (most recent first)
+        const recentOrders = orders.slice(0, 5).sort((a: any, b: any) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        
+        // Get best sellers (products with most orders)
+        const bestSellers = products
+          .sort((a: any, b: any) => (b.ordersCount || 0) - (a.ordersCount || 0))
+          .slice(0, 3);
+        
+        setData({
+          totalProducts: products.length,
+          totalOrders: orders.length,
+          totalRevenue: totalRevenue,
+          totalCustomers: users.length,
+          recentOrders,
+          bestSellers,
+        });
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err);
+        setError(err instanceof Error ? err.message : "Failed to load data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  const stats = [
+    {
+      label: "Total Products",
+      value: data?.totalProducts || 0,
+      trend: `${data?.totalProducts || 0} items`,
+      icon: Package,
+      color: "text-violet-600",
+      bgColor: "bg-violet-50",
+    },
+    {
+      label: "Total Orders",
+      value: data?.totalOrders || 0,
+      trend: `${data?.totalOrders || 0} orders`,
+      icon: ShoppingCart,
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+    },
+    {
+      label: "Total Revenue",
+      value: `₦${(data?.totalRevenue || 0).toLocaleString()}`,
+      trend: "Overall revenue",
+      icon: TrendingUp,
+      color: "text-emerald-600",
+      bgColor: "bg-emerald-50",
+    },
+    {
+      label: "Total Customers",
+      value: data?.totalCustomers || 0,
+      trend: `${data?.totalCustomers || 0} users`,
+      icon: Users,
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+    },
+  ];
+
   return (
     <div className="space-y-8">
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard overview</h1>
-        <p className="text-gray-600">
-          Monitor live store metrics, fulfillment, and customer sentiment.
+        <h1 className="text-4xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          Dashboard
+        </h1>
+        <p className="text-gray-600 text-lg">
+          Monitor real-time store metrics and performance
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-2xl bg-white p-5 border border-gray-100 shadow-sm"
-          >
-            <p className="text-sm text-gray-500">{stat.label}</p>
-            <p className={`text-3xl font-bold mt-2 ${stat.color}`}>
-              {stat.value}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">{stat.trend}</p>
-          </div>
-        ))}
-      </div>
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-700">
+          {error}
+        </div>
+      )}
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 rounded-3xl bg-white border border-gray-100 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                Live orders
-              </h2>
-              <p className="text-sm text-gray-500">
-                Last updated a few seconds ago
-              </p>
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader text="Loading dashboard data..." />
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            {stats.map((stat) => {
+              const Icon = stat.icon;
+              return (
+                <div
+                  key={stat.label}
+                  className="rounded-3xl bg-white p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
+                      {stat.label}
+                    </p>
+                    <div className={`${stat.bgColor} rounded-2xl p-3`}>
+                      <Icon className={`w-5 h-5 ${stat.color}`} />
+                    </div>
+                  </div>
+                  <p className={`text-3xl font-bold ${stat.color} mb-2`}>
+                    {typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value}
+                  </p>
+                  <p className="text-xs text-gray-500">{stat.trend}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div className="xl:col-span-2 rounded-3xl bg-white border border-gray-100 p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Recent Orders</h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Latest {data?.recentOrders?.length || 0} orders
+                  </p>
+                </div>
+              </div>
+              {data?.recentOrders && data.recentOrders.length > 0 ? (
+                <div className="divide-y divide-gray-100">
+                  {data.recentOrders.map((order: any) => (
+                    <div
+                      key={order.id}
+                      className="flex items-center justify-between py-4 text-sm hover:bg-gray-50/50 px-2 rounded transition"
+                    >
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900">
+                          Order #{order.id?.slice(-6) || "---"}
+                        </p>
+                        <p className="text-gray-500 text-xs mt-1">
+                          {new Date(order.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <p className="font-semibold text-gray-900 min-w-[100px] text-right">
+                        ₦{(order.total || 0).toLocaleString()}
+                      </p>
+                      <span
+                        className={`text-xs font-semibold px-3 py-1 rounded-full ml-4 ${
+                          order.status === "completed"
+                            ? "bg-green-50 text-green-600"
+                            : order.status === "pending"
+                            ? "bg-yellow-50 text-yellow-600"
+                            : "bg-blue-50 text-blue-600"
+                        }`}
+                      >
+                        {order.status || "pending"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  <p>No orders yet</p>
+                </div>
+              )}
             </div>
-            <button className="text-sm font-semibold text-purple-600">
-              View all
-            </button>
-          </div>
-          <div className="divide-y divide-gray-100">
-            {recentOrders.map((order) => (
-              <div
-                key={order.id}
-                className="flex items-center justify-between py-3 text-sm"
-              >
-                <div>
-                  <p className="font-semibold text-gray-900">{order.id}</p>
-                  <p className="text-gray-500">{order.customer}</p>
-                </div>
-                <p className="font-semibold text-gray-900">{order.total}</p>
-                <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                  {order.status}
-                </span>
-                <p className="text-gray-400">{order.date}</p>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        <div className="rounded-3xl bg-white border border-gray-100 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Best sellers
-            </h2>
-            <button className="text-sm text-gray-500">Last 30 days</button>
-          </div>
-          <div className="space-y-4">
-            {bestSellers.map((item) => (
-              <div key={item.name} className="flex items-center justify-between">
-                <div>
-                  <p className="font-semibold text-gray-900">{item.name}</p>
-                  <p className="text-xs text-gray-500">{item.units} units</p>
+            <div className="rounded-3xl bg-white border border-gray-100 p-6 shadow-sm">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Top Products</h2>
+              {data?.bestSellers && data.bestSellers.length > 0 ? (
+                <div className="space-y-4">
+                  {data.bestSellers.map((product: any, index: number) => (
+                    <div
+                      key={product.id}
+                      className="flex items-start justify-between p-3 rounded-xl bg-gray-50/50 hover:bg-gray-50 transition"
+                    >
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900 text-sm">
+                          {index + 1}. {product.name}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          ₦{(product.price || 0).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <p className="text-sm font-semibold text-gray-900">
-                  {item.revenue}
-                </p>
-              </div>
-            ))}
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  <p>No products yet</p>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 }

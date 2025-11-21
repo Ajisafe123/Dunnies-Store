@@ -45,9 +45,9 @@ export const metadata: Metadata = {
 
 export default function BestSellersPage() {
   return (
-    <section className="bg-gradient-to-b from-purple-50 via-white to-white py-12 px-4 sm:px-6 lg:px-8">
+    <section className="bg-linear-to-b from-purple-50 via-white to-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10">
-        <header className="rounded-[40px] bg-gradient-to-br from-purple-700 via-purple-600 to-fuchsia-600 text-white p-8 sm:p-10 shadow-2xl space-y-6">
+        <header className="rounded-4xl bg-linear-to-br from-purple-700 via-purple-600 to-fuchsia-600 text-white p-8 sm:p-10 shadow-2xl space-y-6">
           <div className="space-y-3">
             <p className="text-xs font-semibold tracking-[0.4em] uppercase text-purple-200">
               Best sellers
@@ -97,7 +97,7 @@ export default function BestSellersPage() {
           ))}
         </div>
 
-        <div className="rounded-[32px] border border-purple-100 bg-white/80 backdrop-blur px-4 py-8 sm:px-6 lg:px-10 shadow-xl">
+        <div className="rounded-4xl border border-purple-100 bg-white/80 backdrop-blur px-4 py-8 sm:px-6 lg:px-10 shadow-xl">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-purple-500">

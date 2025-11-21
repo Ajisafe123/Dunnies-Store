@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Trash2, Edit2 } from "lucide-react";
+import { Trash2, Edit2 } from "lucide-react";
+import Loader from "@/components/ui/Loader";
 
 interface User {
   id: string;
@@ -73,8 +74,8 @@ export default function ManageUsers() {
 
       <div className="bg-white border border-gray-100 rounded-3xl shadow-sm">
         {loading ? (
-          <div className="flex items-center justify-center p-12">
-            <Loader2 className="w-6 h-6 animate-spin text-purple-600" />
+          <div className="p-12">
+            <Loader text="Loading users..." />
           </div>
         ) : users.length === 0 ? (
           <div className="text-center p-12">

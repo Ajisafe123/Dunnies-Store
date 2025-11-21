@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Flame, Sparkles, Loader2 } from "lucide-react";
+import { ArrowRight, Flame, Sparkles } from "lucide-react";
+import Loader from "@/components/ui/Loader";
 import ProductList from "@/components/product/ProductList";
 
 interface Product {
@@ -70,8 +71,8 @@ export default function SpotlightCollections() {
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center p-12">
-            <Loader2 className="w-6 h-6 animate-spin text-purple-600" />
+          <div className="p-12">
+            <Loader text="Loading spotlight collections..." />
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-8 lg:gap-12">

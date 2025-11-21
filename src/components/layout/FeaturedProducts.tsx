@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Loader2 } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import Loader from "@/components/ui/Loader";
 import ProductList from "@/components/product/ProductList";
 
 interface Product {
@@ -68,9 +69,7 @@ export default function FeaturedProducts() {
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center p-12">
-            <Loader2 className="w-6 h-6 animate-spin text-purple-600" />
-          </div>
+          <Loader text="Loading featured products..." />
         ) : products.length === 0 ? (
           <div className="text-center p-12">
             <p className="text-gray-600">No products available yet.</p>

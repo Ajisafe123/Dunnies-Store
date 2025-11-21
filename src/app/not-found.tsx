@@ -5,9 +5,9 @@ import { ArrowLeft, Search } from "lucide-react";
 
 export default function NotFoundPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-white flex items-center justify-center px-4 py-16">
+    <main className="min-h-screen bg-linear-to-b from-purple-50 via-white to-white flex items-center justify-center px-4 py-16">
       <div className="max-w-3xl w-full text-center bg-white rounded-3xl shadow-2xl border border-purple-100 p-12">
-        <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-purple-600 to-pink-500 text-white text-4xl font-bold shadow-lg mb-8">
+        <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-linear-to-br from-purple-600 to-pink-500 text-white text-4xl font-bold shadow-lg mb-8">
           404
         </div>
         <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
@@ -29,7 +29,7 @@ export default function NotFoundPage() {
           </Link>
           <Link
             href="/products"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold shadow-lg hover:shadow-purple-200 transition"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-linear-to-r from-purple-600 to-pink-600 text-white font-semibold shadow-lg hover:shadow-purple-200 transition"
           >
             <Search className="w-5 h-5" />
             Explore Products

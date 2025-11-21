@@ -1,4 +1,6 @@
 "use client";
+import CookieConsent from "@/components/layout/CookieConsent";
+
 export default function ClientLayout({
   children,
 }: {
@@ -7,6 +9,7 @@ export default function ClientLayout({
   return (
     <>
       <main>{children}</main>
+      <CookieConsent />
     </>
   );
 }

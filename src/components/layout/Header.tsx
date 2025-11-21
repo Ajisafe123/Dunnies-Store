@@ -25,7 +25,6 @@ import {
   Globe,
   HelpCircle,
   Flame,
-  Sparkles,
 } from "lucide-react";
 
 type CurrentUser = {
@@ -35,6 +34,11 @@ type CurrentUser = {
   email: string;
   phone?: string | null;
   role?: string;
+};
+
+type Category = {
+  id: string;
+  name: string;
 };
 
 const USER_INTERFACE_PATH = "/users-interface";
@@ -63,6 +67,7 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
   const pathname = usePathname();
   const { items: wishlistItems } = useWishlist();
 
@@ -91,6 +96,30 @@ export default function Header() {
     };
   }, [pathname]);
 
+  useEffect(() => {
+    let isSubscribed = true;
+
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/categories", {
+          cache: "no-store",
+        });
+        if (response.ok && isSubscribed) {
+          const data = await response.json();
+          setCategories(data.categories || []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+      }
+    };
+
+    fetchCategories();
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, []);
+
   const userFirstName =
     user?.firstName ||
     user?.fullName?.split(" ")[0] ||
@@ -114,7 +143,11 @@ export default function Header() {
 
   const navItems = useMemo(
     () => [
-      { label: "Home", href: "/", icon: <Home className="w-4 h-4 text-purple-500" /> },
+      {
+        label: "Home",
+        href: "/",
+        icon: <Home className="w-4 h-4 text-purple-500" />,
+      },
       {
         label: "Products",
         href: "/product",
@@ -127,45 +160,47 @@ export default function Header() {
       },
       {
         label: "Gifts",
+        href: "/gift",
         icon: <Gift className="w-4 h-4 text-purple-700" />,
-        children: [
-          { label: "Birthday Gifts", href: "/gifts/birthday" },
-          { label: "Wedding Gifts", href: "/gifts/wedding" },
-          { label: "Anniversary Gifts", href: "/gifts/anniversary" },
-          { label: "Corporate Gifts", href: "/gifts/corporate" },
-          { label: "Baby Shower", href: "/gifts/baby-shower" },
-        ],
+        children: categories.map((cat) => ({
+          label: cat.name,
+          href: `/categories/${cat.id}`,
+        })),
       },
       {
         label: "Groceries",
+        href: "/groceries",
         icon: <ShoppingCart className="w-4 h-4 text-purple-700" />,
-        children: [
-          { label: "Fresh Produce", href: "/groceries/produce" },
-          { label: "Dairy & Eggs", href: "/groceries/dairy" },
-          { label: "Meat & Seafood", href: "/groceries/meat" },
-          { label: "Bakery", href: "/groceries/bakery" },
-          { label: "Beverages", href: "/groceries/beverages" },
-        ],
+        children: categories.map((cat) => ({
+          label: cat.name,
+          href: `/categories/${cat.id}`,
+        })),
       },
       {
         label: "Categories",
         icon: <Package className="w-4 h-4 text-purple-700" />,
-        children: [
-          { label: "Jewelry", href: "/categories/jewelry" },
-          { label: "Toys & Games", href: "/categories/toys" },
-          { label: "Home Decor", href: "/categories/decor" },
-          { label: "Fashion", href: "/categories/fashion" },
-        ],
+        children: categories.map((cat) => ({
+          label: cat.name,
+          href: `/categories/${cat.id}`,
+        })),
       },
-      { label: "About", href: "/about", icon: <Info className="w-4 h-4 text-purple-700" /> },
+      {
+        label: "About",
+        href: "/about",
+        icon: <Info className="w-4 h-4 text-purple-700" />,
+      },
       {
         label: "Help Center",
         href: "/help",
         icon: <HelpCircle className="w-4 h-4 text-purple-700" />,
       },
-      { label: "Contact", href: "/contact", icon: <Phone className="w-4 h-4 text-purple-700" /> },
+      {
+        label: "Contact",
+        href: "/contact",
+        icon: <Phone className="w-4 h-4 text-purple-700" />,
+      },
     ],
-    [wishlistCount]
+    [categories]
   );
 
   const toggleMobileMenu = () => {
@@ -178,7 +213,10 @@ export default function Header() {
     setOpenDropdown(openDropdown === label ? null : label);
   };
 
-  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+    setOpenDropdown(null);
+  };
 
   return (
     <>
@@ -264,7 +302,9 @@ export default function Header() {
                     )}
                   </span>
                   <div className="hidden xl:block text-left">
-                    <p className="text-xs text-gray-500">Hello {greetingName}</p>
+                    <p className="text-xs text-gray-500">
+                      Hello {greetingName}
+                    </p>
                     <p className="text-sm font-semibold text-gray-700 group-hover:text-purple-600">
                       Profile
                     </p>
@@ -339,9 +379,10 @@ export default function Header() {
               <Link
                 href="/wishlist"
                 className="relative p-2 sm:p-2.5 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
+                onClick={() => setIsUserDropdownOpen(false)}
               >
                 <Heart
-                  className={`w-5 h-5 sm:w-6 sm:h-6 text-red-500 ${
+                  className={`w-5 h-5 sm:w-6 sm:h-6 ${
                     wishlistItems.length
                       ? "text-red-500 fill-red-500"
                       : "text-gray-700"
@@ -357,6 +398,7 @@ export default function Header() {
               <Link
                 href="/cart"
                 className="relative p-2 sm:p-2.5 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
+                onClick={() => setIsUserDropdownOpen(false)}
               >
                 <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 group-hover:text-purple-600 transition-colors" />
                 {totalItems > 0 && (
@@ -394,6 +436,7 @@ export default function Header() {
                           key={child.label}
                           href={child.href || "#"}
                           className="block px-4 py-2.5 text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors text-sm font-medium"
+                          onClick={() => setOpenDropdown(null)}
                         >
                           {child.label}
                         </Link>
@@ -404,6 +447,7 @@ export default function Header() {
                   <Link
                     href={item.href || "#"}
                     className="flex items-center space-x-1 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-purple-50 hover:text-purple-600 transition-all duration-200"
+                    onClick={() => setOpenDropdown(null)}
                   >
                     {item.icon}
                     <span>{item.label}</span>
@@ -467,24 +511,24 @@ export default function Header() {
             <div>
               <p className="font-semibold">Hello {greetingName}</p>
               {user ? (
-                  <div className="flex flex-col gap-2 mt-1 text-sm">
-                    <Link
-                      href={profileHref}
-                      onClick={closeMobileMenu}
-                      className="text-white font-medium bg-white/20 hover:bg-white/30 rounded-full px-4 py-1 transition"
-                    >
-                      Go to Profile
-                    </Link>
-                    <button
-                      onClick={() => {
-                        closeMobileMenu();
-                        setShowLogoutModal(true);
-                      }}
-                      className="text-purple-100 hover:underline text-left"
-                    >
-                      Logout
-                    </button>
-                  </div>
+                <div className="flex flex-col gap-2 mt-1 text-sm">
+                  <Link
+                    href={profileHref}
+                    onClick={closeMobileMenu}
+                    className="text-white font-medium bg-white/20 hover:bg-white/30 rounded-full px-4 py-1 transition"
+                  >
+                    Go to Profile
+                  </Link>
+                  <button
+                    onClick={() => {
+                      closeMobileMenu();
+                      setShowLogoutModal(true);
+                    }}
+                    className="text-purple-100 hover:underline text-left"
+                  >
+                    Logout
+                  </button>
+                </div>
               ) : (
                 <div className="flex flex-row gap-3 text-sm">
                   <Link

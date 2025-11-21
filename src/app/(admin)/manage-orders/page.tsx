@@ -1,125 +1,149 @@
-const orders = [
-  {
-    id: "#ORD-1042",
-    customer: "Chiamaka Obi",
-    total: "₦89,500",
-    payment: "Paid",
-    status: "In transit",
-    items: 5,
-  },
-  {
-    id: "#ORD-1039",
-    customer: "Kelechi James",
-    total: "₦152,000",
-    payment: "Pending",
-    status: "Processing",
-    items: 3,
-  },
-  {
-    id: "#ORD-1035",
-    customer: "Maya Bello",
-    total: "₦64,900",
-    payment: "Paid",
-    status: "Delivered",
-    items: 2,
-  },
-  {
-    id: "#ORD-1027",
-    customer: "Bode A.",
-    total: "₦34,200",
-    payment: "Refunded",
-    status: "Cancelled",
-    items: 1,
-  },
-];
+"use client";
+
+import { useEffect, useState } from "react";
+import { ShoppingCart, Download, Plus, Eye } from "lucide-react";
+import Loader from "@/components/ui/Loader";
+
+interface Order {
+  id: string;
+  total: number;
+  status: string;
+  createdAt: string;
+  items?: any[];
+}
 
 export default function ManageOrders() {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("/api/orders");
+        if (!response.ok) throw new Error("Failed to fetch orders");
+        const data = await response.json();
+        setOrders(data.orders || []);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load orders");
+        setOrders([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case "completed":
+      case "delivered":
+        return "bg-emerald-50 text-emerald-600 border-emerald-200";
+      case "pending":
+        return "bg-amber-50 text-amber-600 border-amber-200";
+      case "processing":
+      case "in transit":
+        return "bg-blue-50 text-blue-600 border-blue-200";
+      case "cancelled":
+      case "refunded":
+        return "bg-red-50 text-red-600 border-red-200";
+      default:
+        return "bg-gray-50 text-gray-600 border-gray-200";
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Orders</h1>
-          <p className="text-gray-600">
-            Track fulfillment, payments, and customer information.
+          <h1 className="text-4xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Orders
+          </h1>
+          <p className="text-gray-600 text-lg mt-2">
+            Track and manage customer orders
           </p>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <button className="rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">
-            Export CSV
+        <div className="flex gap-3">
+          <button className="inline-flex items-center gap-2 rounded-full border border-gray-300 px-6 py-3 text-gray-700 font-semibold hover:bg-gray-50 transition">
+            <Download className="w-5 h-5" />
+            Export
           </button>
-          <button className="rounded-full bg-purple-600 text-white px-4 py-2 text-sm font-semibold hover:bg-purple-700 transition">
-            Create order
+          <button className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-purple-600 to-pink-600 text-white px-6 py-3 font-semibold hover:shadow-lg transition-all">
+            <Plus className="w-5 h-5" />
+            Create Order
           </button>
         </div>
       </div>
 
-      <div className="bg-white border border-gray-100 rounded-3xl shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 uppercase text-xs tracking-wide">
-              <tr>
-                <th className="px-6 py-3 text-left">Order</th>
-                <th className="px-6 py-3 text-left">Customer</th>
-                <th className="px-6 py-3 text-left">Items</th>
-                <th className="px-6 py-3 text-left">Total</th>
-                <th className="px-6 py-3 text-left">Payment</th>
-                <th className="px-6 py-3 text-left">Status</th>
-                <th className="px-6 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {orders.map((order) => (
-                <tr key={order.id} className="text-gray-700">
-                  <td className="px-6 py-4 font-semibold text-gray-900">
-                    {order.id}
-                  </td>
-                  <td className="px-6 py-4">{order.customer}</td>
-                  <td className="px-6 py-4">{order.items}</td>
-                  <td className="px-6 py-4 font-semibold text-gray-900">
-                    {order.total}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        order.payment === "Paid"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : order.payment === "Pending"
-                          ? "bg-amber-100 text-amber-600"
-                          : "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      {order.payment}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        order.status === "Delivered"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : order.status === "In transit"
-                          ? "bg-blue-100 text-blue-700"
-                          : order.status === "Processing"
-                          ? "bg-amber-100 text-amber-700"
-                          : "bg-red-100 text-red-600"
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right space-x-2">
-                    <button className="text-sm font-semibold text-purple-600">
-                      View
-                    </button>
-                    <button className="text-sm text-gray-500 hover:text-gray-700">
-                      Update
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-700">
+          {error}
         </div>
-      </div>
+      )}
+
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader text="Loading orders..." />
+        </div>
+      ) : orders.length === 0 ? (
+        <div className="rounded-3xl border-2 border-dashed border-purple-200 bg-purple-50/50 text-center p-12">
+          <ShoppingCart className="w-16 h-16 text-purple-300 mx-auto mb-4" />
+          <p className="text-gray-600 mb-4 text-lg font-semibold">No orders yet</p>
+          <button className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-700 transition">
+            <Plus className="w-5 h-5" />
+            Create your first order
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {orders.map((order) => (
+            <div
+              key={order.id}
+              className="bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-md transition-shadow"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Order ID</p>
+                  <p className="text-lg font-bold text-gray-900 mt-1">
+                    #{order.id?.slice(-6) || "---"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Amount</p>
+                  <p className="text-lg font-bold text-gray-900 mt-1">
+                    ₦{(order.total || 0).toLocaleString()}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Date</p>
+                  <p className="text-sm font-medium text-gray-700 mt-1">
+                    {new Date(order.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Status</p>
+                  <span className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(order.status)}`}>
+                    {order.status || "pending"}
+                  </span>
+                </div>
+
+                <div className="flex gap-2">
+                  <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border-2 border-purple-200 text-purple-600 rounded-lg font-semibold hover:bg-purple-50 transition">
+                    <Eye className="w-4 h-4" />
+                    View
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -11,13 +11,26 @@ import {
   MessageSquare,
   Share2,
   Star,
+  Loader,
 } from "lucide-react";
 import { ProductRecord } from "@/Data/products";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/hooks/useWishlist";
+import { getBaseUrl } from "@/utils/url";
 
 type ProductDetailProps = {
   product: ProductRecord;
+};
+
+type Comment = {
+  id: string;
+  text: string;
+  rating: number;
+  user: {
+    id: string;
+    fullName: string;
+  };
+  createdAt: string;
 };
 
 export default function ProductDetail({ product }: ProductDetailProps) {
@@ -26,9 +39,91 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const [selectedImage, setSelectedImage] = useState(product.images[0]);
   const [quantity, setQuantity] = useState(1);
   const [copied, setCopied] = useState(false);
-  const [reviews, setReviews] = useState(product.reviews);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [totalComments, setTotalComments] = useState(0);
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(5);
+  const [loadingComments, setLoadingComments] = useState(true);
+  const [submittingComment, setSubmittingComment] = useState(false);
+  const [likes, setLikes] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
+  const [loadingLikes, setLoadingLikes] = useState(true);
+  const [userId] = useState(
+    typeof window !== "undefined" ? localStorage.getItem("userId") : null
+  );
+
+  // Fetch comments on component mount
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        setLoadingComments(true);
+        const response = await fetch(
+          `${getBaseUrl()}/api/products/${product.id}/comments`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setComments(data.comments || []);
+          setAverageRating(data.averageRating || 0);
+          setTotalComments(data.totalComments || 0);
+        }
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      } finally {
+        setLoadingComments(false);
+      }
+    };
+
+    fetchComments();
+  }, [product.id]);
+
+  // Fetch likes on component mount
+  useEffect(() => {
+    const fetchLikes = async () => {
+      try {
+        setLoadingLikes(true);
+        const url = new URL(`${getBaseUrl()}/api/products/${product.id}/likes`);
+        if (userId) url.searchParams.set("userId", userId);
+        const response = await fetch(url.toString());
+        if (response.ok) {
+          const data = await response.json();
+          setLikes(data.likeCount || 0);
+          setIsLiked(data.isLikedByUser || false);
+        }
+      } catch (error) {
+        console.error("Error fetching likes:", error);
+      } finally {
+        setLoadingLikes(false);
+      }
+    };
+
+    fetchLikes();
+  }, [product.id, userId]);
+
+  const handleToggleLike = async () => {
+    if (!userId) {
+      alert("Please log in to like products");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${getBaseUrl()}/api/products/${product.id}/likes`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }),
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setLikes(data.likeCount);
+        setIsLiked(data.liked);
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
 
   const wishlisted = isInWishlist(product.id);
 
@@ -75,20 +170,56 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     }
   };
 
-  const handleReviewSubmit = (e: React.FormEvent) => {
+  const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!comment.trim()) return;
-    const newReview = {
-      id: `local-${Date.now()}`,
-      author: "You",
-      avatar: "https://i.pravatar.cc/100?img=1",
-      rating,
-      date: new Date().toLocaleDateString(),
-      comment,
-    };
-    setReviews([newReview, ...reviews]);
-    setComment("");
-    setRating(5);
+    if (!comment.trim() || !userId) {
+      if (!userId) alert("Please log in to post a comment");
+      return;
+    }
+
+    setSubmittingComment(true);
+    try {
+      const response = await fetch(
+        `${getBaseUrl()}/api/products/${product.id}/comments`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId,
+            text: comment,
+            rating,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const newComment = await response.json();
+        setComments([newComment, ...comments]);
+        setComment("");
+        setRating(5);
+
+        // Recalculate average rating
+        const updatedComments = [newComment, ...comments];
+        const avgRating =
+          updatedComments.length > 0
+            ? Math.round(
+                (updatedComments.reduce(
+                  (sum: number, c: any) => sum + c.rating,
+                  0
+                ) /
+                  updatedComments.length) *
+                  10
+              ) / 10
+            : 0;
+        setAverageRating(avgRating);
+        setTotalComments(updatedComments.length);
+      }
+    } catch (error) {
+      console.error("Error posting comment:", error);
+      alert("Failed to post comment. Please try again.");
+    } finally {
+      setSubmittingComment(false);
+    }
   };
 
   return (
@@ -226,6 +357,17 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 </>
               )}
             </button>
+            <button
+              onClick={handleToggleLike}
+              className={`inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold transition ${
+                isLiked
+                  ? "bg-red-50 border border-red-300 text-red-700 hover:bg-red-100"
+                  : "border border-gray-300 text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
+              <span>{likes}</span>
+            </button>
           </div>
 
           <div className="rounded-3xl bg-white border border-gray-200 p-6 space-y-4">
@@ -317,44 +459,61 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         </form>
 
         <div className="space-y-4">
-          {reviews.length === 0 ? (
+          {loadingComments ? (
+            <div className="flex justify-center py-8">
+              <Loader />
+            </div>
+          ) : comments.length === 0 ? (
             <p className="text-sm text-gray-500">
               Be the first to leave a review.
             </p>
           ) : (
-            reviews.map((review) => (
-              <div
-                key={review.id}
-                className="border border-gray-100 rounded-2xl p-4 flex gap-4"
-              >
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100">
-                  <Image
-                    src={
-                      review.avatar ||
-                      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&q=80"
-                    }
-                    alt={review.author}
-                    width={40}
-                    height={40}
-                    className="object-cover"
-                  />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center justify-between flex-wrap gap-2">
-                    <p className="font-semibold text-gray-900">
-                      {review.author}
-                    </p>
-                    <span className="text-xs text-gray-500">{review.date}</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-amber-400 text-sm">
-                    {[...Array(review.rating)].map((_, index) => (
-                      <Star key={index} className="w-4 h-4 fill-current" />
+            <div className="space-y-4">
+              <div className="mb-6 pb-4 border-b border-gray-200">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 text-amber-400">
+                    {[...Array(Math.round(averageRating))].map((_, index) => (
+                      <Star key={index} className="w-5 h-5 fill-current" />
                     ))}
                   </div>
-                  <p className="text-gray-700 text-sm">{review.comment}</p>
+                  <span className="font-semibold text-gray-900">
+                    {averageRating.toFixed(1)}
+                  </span>
+                  <span className="text-gray-500">
+                    ({totalComments}{" "}
+                    {totalComments === 1 ? "review" : "reviews"})
+                  </span>
                 </div>
               </div>
-            ))
+              {comments.map((review: any) => (
+                <div
+                  key={review.id}
+                  className="border border-gray-100 rounded-2xl p-4 flex gap-4"
+                >
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-purple-100 flex items-center justify-center shrink-0">
+                    <span className="text-sm font-semibold text-purple-600">
+                      {review.user?.fullName?.[0]?.toUpperCase() || "U"}
+                    </span>
+                  </div>
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <p className="font-semibold text-gray-900">
+                        {review.user?.fullName || "Anonymous"}
+                      </p>
+                      <span className="text-xs text-gray-500">
+                        {new Date(review.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 text-amber-400 text-sm">
+                      {[...Array(review.rating)].map((_, index) => (
+                        <Star key={index} className="w-4 h-4 fill-current" />
+                      ))}
+                    </div>
+                    <p className="text-gray-700 text-sm">{review.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>

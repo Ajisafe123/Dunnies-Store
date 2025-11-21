@@ -12,12 +12,12 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-300">
+    <footer className="bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
           <div className="lg:col-span-2 space-y-6">
             <div>
-              <h3 className="text-white text-3xl font-black mb-2 bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+              <h3 className="text-3xl font-black mb-2 bg-linear-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
                 Dunni Stores
               </h3>
               <p className="text-sm leading-relaxed text-gray-400">
@@ -29,15 +29,15 @@ export default function Footer() {
 
             <div className="space-y-3">
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-violet-400 flex-shrink-0 mt-0.5" />
+                <MapPin className="w-5 h-5 text-violet-400 shrink-0 mt-0.5" />
                 <p className="text-sm">123 Abuja, Nigeria</p>
               </div>
               <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-violet-400 flex-shrink-0" />
+                <Phone className="w-5 h-5 text-violet-400 shrink-0" />
                 <p className="text-sm">+234 800 123 4567</p>
               </div>
               <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-violet-400 flex-shrink-0" />
+                <Mail className="w-5 h-5 text-violet-400 shrink-0" />
                 <p className="text-sm">hello@dunnistores.ng</p>
               </div>
             </div>
@@ -45,25 +45,25 @@ export default function Footer() {
             <div className="flex gap-3">
               <Link
                 href="https://facebook.com"
-                className="w-11 h-11 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-gradient-to-r hover:from-violet-600 hover:to-fuchsia-600 transition-all duration-300 hover:scale-110"
+                className="w-11 h-11 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-linear-to-r hover:from-violet-600 hover:to-fuchsia-600 transition-all duration-300 hover:scale-110"
               >
                 <Facebook className="w-5 h-5" />
               </Link>
               <Link
                 href="https://twitter.com"
-                className="w-11 h-11 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-gradient-to-r hover:from-violet-600 hover:to-fuchsia-600 transition-all duration-300 hover:scale-110"
+                className="w-11 h-11 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-linear-to-r hover:from-violet-600 hover:to-fuchsia-600 transition-all duration-300 hover:scale-110"
               >
                 <Twitter className="w-5 h-5" />
               </Link>
               <Link
                 href="https://instagram.com"
-                className="w-11 h-11 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-gradient-to-r hover:from-violet-600 hover:to-fuchsia-600 transition-all duration-300 hover:scale-110"
+                className="w-11 h-11 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-linear-to-r hover:from-violet-600 hover:to-fuchsia-600 transition-all duration-300 hover:scale-110"
               >
                 <Instagram className="w-5 h-5" />
               </Link>
               <Link
                 href="https://youtube.com"
-                className="w-11 h-11 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-gradient-to-r hover:from-violet-600 hover:to-fuchsia-600 transition-all duration-300 hover:scale-110"
+                className="w-11 h-11 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-linear-to-r hover:from-violet-600 hover:to-fuchsia-600 transition-all duration-300 hover:scale-110"
               >
                 <Youtube className="w-5 h-5" />
               </Link>
@@ -73,7 +73,7 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-bold text-lg mb-6 relative inline-block">
               Quick Links
-              <span className="absolute bottom-0 left-0 w-8 h-1 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full"></span>
+              <span className="absolute bottom-0 left-0 w-8 h-1 bg-linear-to-r from-violet-500 to-fuchsia-500 rounded-full"></span>
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
@@ -130,7 +130,7 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-bold text-lg mb-6 relative inline-block">
               Shop
-              <span className="absolute bottom-0 left-0 w-8 h-1 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full"></span>
+              <span className="absolute bottom-0 left-0 w-8 h-1 bg-linear-to-r from-violet-500 to-fuchsia-500 rounded-full"></span>
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
@@ -187,7 +187,7 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-bold text-lg mb-6 relative inline-block">
               Support
-              <span className="absolute bottom-0 left-0 w-8 h-1 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full"></span>
+              <span className="absolute bottom-0 left-0 w-8 h-1 bg-linear-to-r from-violet-500 to-fuchsia-500 rounded-full"></span>
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
@@ -258,7 +258,7 @@ export default function Footer() {
                 placeholder="Enter your email"
                 className="flex-1 md:w-64 px-4 py-3 rounded-xl bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-violet-500 transition-colors"
               />
-              <button className="px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2">
+              <button className="px-6 py-3 bg-linear-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2">
                 <Send className="w-4 h-4" />
                 <span className="hidden sm:inline">Subscribe</span>
               </button>

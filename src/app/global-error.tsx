@@ -1,5 +1,7 @@
 "use client";
 
+import { usePathname } from "next/navigation";
+
 export default function GlobalError({
   error,
   reset,
@@ -7,6 +9,13 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const pathname = usePathname();
+  
+  // Don't show global error for login and signup pages
+  if (pathname === "/login" || pathname === "/signup") {
+    return null;
+  }
+
   return (
     <html>
       <body>
@@ -16,7 +25,7 @@ export default function GlobalError({
               Oops! Something went wrong
             </h2>
             <p className="text-gray-600 mb-8">
-              We're sorry, but something unexpected happened.
+              We're sorry, but something unexpected happened. Please try again.
             </p>
             <button
               onClick={reset}

@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 
 export default function SignatureExperiencesPage() {
   return (
-    <section className="bg-gradient-to-b from-purple-900 via-purple-800 to-purple-700 text-white py-12 px-4 sm:px-6 lg:px-8">
+    <section className="bg-linear-to-b from-purple-900 via-purple-800 to-purple-700 text-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-12">
         <header className="rounded-3xl bg-white/10 border border-white/20 p-8 backdrop-blur shadow-2xl">
           <p className="text-xs font-semibold tracking-[0.4em] text-purple-200 uppercase">

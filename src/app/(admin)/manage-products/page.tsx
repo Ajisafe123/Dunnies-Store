@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Trash2 } from "lucide-react";
+import { Trash2, Plus, Edit, Image as ImageIcon } from "lucide-react";
+import Loader from "@/components/ui/Loader";
 import AddProductModal from "./AddProductModal/AddProductModal";
 
 interface Product {
@@ -57,92 +58,110 @@ export default function ManageProducts() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-          <p className="text-gray-600">
-            Manage inventory, pricing, and catalog visibility.
+          <h1 className="text-4xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Products
+          </h1>
+          <p className="text-gray-600 text-lg mt-2">
+            Manage inventory, pricing, and product details
           </p>
         </div>
-        <div className="flex gap-3">
-          <button className="rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">
-            Bulk actions
-          </button>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="rounded-full bg-purple-600 text-white px-4 py-2 text-sm font-semibold hover:bg-purple-700 transition"
-          >
-            Add product
-          </button>
-        </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-purple-600 to-pink-600 text-white px-6 py-3 font-semibold hover:shadow-lg transition-all"
+        >
+          <Plus className="w-5 h-5" />
+          Add Product
+        </button>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-700">
           {error}
         </div>
       )}
 
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-        {loading ? (
-          <div className="flex items-center justify-center p-12">
-            <Loader2 className="w-6 h-6 animate-spin text-purple-600" />
-          </div>
-        ) : products.length === 0 ? (
-          <div className="text-center p-12">
-            <p className="text-gray-600 mb-4">No products yet.</p>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition"
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader text="Loading products..." />
+        </div>
+      ) : products.length === 0 ? (
+        <div className="rounded-3xl border-2 border-dashed border-purple-200 bg-purple-50/50 text-center p-12">
+          <ImageIcon className="w-16 h-16 text-purple-300 mx-auto mb-4" />
+          <p className="text-gray-600 mb-4 text-lg font-semibold">No products yet</p>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-700 transition"
+          >
+            <Plus className="w-5 h-5" />
+            Create your first product
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="rounded-3xl bg-white border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow"
             >
-              Create your first product
-            </button>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-gray-500 uppercase text-xs tracking-wide">
-                <tr>
-                  <th className="px-6 py-3 text-left">Product Name</th>
-                  <th className="px-6 py-3 text-left">Description</th>
-                  <th className="px-6 py-3 text-left">Price</th>
-                  <th className="px-6 py-3 text-left">Created</th>
-                  <th className="px-6 py-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {products.map((product) => (
-                  <tr
-                    key={product.id}
-                    className="text-gray-700 hover:bg-gray-50"
-                  >
-                    <td className="px-6 py-4 font-semibold text-gray-900">
-                      {product.name}
-                    </td>
-                    <td className="px-6 py-4 text-sm">{product.description}</td>
-                    <td className="px-6 py-4 font-semibold">
+              <div className="relative h-48 bg-linear-to-br from-purple-100 to-pink-100 overflow-hidden">
+                {product.imageUrl ? (
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <ImageIcon className="w-12 h-12 text-purple-300" />
+                  </div>
+                )}
+              </div>
+              
+              <div className="p-5 space-y-4">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 line-clamp-2">
+                    {product.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                    {product.description || "No description"}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">Price</p>
+                    <p className="text-2xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                       ₦{product.price.toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4 text-sm">
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">Added</p>
+                    <p className="text-sm font-semibold text-gray-700">
                       {new Date(product.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 text-right space-x-2">
-                      <button className="text-sm font-semibold text-purple-600 hover:text-purple-700">
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteProduct(product.id)}
-                        className="text-sm text-red-600 hover:text-red-700 inline-flex items-center gap-1"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <button
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-purple-200 text-purple-600 rounded-full font-semibold hover:bg-purple-50 transition"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteProduct(product.id)}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-red-200 text-red-600 rounded-full font-semibold hover:bg-red-50 transition"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <AddProductModal
         isOpen={isModalOpen}

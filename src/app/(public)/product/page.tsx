@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import ProductsCatalog from "@/components/product/ProductsCatalog";
-import { productsCatalog, type ProductRecord } from "@/Data/products";
+import { type ProductRecord } from "@/Data/products";
 import { getBaseUrl } from "@/utils/url";
 
 export const metadata: Metadata = {
@@ -36,36 +36,42 @@ const adaptProductRecord = (product: ApiProduct): ProductRecord => ({
   reviews: [],
 });
 
-async function fetchLiveProducts(): Promise<ProductRecord[] | null> {
+async function fetchLiveProducts(): Promise<ProductRecord[]> {
   try {
     const response = await fetch(`${getBaseUrl()}/api/products`, {
       cache: "no-store",
     });
 
     if (!response.ok) {
-      return null;
+      return [];
     }
 
     const data = await response.json();
     if (!Array.isArray(data.products)) {
-      return null;
+      return [];
     }
 
     return data.products.map(adaptProductRecord);
   } catch {
-    return null;
+    return [];
   }
 }
 
 export default async function ProductListingPage() {
-  const liveProducts = await fetchLiveProducts();
-  const catalog =
-    liveProducts && liveProducts.length > 0 ? liveProducts : productsCatalog;
+  const catalog = await fetchLiveProducts();
 
   return (
     <section className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10">
-        <ProductsCatalog products={catalog} />
+        {catalog.length > 0 ? (
+          <ProductsCatalog products={catalog} />
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">
+              No products available yet. Please check back soon!
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

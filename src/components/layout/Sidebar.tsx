@@ -26,6 +26,16 @@ const navItems = [
     icon: Package,
   },
   {
+    label: "Gifts",
+    href: "/manage-gifts",
+    icon: Package,
+  },
+  {
+    label: "Groceries",
+    href: "/manage-groceries",
+    icon: Package,
+  },
+  {
     label: "Orders",
     href: "/manage-orders",
     icon: ClipboardList,
@@ -52,7 +62,12 @@ type SidebarUser = {
   email?: string;
 } | null;
 
-export default function Sidebar({ user }: { user: SidebarUser }) {
+interface SidebarProps {
+  user: SidebarUser;
+  onNavClick?: () => void;
+}
+
+export default function Sidebar({ user, onNavClick }: SidebarProps) {
   const pathname = usePathname();
 
   const avatarUrl = useMemo(() => {
@@ -69,7 +84,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
   }, [user]);
 
   return (
-    <aside className="h-full w-72 bg-gradient-to-b from-purple-950 via-purple-900 to-purple-800 text-white flex flex-col border-r border-purple-950">
+    <aside className="h-full w-72 bg-linear-to-b from-purple-950 via-purple-900 to-purple-800 text-white flex flex-col border-r border-purple-950">
       <div className="px-6 py-6 border-b border-white/10 space-y-4">
         <p className="text-sm uppercase tracking-[0.3em] text-purple-300">
           Dunnis Admin
@@ -96,7 +111,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
             <p className="font-semibold leading-tight">
               {user?.fullName || "Admin"}
             </p>
-            <p className="text-xs text-purple-200 truncate max-w-[11rem]">
+            <p className="text-xs text-purple-200 truncate max-w-44">
               {user?.email || "admin@dunnis.store"}
             </p>
           </div>
@@ -112,6 +127,7 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavClick}
               className={`flex items-center gap-3 px-3 py-2 rounded-xl transition ${
                 isActive
                   ? "bg-white/15 text-white shadow-lg shadow-purple-900/30"

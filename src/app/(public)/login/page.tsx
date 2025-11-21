@@ -40,6 +40,11 @@ export default function LoginPage() {
     try {
       const data = await login(email, password);
 
+      // Store userId in localStorage for authenticated requests
+      if (data.user?.id) {
+        localStorage.setItem("userId", data.user.id);
+      }
+
       const destination = resolveRoleDestination(data.user?.role);
       router.refresh();
       router.push(destination);
@@ -51,10 +56,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-purple-100 via-pink-50 to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-5xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
             Welcome Back
           </h1>
           <p className="text-gray-600 text-2xl">Sign in to continue shopping</p>
@@ -63,7 +68,7 @@ export default function LoginPage() {
         <div className="bg-white rounded-2xl shadow-2xl border border-purple-100 p-8 backdrop-blur-sm">
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
               <p className="text-red-700 text-sm font-medium">{error}</p>
             </div>
           )}
