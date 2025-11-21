@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import ProductsCatalog from "@/components/product/ProductsCatalog";
-import { productsCatalog, type ProductRecord } from "@/data/products";
+import { productsCatalog, type ProductRecord } from "@/Data/products";
 import { getBaseUrl } from "@/utils/url";
 
 export const metadata: Metadata = {
@@ -59,7 +59,8 @@ async function fetchLiveProducts(): Promise<ProductRecord[] | null> {
 
 export default async function ProductListingPage() {
   const liveProducts = await fetchLiveProducts();
-  const catalog = liveProducts && liveProducts.length > 0 ? liveProducts : productsCatalog;
+  const catalog =
+    liveProducts && liveProducts.length > 0 ? liveProducts : productsCatalog;
 
   return (
     <section className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -69,4 +70,3 @@ export default async function ProductListingPage() {
     </section>
   );
 }
-

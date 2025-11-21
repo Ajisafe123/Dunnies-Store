@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ProductList from "@/components/product/ProductList";
-import { productsCatalog } from "@/data/products";
+import { productsCatalog } from "@/Data/products";
 
 const signatureExperiences = [...productsCatalog]
   .filter((product) =>
@@ -78,7 +78,7 @@ export default function SignatureExperiencesPage() {
 
           <ProductList products={signatureExperiences} cols={3} gap={8} />
 
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-t border-gray-200 pt-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-t border-gray-200 pt-6">
             <div className="text-sm text-gray-500">
               Need corporate or wedding gifting support?
               <span className="font-semibold text-gray-800 ml-1">
@@ -105,4 +105,3 @@ export default function SignatureExperiencesPage() {
     </section>
   );
 }
-

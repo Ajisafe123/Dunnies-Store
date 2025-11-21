@@ -1,32 +1,17 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-interface RouteParams {
-  params: Promise<{ id: string }>;
-}
+export async function GET(request: NextRequest) {
+  try {
+    const products = await prisma.product.findMany();
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
-  try {
-    const { id } = await params;
-
-    const product = await prisma.product.findUnique({
-      where: { id },
-    });
-
-    if (!product) {
-      return NextResponse.json(
-        { error: "Product not found" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({ product });
-  } catch (error) {
-    console.error("[PRODUCT_GET_BY_ID]", error);
-    return NextResponse.json(
-      { error: "Unable to fetch product" },
-      { status: 500 }
-    );
-  }
+    return NextResponse.json({ products });
+  } catch (error) {
+    console.error("[PRODUCTS_GET]", error);
+    return NextResponse.json(
+      { error: "Unable to fetch products" },
+      { status: 500 }
+    );
+  }
 }

@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 interface RouteContext {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function GET(
@@ -11,24 +11,24 @@ export async function GET(
   { params }: RouteContext
 ) {
   try {
-    const { id } = params; 
+    const { id } = await params; 
 
-    const product = await prisma.product.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id },
     });
 
-    if (!product) {
+    if (!user) {
       return NextResponse.json(
-        { error: "Product not found" },
+        { error: "User not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({ product });
+    return NextResponse.json({ user });
   } catch (error) {
-    console.error("[PRODUCT_GET_BY_ID]", error);
+    console.error("[USER_GET_BY_ID]", error);
     return NextResponse.json(
-      { error: "Unable to fetch product" },
+      { error: "Unable to fetch user" },
       { status: 500 }
     );
   }

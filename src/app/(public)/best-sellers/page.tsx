@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import ProductList from "@/components/product/ProductList";
-import { productsCatalog } from "@/data/products";
+import { productsCatalog } from "@/Data/products";
 import Link from "next/link";
 
 const bestSellers = [...productsCatalog]
@@ -22,15 +22,18 @@ const bestSellers = [...productsCatalog]
 const promiseCards = [
   {
     title: "Realtime rankings",
-    description: "Pulled from live orders, wishlists, and re-deliveries across the globe.",
+    description:
+      "Pulled from live orders, wishlists, and re-deliveries across the globe.",
   },
   {
     title: "Purple-glove QC",
-    description: "Every product is inspected by concierge teams before shipping out.",
+    description:
+      "Every product is inspected by concierge teams before shipping out.",
   },
   {
     title: "Doorstep ready",
-    description: "Worldwide delivery partners ensure gifts arrive exactly how you imagined.",
+    description:
+      "Worldwide delivery partners ensure gifts arrive exactly how you imagined.",
   },
 ];
 
@@ -47,16 +50,17 @@ export default function BestSellersPage() {
         <header className="rounded-[40px] bg-gradient-to-br from-purple-700 via-purple-600 to-fuchsia-600 text-white p-8 sm:p-10 shadow-2xl space-y-6">
           <div className="space-y-3">
             <p className="text-xs font-semibold tracking-[0.4em] uppercase text-purple-200">
-            Best sellers
-          </p>
+              Best sellers
+            </p>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
               Shop the products everyone is talking about
-          </h1>
+            </h1>
             <p className="text-base sm:text-lg text-purple-100 max-w-3xl">
-              These cult-favorite gifts, groceries, and daily luxuries are moving fastest in every city we deliver to.
-              Updated hourly with live reviews, verified reorders, and concierge quality scores.
+              These cult-favorite gifts, groceries, and daily luxuries are
+              moving fastest in every city we deliver to. Updated hourly with
+              live reviews, verified reorders, and concierge quality scores.
             </p>
-            </div>
+          </div>
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-wrap gap-3">
               <Link
@@ -65,15 +69,16 @@ export default function BestSellersPage() {
               >
                 Explore global picks
               </Link>
-            <Link
-              href="/signature-experiences"
+              <Link
+                href="/signature-experiences"
                 className="inline-flex items-center gap-2 rounded-full bg-white/90 text-purple-700 px-6 py-3 text-sm font-semibold hover:bg-white"
-            >
+              >
                 Concierge-curated sets
-            </Link>
+              </Link>
             </div>
             <div className="text-sm text-purple-100">
-              Updated <strong className="font-semibold">daily</strong> from live orders and wishlist data.
+              Updated <strong className="font-semibold">daily</strong> from live
+              orders and wishlist data.
             </div>
           </div>
         </header>
@@ -110,10 +115,9 @@ export default function BestSellersPage() {
             </Link>
           </div>
 
-        <ProductList products={bestSellers} cols={4} gap={8} />
+          <ProductList products={bestSellers} cols={4} gap={8} />
         </div>
       </div>
     </section>
   );
 }
-

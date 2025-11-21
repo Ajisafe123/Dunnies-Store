@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import ProductDetail from "@/components/product/ProductDetail";
-import { getProductById } from "@/data/products";
+import { getProductById } from "@/Data/products";
 
 type ProductDetailPageProps = {
   params: Promise<{ id: string }>;

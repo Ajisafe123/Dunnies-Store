@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import ProductList from "@/components/product/ProductList";
-import { ProductRecord } from "@/data/products";
+import { ProductRecord } from "@/Data/products";
 import { Search, SlidersHorizontal, Grid, List } from "lucide-react";
 
 interface ProductsCatalogProps {
@@ -24,7 +24,8 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
             Shop products
           </h1>
           <p className="text-slate-600 mt-2">
-            Browse curated collections of gifts, groceries, home goods, and more.
+            Browse curated collections of gifts, groceries, home goods, and
+            more.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 w-full max-w-lg">
@@ -86,10 +87,10 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
         />
       ) : (
         <div className="space-y-4">
-            {products.map((product) => (
+          {products.map((product) => (
             <Link
-                key={product.id}
-                href={product.href || "#"}
+              key={product.id}
+              href={product.href || "#"}
               className="bg-white border border-purple-100 rounded-3xl p-6 shadow-sm flex flex-col gap-4 md:flex-row md:items-center hover:shadow-lg transition"
             >
               <div className="w-full md:w-48 h-48 bg-purple-50 rounded-2xl overflow-hidden">
@@ -107,7 +108,9 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
                   {product.originalPrice && (
                     <span className="text-xs text-gray-500">
                       Save ₦
-                      {Number(product.originalPrice - product.price).toLocaleString()}
+                      {Number(
+                        product.originalPrice - product.price
+                      ).toLocaleString()}
                     </span>
                   )}
                 </div>
@@ -133,4 +136,3 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
     </>
   );
 }
-

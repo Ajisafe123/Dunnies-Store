@@ -12,7 +12,7 @@ import {
   Share2,
   Star,
 } from "lucide-react";
-import { ProductRecord } from "@/data/products";
+import { ProductRecord } from "@/Data/products";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/hooks/useWishlist";
 
@@ -154,9 +154,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </span>
               <span className="text-xs text-gray-500">{product.category}</span>
             </div>
-            <h1 className="text-4xl font-bold text-gray-900">
-              {product.name}
-            </h1>
+            <h1 className="text-4xl font-bold text-gray-900">{product.name}</h1>
             <p className="text-gray-600 mt-3">{product.description}</p>
           </div>
 
@@ -198,9 +196,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               >
                 –
               </button>
-              <span className="w-10 text-center font-semibold">
-                {quantity}
-              </span>
+              <span className="w-10 text-center font-semibold">{quantity}</span>
               <button
                 onClick={() => setQuantity((prev) => prev + 1)}
                 className="text-gray-600 px-2 text-xl"
@@ -348,9 +344,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     <p className="font-semibold text-gray-900">
                       {review.author}
                     </p>
-                    <span className="text-xs text-gray-500">
-                      {review.date}
-                    </span>
+                    <span className="text-xs text-gray-500">{review.date}</span>
                   </div>
                   <div className="flex items-center gap-1 text-amber-400 text-sm">
                     {[...Array(review.rating)].map((_, index) => (
@@ -367,4 +361,3 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     </div>
   );
 }
-
