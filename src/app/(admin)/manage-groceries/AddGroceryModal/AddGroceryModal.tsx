@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { X, Upload, Trash2 } from "lucide-react";
 
 interface AddGroceryModalProps {
@@ -22,7 +22,45 @@ export default function AddGroceryModal({
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Fetch categories on mount and fetch grocery if editing
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/categories");
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data.categories || []);
+        }
+
+        // Fetch grocery data if editing
+        if (groceryId) {
+          const groceryResponse = await fetch(`/api/groceries/${groceryId}`);
+          if (groceryResponse.ok) {
+            const groceryData = await groceryResponse.json();
+            const grocery = groceryData.grocery;
+            setFormData({
+              name: grocery.name || "",
+              description: grocery.description || "",
+              price: grocery.price || "",
+            });
+            if (grocery.imageUrl) {
+              setImagePreview(grocery.imageUrl);
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch data:", err);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [groceryId]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -57,19 +95,25 @@ export default function AddGroceryModal({
         formDataToSend.append("image", image);
       }
 
-      const response = await fetch("/api/groceries", {
-        method: "POST",
+      const url = groceryId ? `/api/groceries/${groceryId}` : "/api/groceries";
+      const method = groceryId ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
         body: formDataToSend,
       });
 
       if (response.ok) {
         onSuccess();
       } else {
-        alert("Failed to add grocery");
+        alert(`Failed to ${groceryId ? "update" : "add"} grocery`);
       }
     } catch (error) {
-      console.error("Error adding grocery:", error);
-      alert("Error adding grocery");
+      console.error(
+        `Error ${groceryId ? "updating" : "adding"} grocery:`,
+        error
+      );
+      alert(`Error ${groceryId ? "updating" : "adding"} grocery`);
     } finally {
       setLoading(false);
     }
@@ -79,7 +123,9 @@ export default function AddGroceryModal({
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900">Add Grocery</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            {groceryId ? "Edit Grocery" : "Add Grocery"}
+          </h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -133,6 +179,27 @@ export default function AddGroceryModal({
               step="0.01"
               className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:outline-none transition-colors"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Category
+            </label>
+            <select
+              disabled={categoriesLoading}
+              className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:outline-none transition-colors"
+            >
+              <option value="">
+                {categoriesLoading
+                  ? "Loading categories..."
+                  : "Select a category (optional)"}
+              </option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -191,7 +258,7 @@ export default function AddGroceryModal({
               disabled={loading || !formData.name || !formData.price}
               className="flex-1 px-4 py-3 rounded-lg bg-linear-to-r from-purple-600 to-pink-600 text-white font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Adding..." : "Add Grocery"}
+              {loading ? (groceryId ? "Updating..." : "Adding...") : (groceryId ? "Update Grocery" : "Add Grocery")}
             </button>
           </div>
         </form>

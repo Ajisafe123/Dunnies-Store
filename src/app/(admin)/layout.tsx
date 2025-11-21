@@ -76,26 +76,26 @@ export default function AdminLayout({
           </div>
 
           <div className="flex items-center gap-3">
-          <div className="flex items-center gap-3 flex-1 max-w-md">
-            <div className="w-full flex items-center bg-white border border-purple-100 rounded-full px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
-              <Search className="w-4 h-4 text-purple-400" />
-              <input
-                type="search"
-                placeholder="Search products, orders, users..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-transparent px-3 py-1 text-sm focus:outline-none w-full"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="text-gray-400 hover:text-gray-600 transition"
-                >
-                  ✕
-                </button>
-              )}
+            <div className="flex items-center gap-3 flex-1 max-w-md">
+              <div className="w-full flex items-center bg-white border border-purple-100 rounded-full px-4 py-2 shadow-sm hover:shadow-md transition-shadow">
+                <Search className="w-4 h-4 text-purple-400" />
+                <input
+                  type="search"
+                  placeholder="Search products, orders, users..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="bg-transparent px-3 py-1 text-sm focus:outline-none w-full"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="text-gray-400 hover:text-gray-600 transition"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
             <button className="relative p-2 text-purple-500 hover:text-purple-700">
               <Bell className="w-5 h-5" />
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />

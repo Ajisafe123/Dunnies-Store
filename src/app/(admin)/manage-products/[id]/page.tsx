@@ -1,4 +1,10 @@
-export default function EditProduct({ params }: { params: { id: string } }) {
+export default async function EditProduct({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
   return (
     <div className="space-y-6">
       <div>
@@ -6,7 +12,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
           Editing product
         </p>
         <h1 className="text-3xl font-bold text-gray-900 mt-1">
-          {params.id.replace(/-/g, " ")}
+          {id.replace(/-/g, " ")}
         </h1>
       </div>
 

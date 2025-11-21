@@ -91,7 +91,9 @@ export default function ManageOrders() {
       ) : orders.length === 0 ? (
         <div className="rounded-3xl border-2 border-dashed border-purple-200 bg-purple-50/50 text-center p-12">
           <ShoppingCart className="w-16 h-16 text-purple-300 mx-auto mb-4" />
-          <p className="text-gray-600 mb-4 text-lg font-semibold">No orders yet</p>
+          <p className="text-gray-600 mb-4 text-lg font-semibold">
+            No orders yet
+          </p>
           <button className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-700 transition">
             <Plus className="w-5 h-5" />
             Create your first order
@@ -106,29 +108,41 @@ export default function ManageOrders() {
             >
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Order ID</p>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">
+                    Order ID
+                  </p>
                   <p className="text-lg font-bold text-gray-900 mt-1">
                     #{order.id?.slice(-6) || "---"}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Amount</p>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">
+                    Amount
+                  </p>
                   <p className="text-lg font-bold text-gray-900 mt-1">
                     ₦{(order.total || 0).toLocaleString()}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Date</p>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">
+                    Date
+                  </p>
                   <p className="text-sm font-medium text-gray-700 mt-1">
                     {new Date(order.createdAt).toLocaleDateString()}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Status</p>
-                  <span className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(order.status)}`}>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">
+                    Status
+                  </p>
+                  <span
+                    className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
+                      order.status
+                    )}`}
+                  >
                     {order.status || "pending"}
                   </span>
                 </div>

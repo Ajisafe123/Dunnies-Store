@@ -18,6 +18,7 @@ export default function ManageGroceries() {
   const [groceries, setGroceries] = useState<Grocery[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingGroceryId, setEditingGroceryId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const fetchGroceries = async () => {
@@ -87,7 +88,9 @@ export default function ManageGroceries() {
       ) : groceries.length === 0 ? (
         <div className="rounded-3xl border-2 border-dashed border-purple-200 bg-purple-50/50 text-center p-12">
           <ImageIcon className="w-16 h-16 text-purple-300 mx-auto mb-4" />
-          <p className="text-gray-600 mb-4 text-lg font-semibold">No groceries yet</p>
+          <p className="text-gray-600 mb-4 text-lg font-semibold">
+            No groceries yet
+          </p>
           <button
             onClick={() => setShowAddModal(true)}
             className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-700 transition"
@@ -116,7 +119,7 @@ export default function ManageGroceries() {
                   </div>
                 )}
               </div>
-              
+
               <div className="p-5 space-y-4">
                 <div>
                   <h3 className="text-lg font-bold text-gray-900 line-clamp-2">
@@ -129,13 +132,17 @@ export default function ManageGroceries() {
 
                 <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                   <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">Price</p>
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">
+                      Price
+                    </p>
                     <p className="text-2xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                       ₦{grocery.price.toLocaleString()}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">Added</p>
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">
+                      Added
+                    </p>
                     <p className="text-sm font-semibold text-gray-700">
                       {new Date(grocery.createdAt).toLocaleDateString()}
                     </p>
@@ -144,6 +151,7 @@ export default function ManageGroceries() {
 
                 <div className="flex gap-2 pt-2">
                   <button
+                    onClick={() => setEditingGroceryId(grocery.id)}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-purple-200 text-purple-600 rounded-full font-semibold hover:bg-purple-50 transition"
                   >
                     <Edit className="w-4 h-4" />
@@ -167,6 +175,17 @@ export default function ManageGroceries() {
         <AddGroceryModal
           onClose={() => setShowAddModal(false)}
           onSuccess={fetchGroceries}
+        />
+      )}
+
+      {editingGroceryId && (
+        <AddGroceryModal
+          groceryId={editingGroceryId}
+          onClose={() => setEditingGroceryId(null)}
+          onSuccess={() => {
+            fetchGroceries();
+            setEditingGroceryId(null);
+          }}
         />
       )}
     </div>

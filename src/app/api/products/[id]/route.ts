@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { saveUploadedFile } from "@/lib/uploadHandler";
 
 type Params = {
   params: Promise<{
@@ -39,8 +40,25 @@ export async function PUT(request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    const body = await request.json();
-    const { name, description, price, imageUrl, category } = body;
+    const contentType = request.headers.get("content-type");
+    let body: any = {};
+
+    if (contentType?.includes("multipart/form-data")) {
+      const formData = await request.formData();
+      body = {
+        name: formData.get("name"),
+        description: formData.get("description"),
+        price: formData.get("price"),
+        imageUrl: formData.get("imageUrl"),
+        categoryId: formData.get("categoryId"),
+        priority: formData.get("priority"),
+        images: formData.getAll("images"),
+      };
+    } else {
+      body = await request.json();
+    }
+
+    const { name, description, price, imageUrl, categoryId, priority, images } = body;
     const parsedPrice =
       typeof price === "string" ? parseFloat(price) : Number(price);
 
@@ -49,8 +67,25 @@ export async function PUT(request: NextRequest, { params }: Params) {
     if (name) updateData.name = name;
     if (description) updateData.description = description;
     if (imageUrl) updateData.imageUrl = imageUrl;
-    if (category) updateData.category = category;
+    if (categoryId) updateData.categoryId = categoryId;
+    if (priority) updateData.priority = priority;
     if (!Number.isNaN(parsedPrice)) updateData.price = parsedPrice;
+
+    // Handle image uploads
+    if (images && Array.isArray(images) && images.length > 0) {
+      const processedImages: string[] = [];
+      for (const image of images) {
+        if (image instanceof File) {
+          const uploadedUrl = await saveUploadedFile(image, "products");
+          if (uploadedUrl) {
+            processedImages.push(uploadedUrl);
+          }
+        }
+      }
+      if (processedImages.length > 0) {
+        updateData.images = processedImages;
+      }
+    }
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
@@ -62,6 +97,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     const product = await prisma.product.update({
       where: { id },
       data: updateData,
+      include: { category: true },
     });
 
     return NextResponse.json({ product });

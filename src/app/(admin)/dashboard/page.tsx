@@ -22,36 +22,46 @@ export default function AdminDashboard() {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch products
         const productsRes = await fetch("/api/products");
-        const productsData = productsRes.ok ? await productsRes.json() : { products: [] };
-        
+        const productsData = productsRes.ok
+          ? await productsRes.json()
+          : { products: [] };
+
         // Fetch orders
         const ordersRes = await fetch("/api/orders");
-        const ordersData = ordersRes.ok ? await ordersRes.json() : { orders: [] };
-        
+        const ordersData = ordersRes.ok
+          ? await ordersRes.json()
+          : { orders: [] };
+
         // Fetch users
         const usersRes = await fetch("/api/users");
         const usersData = usersRes.ok ? await usersRes.json() : { users: [] };
-        
+
         const orders = ordersData.orders || [];
         const products = productsData.products || [];
         const users = usersData.users || [];
-        
+
         // Calculate metrics
-        const totalRevenue = orders.reduce((sum: number, order: any) => sum + (order.total || 0), 0);
-        
-        // Sort orders by date (most recent first)
-        const recentOrders = orders.slice(0, 5).sort((a: any, b: any) => 
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        const totalRevenue = orders.reduce(
+          (sum: number, order: any) => sum + (order.total || 0),
+          0
         );
-        
+
+        // Sort orders by date (most recent first)
+        const recentOrders = orders
+          .slice(0, 5)
+          .sort(
+            (a: any, b: any) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+
         // Get best sellers (products with most orders)
         const bestSellers = products
           .sort((a: any, b: any) => (b.ordersCount || 0) - (a.ordersCount || 0))
           .slice(0, 3);
-        
+
         setData({
           totalProducts: products.length,
           totalOrders: orders.length,
@@ -147,7 +157,9 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <p className={`text-3xl font-bold ${stat.color} mb-2`}>
-                    {typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value}
+                    {typeof stat.value === "number"
+                      ? stat.value.toLocaleString()
+                      : stat.value}
                   </p>
                   <p className="text-xs text-gray-500">{stat.trend}</p>
                 </div>
@@ -159,7 +171,9 @@ export default function AdminDashboard() {
             <div className="xl:col-span-2 rounded-3xl bg-white border border-gray-100 p-6 shadow-sm">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Recent Orders</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Recent Orders
+                  </h2>
                   <p className="text-sm text-gray-500 mt-1">
                     Latest {data?.recentOrders?.length || 0} orders
                   </p>
@@ -205,7 +219,9 @@ export default function AdminDashboard() {
             </div>
 
             <div className="rounded-3xl bg-white border border-gray-100 p-6 shadow-sm">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Top Products</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Top Products
+              </h2>
               {data?.bestSellers && data.bestSellers.length > 0 ? (
                 <div className="space-y-4">
                   {data.bestSellers.map((product: any, index: number) => (

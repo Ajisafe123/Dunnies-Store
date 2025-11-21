@@ -91,7 +91,9 @@ export default function ManageCategoriesPage() {
       ) : categories.length === 0 ? (
         <div className="rounded-3xl border-2 border-dashed border-purple-200 bg-purple-50/50 text-center p-12">
           <Tag className="w-16 h-16 text-purple-300 mx-auto mb-4" />
-          <p className="text-gray-600 mb-4 text-lg font-semibold">No categories yet</p>
+          <p className="text-gray-600 mb-4 text-lg font-semibold">
+            No categories yet
+          </p>
           <button
             onClick={() => setIsModalOpen(true)}
             className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-700 transition"
@@ -120,7 +122,7 @@ export default function ManageCategoriesPage() {
                   </div>
                 )}
               </div>
-              
+
               <div className="p-5 space-y-4">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">

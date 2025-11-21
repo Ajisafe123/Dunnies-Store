@@ -14,9 +14,9 @@ export default function NotFoundPage() {
           Oops! Page not found
         </h1>
         <p className="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">
-          We couldn’t find the page you were looking for. It might have been removed,
-          renamed, or never existed. Try heading back home or explore our latest
-          collections.
+          We couldn’t find the page you were looking for. It might have been
+          removed, renamed, or never existed. Try heading back home or explore
+          our latest collections.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -39,4 +39,3 @@ export default function NotFoundPage() {
     </main>
   );
 }
-

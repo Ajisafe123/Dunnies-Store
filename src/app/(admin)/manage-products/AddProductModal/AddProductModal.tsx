@@ -7,12 +7,14 @@ interface AddProductModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  productId?: string | null;
 }
 
 export default function AddProductModal({
   isOpen,
   onClose,
   onSuccess,
+  productId,
 }: AddProductModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
@@ -30,24 +32,46 @@ export default function AddProductModal({
   const [categories, setCategories] = useState<any[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
 
-  // Fetch categories on mount
+  // Fetch categories on mount and fetch product if editing
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       try {
         const response = await fetch("/api/categories");
         if (response.ok) {
           const data = await response.json();
           setCategories(data.categories || []);
         }
+
+        // Fetch product data if editing
+        if (productId) {
+          const productResponse = await fetch(`/api/products/${productId}`);
+          if (productResponse.ok) {
+            const productData = await productResponse.json();
+            const product = productData.product;
+            setFormData({
+              name: product.name || "",
+              description: product.description || "",
+              price: product.price || "",
+              imageUrl: product.imageUrl || "",
+              categoryId: product.categoryId || "",
+              priority: product.priority || "normal",
+            });
+            if (product.imageUrl) {
+              setImagePreviews([product.imageUrl]);
+            }
+          }
+        }
       } catch (err) {
-        console.error("Failed to fetch categories:", err);
+        console.error("Failed to fetch data:", err);
       } finally {
         setCategoriesLoading(false);
       }
     };
 
-    fetchCategories();
-  }, []);
+    if (isOpen) {
+      fetchData();
+    }
+  }, [isOpen, productId]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -109,14 +133,17 @@ export default function AddProductModal({
         formDataToSend.append(`images[${index}]`, image);
       });
 
-      const response = await fetch("/api/products", {
-        method: "POST",
+      const url = productId ? `/api/products/${productId}` : "/api/products";
+      const method = productId ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
         body: formDataToSend,
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Failed to create product");
+        throw new Error(data.error || `Failed to ${productId ? "update" : "create"} product`);
       }
 
       setFormData({
@@ -144,7 +171,9 @@ export default function AddProductModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">Add Product</h2>
+          <h2 className="text-xl font-bold text-gray-900">
+            {productId ? "Edit Product" : "Add Product"}
+          </h2>
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded-full transition"
@@ -280,7 +309,11 @@ export default function AddProductModal({
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
               disabled={categoriesLoading}
             >
-              <option value="">{categoriesLoading ? "Loading categories..." : "Select a category"}</option>
+              <option value="">
+                {categoriesLoading
+                  ? "Loading categories..."
+                  : "Select a category"}
+              </option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -322,7 +355,7 @@ export default function AddProductModal({
               className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {loading ? "Creating..." : "Add Product"}
+              {loading ? (productId ? "Updating..." : "Creating...") : (productId ? "Update Product" : "Add Product")}
             </button>
           </div>
         </form>
