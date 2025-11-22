@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create order
+
     const order = await prisma.order.create({
       data: {
         customerName,
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Send confirmation email to customer
+
     try {
       const emailContent = generateOrderConfirmationEmail(
         customerName,
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       console.error("Failed to send customer confirmation email:", emailError);
     }
 
-    // Send admin notification
+
     const adminEmail = process.env.ADMIN_EMAIL || process.env.FORMSPREE_EMAIL;
     if (adminEmail) {
       try {

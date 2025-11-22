@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    // Add rating calculations
+
     const productsWithRatings = products.map((product: any) => {
       const ratings = product.comments.map((c: any) => c.rating);
       const averageRating = ratings.length > 0 

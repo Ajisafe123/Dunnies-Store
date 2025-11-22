@@ -103,7 +103,7 @@ async function fetchProductsByCategory(
           )
         );
       } else {
-        // Product category
+
         const products = await prisma.product.findMany({
           where: { categoryId },
           include: { category: true },
@@ -122,7 +122,7 @@ async function fetchProductsByCategory(
       }
     }
 
-    // Fetch all products from all tables
+
     const [products, gifts, groceries] = await Promise.all([
       prisma.product.findMany({
         include: { category: true },
@@ -138,7 +138,7 @@ async function fetchProductsByCategory(
 
     const allProducts: ProductRecord[] = [];
 
-    // Add products from Product table
+
     allProducts.push(
       ...products.map((product: any) =>
         adaptProductRecord({
@@ -152,7 +152,7 @@ async function fetchProductsByCategory(
       )
     );
 
-    // Add gifts
+
     allProducts.push(
       ...gifts.map((gift: any) =>
         adaptProductRecord(
@@ -171,7 +171,7 @@ async function fetchProductsByCategory(
       )
     );
 
-    // Add groceries
+
     allProducts.push(
       ...groceries.map((grocery: any) =>
         adaptProductRecord(

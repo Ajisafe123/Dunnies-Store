@@ -49,7 +49,7 @@ export default function ProductAnalytics() {
       const data = await response.json();
       const productsWithAnalytics = data.products || [];
 
-      // Fetch comments and likes for each product
+
       const analyticsData = await Promise.all(
         productsWithAnalytics.map(async (product: any) => {
           try {

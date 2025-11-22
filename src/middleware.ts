@@ -12,7 +12,7 @@ const AUTH_SECRET = process.env.NEXTAUTH_SECRET || "your-secret-key";
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Admin routes protection
+
   if (pathname.startsWith("/dashboard") || pathname.startsWith("/manage-") || pathname.startsWith("/admin-settings") || pathname.startsWith("/product-analytics")) {
     const token = request.cookies.get("auth_token")?.value;
 
@@ -31,7 +31,7 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // User routes protection - prevent admin access to user pages unnecessarily
+
   if (pathname.startsWith("/settings") || pathname.startsWith("/addresses") || pathname.startsWith("/payment-methods")) {
     const token = request.cookies.get("auth_token")?.value;
 
@@ -40,10 +40,10 @@ export function middleware(request: NextRequest) {
         const decoded = jwt.verify(token, AUTH_SECRET) as TokenPayload;
         
         if (decoded.role === "admin") {
-          // Allow admin to access, but could restrict if needed
+
         }
       } catch (error) {
-        // Token invalid, continue
+
       }
     }
   }

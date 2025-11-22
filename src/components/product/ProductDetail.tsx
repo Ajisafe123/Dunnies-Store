@@ -52,7 +52,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const [likes, setLikes] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [loadingLikes, setLoadingLikes] = useState(true);
-  const [commentLikes, setCommentLikes] = useState<Record<string, { count: number; isLiked: boolean }>>({});
+  const [commentLikes, setCommentLikes] = useState<
+    Record<string, { count: number; isLiked: boolean }>
+  >({});
   const [userId] = useState(
     typeof window !== "undefined" ? localStorage.getItem("userId") : null
   );
@@ -89,7 +91,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           const data = await response.json();
           setUserRole(data.user?.role || null);
         } else {
-          // If response is not ok, user is not authenticated
+
           setUserRole(null);
         }
       } catch (error) {
@@ -98,10 +100,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       }
     };
 
-    // Always fetch user role to check current auth status
+
     fetchUserRole();
 
-    // Listen for visibility changes to refresh auth when user returns
+
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         fetchUserRole();
@@ -109,7 +111,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
   useEffect(() => {
@@ -165,9 +168,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   };
 
   const handleToggleCommentLike = async (commentId: string) => {
-    // Get fresh userId from localStorage
-    const currentUserId = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
-    
+
+    const currentUserId =
+      typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+
     if (!currentUserId) {
       router.push("/login");
       return;
@@ -185,7 +189,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         setCommentLikes((prev) => ({
           ...prev,
           [commentId]: {
-            count: data.likeCount || (prev[commentId]?.count || 0) + (data.liked ? 1 : -1),
+            count:
+              data.likeCount ||
+              (prev[commentId]?.count || 0) + (data.liked ? 1 : -1),
             isLiked: data.liked,
           },
         }));
@@ -242,7 +248,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (userRole === "admin") {
       alert("Admin users cannot comment on products");
       return;
@@ -501,48 +507,52 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         </div>
 
         {userRole !== "admin" && userId ? (
-        <form
-          onSubmit={handleReviewSubmit}
-          className="rounded-2xl border border-gray-200 p-4 space-y-4"
-        >
-          <div className="flex flex-wrap items-center gap-4">
-            <p className="text-sm text-gray-600">Your rating:</p>
-            <div className="flex items-center gap-1">
-              {[1, 2, 3, 4, 5].map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setRating(value)}
-                  className="text-amber-400"
-                >
-                  <Star
-                    className={`w-5 h-5 ${
-                      rating >= value ? "fill-current" : "fill-transparent"
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-          <textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Share your experience..."
-            className="w-full rounded-2xl border border-gray-200 p-4 focus:border-purple-500 focus:outline-none"
-            rows={3}
-          />
-          <button
-            type="submit"
-            disabled={submittingComment}
-            className="inline-flex items-center gap-2 rounded-full bg-purple-600 text-white px-5 py-2.5 font-semibold hover:bg-purple-700 transition disabled:opacity-50"
+          <form
+            onSubmit={handleReviewSubmit}
+            className="rounded-2xl border border-gray-200 p-4 space-y-4"
           >
-            <MessageSquare className="w-4 h-4" />
-            {submittingComment ? "Posting..." : "Post comment"}
-          </button>
-        </form>
+            <div className="flex flex-wrap items-center gap-4">
+              <p className="text-sm text-gray-600">Your rating:</p>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setRating(value)}
+                    className="text-amber-400"
+                  >
+                    <Star
+                      className={`w-5 h-5 ${
+                        rating >= value ? "fill-current" : "fill-transparent"
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+            <textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Share your experience..."
+              className="w-full rounded-2xl border border-gray-200 p-4 focus:border-purple-500 focus:outline-none"
+              rows={3}
+            />
+            <button
+              type="submit"
+              disabled={submittingComment}
+              className="inline-flex items-center gap-2 rounded-full bg-purple-600 text-white px-5 py-2.5 font-semibold hover:bg-purple-700 transition disabled:opacity-50"
+            >
+              <MessageSquare className="w-4 h-4" />
+              {submittingComment ? "Posting..." : "Post comment"}
+            </button>
+          </form>
         ) : (
           <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-sm text-blue-700 flex items-center justify-between">
-            <span>{userRole === "admin" ? "Admin users cannot post comments on products." : "Please log in to comment on this product"}</span>
+            <span>
+              {userRole === "admin"
+                ? "Admin users cannot post comments on products."
+                : "Please log in to comment on this product"}
+            </span>
             {!userId && (
               <button
                 onClick={() => router.push("/login")}
@@ -614,7 +624,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                           : "text-gray-600 bg-gray-100 hover:bg-gray-200"
                       }`}
                     >
-                      <ThumbsUp className={`w-4 h-4 ${commentLikes[review.id]?.isLiked ? "fill-current" : ""}`} />
+                      <ThumbsUp
+                        className={`w-4 h-4 ${
+                          commentLikes[review.id]?.isLiked ? "fill-current" : ""
+                        }`}
+                      />
                       <span>{commentLikes[review.id]?.count || 0}</span>
                     </button>
                   </div>

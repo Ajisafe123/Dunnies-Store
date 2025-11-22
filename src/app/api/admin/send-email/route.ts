@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     let recipientEmails: string[] = [];
 
-    // Get emails from user IDs
+
     if (userIds && userIds.length > 0) {
       const users = await prisma.user.findMany({
         where: { id: { in: userIds } },
@@ -32,12 +32,12 @@ export async function POST(request: NextRequest) {
       recipientEmails = users.map((u: any) => u.email);
     }
 
-    // Add directly provided emails
+
     if (emails && emails.length > 0) {
       recipientEmails = [...recipientEmails, ...emails];
     }
 
-    // Remove duplicates
+
     recipientEmails = [...new Set(recipientEmails)];
 
     if (recipientEmails.length === 0) {
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send emails to all recipients
+
     const sendResults = await Promise.allSettled(
       recipientEmails.map((email) =>
         sendEmail({

@@ -161,13 +161,13 @@ export default function OrdersPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
+        {}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">My Orders</h1>
           <p className="text-gray-600">Track and manage all your orders</p>
         </div>
 
-        {/* Search and Filter Bar */}
+        {}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
@@ -188,7 +188,7 @@ export default function OrdersPage() {
           </div>
         </div>
 
-        {/* Tabs */}
+        {}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 mb-6">
           <div className="flex overflow-x-auto">
             {tabs.map((tab) => (
@@ -216,7 +216,7 @@ export default function OrdersPage() {
           </div>
         </div>
 
-        {/* Orders List */}
+        {}
         <div className="space-y-6">
           {filteredOrders.length === 0 ? (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center">
@@ -242,7 +242,7 @@ export default function OrdersPage() {
                   key={order.id}
                   className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all"
                 >
-                  {/* Order Header */}
+                  {}
                   <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="flex flex-wrap items-center gap-4">
@@ -275,7 +275,7 @@ export default function OrdersPage() {
                     </div>
                   </div>
 
-                  {/* Order Items */}
+                  {}
                   <div className="p-6">
                     <div className="space-y-4 mb-6">
                       {order.items.map((item, index) => (
@@ -303,7 +303,7 @@ export default function OrdersPage() {
                       ))}
                     </div>
 
-                    {/* Order Footer */}
+                    {}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-gray-200">
                       <div className="mb-4 sm:mb-0">
                         {order.tracking !== "N/A" &&
@@ -322,7 +322,7 @@ export default function OrdersPage() {
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
+                    {}
                     <div className="flex flex-wrap gap-3 mt-6">
                       {order.status === "Delivered" && (
                         <>

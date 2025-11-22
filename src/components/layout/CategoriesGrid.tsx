@@ -56,7 +56,7 @@ export default function CategoriesGrid() {
 
     fetchCategories();
 
-    const interval = setInterval(fetchCategories, 15000); // Fetch every 15 seconds
+    const interval = setInterval(fetchCategories, 15000);
 
     return () => clearInterval(interval);
   }, []);

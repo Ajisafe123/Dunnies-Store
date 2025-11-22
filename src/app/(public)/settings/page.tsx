@@ -145,7 +145,7 @@ export default function ProfileSettingsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
+        {}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Account Settings
@@ -156,7 +156,7 @@ export default function ProfileSettingsPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar Navigation */}
+          {}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
               <nav className="space-y-1">
@@ -181,9 +181,9 @@ export default function ProfileSettingsPage() {
             </div>
           </div>
 
-          {/* Main Content */}
+          {}
           <div className="lg:col-span-3">
-            {/* Profile Information Section */}
+            {}
             {activeSection === "profile" && (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -218,7 +218,7 @@ export default function ProfileSettingsPage() {
                   )}
                 </div>
 
-                {/* Avatar Section */}
+                {}
                 <div className="flex items-center space-x-6 mb-8 pb-8 border-b border-gray-200">
                   <div className="relative">
                     <Image
@@ -248,7 +248,7 @@ export default function ProfileSettingsPage() {
                   </div>
                 </div>
 
-                {/* Form Fields */}
+                {}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -391,7 +391,7 @@ export default function ProfileSettingsPage() {
               </div>
             )}
 
-            {/* Security Section */}
+            {}
             {activeSection === "security" && (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
@@ -438,7 +438,7 @@ export default function ProfileSettingsPage() {
               </div>
             )}
 
-            {/* Notifications Section */}
+            {}
             {activeSection === "notifications" && (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
@@ -549,7 +549,7 @@ export default function ProfileSettingsPage() {
               </div>
             )}
 
-            {/* Privacy Section */}
+            {}
             {activeSection === "privacy" && (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
@@ -596,7 +596,7 @@ export default function ProfileSettingsPage() {
               </div>
             )}
 
-            {/* Preferences Section */}
+            {}
             {activeSection === "preferences" && (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">

@@ -44,7 +44,7 @@ async function fetchAllCategories(): Promise<Category[]> {
 export default async function CategoriesPage() {
   const categories = await fetchAllCategories();
 
-  // Group categories by type
+
   const productCategories = categories.filter((c) => c.type === "product");
   const giftCategories = categories.filter((c) => c.type === "gift");
   const groceryCategories = categories.filter((c) => c.type === "grocery");
@@ -76,15 +76,15 @@ export default async function CategoriesPage() {
           </div>
         )}
 
-        {/* Overlay */}
+        {}
         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent opacity-70 group-hover:opacity-85 transition-opacity duration-300" />
 
-        {/* Gradient accent corner */}
+        {}
         <div
           className={`absolute top-0 right-0 w-32 h-32 bg-linear-to-br ${colorAccent} opacity-0 group-hover:opacity-20 blur-3xl transition-all duration-500`}
         />
 
-        {/* Content */}
+        {}
         <div className="absolute inset-0 flex flex-col justify-between p-6 text-white">
           <div className="flex-1" />
           <div className="space-y-3">
@@ -110,7 +110,7 @@ export default async function CategoriesPage() {
 
   return (
     <main className="min-h-screen bg-white">
-      {/* Hero Section */}
+      {}
       <section className="relative overflow-hidden bg-linear-to-br from-gray-900 via-purple-900 to-gray-900 py-24 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500 rounded-full blur-3xl" />
@@ -128,7 +128,7 @@ export default async function CategoriesPage() {
         </div>
       </section>
 
-      {/* Product Categories */}
+      {}
       {productCategories.length > 0 && (
         <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-7xl mx-auto">
@@ -159,7 +159,7 @@ export default async function CategoriesPage() {
         </section>
       )}
 
-      {/* Gift Categories */}
+      {}
       {giftCategories.length > 0 && (
         <section className="py-20 px-4 sm:px-6 lg:px-8 bg-linear-to-br from-rose-50 to-pink-50">
           <div className="max-w-7xl mx-auto">
@@ -190,7 +190,7 @@ export default async function CategoriesPage() {
         </section>
       )}
 
-      {/* Grocery Categories */}
+      {}
       {groceryCategories.length > 0 && (
         <section className="py-20 px-4 sm:px-6 lg:px-8 bg-linear-to-br from-green-50 to-emerald-50">
           <div className="max-w-7xl mx-auto">
@@ -221,7 +221,7 @@ export default async function CategoriesPage() {
         </section>
       )}
 
-      {/* Empty State */}
+      {}
       {categories.length === 0 && (
         <section className="py-32 px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center">

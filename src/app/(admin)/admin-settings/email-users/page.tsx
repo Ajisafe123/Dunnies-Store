@@ -110,7 +110,7 @@ export default function AdminEmailPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Message Form */}
+        {}
         <div className="lg:col-span-2 space-y-4">
           <div className="rounded-3xl bg-white border border-gray-200 p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
@@ -180,7 +180,7 @@ export default function AdminEmailPage() {
           </div>
         </div>
 
-        {/* User Selection */}
+        {}
         <div className="rounded-3xl bg-white border border-gray-200 p-6 shadow-sm">
           <h2 className="text-xl font-bold text-gray-900 mb-4">
             Select Recipients

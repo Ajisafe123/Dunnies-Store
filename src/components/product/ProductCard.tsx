@@ -60,17 +60,25 @@ export default function ProductCard({
   const handleToggleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toggleWishlist({ id, name, price, image: displayImage, href: computedHref });
+    toggleWishlist({
+      id,
+      name,
+      price,
+      image: displayImage,
+      href: computedHref,
+    });
   };
 
   const handleOrderWhatsApp = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "09056453575";
-    const productLink = typeof window !== "undefined" 
-      ? `${window.location.origin}${computedHref}` 
-      : computedHref;
+
+    const whatsappNumber =
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "09056453575";
+    const productLink =
+      typeof window !== "undefined"
+        ? `${window.location.origin}${computedHref}`
+        : computedHref;
 
     const whatsappLink = getWhatsAppLink(whatsappNumber, {
       productName: name,
@@ -97,11 +105,7 @@ export default function ProductCard({
   const CardWrapper = ({ children }: { children: React.ReactNode }) => {
     if (!computedHref || computedHref === "#")
       return <div className="cursor-default">{children}</div>;
-    return (
-      <Link href={computedHref}>
-        {children}
-      </Link>
-    );
+    return <Link href={computedHref}>{children}</Link>;
   };
 
   return (
@@ -109,7 +113,7 @@ export default function ProductCard({
       <div
         className={`group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-purple-500 relative flex flex-col h-full ${className}`}
       >
-        {/* Image Container */}
+        {}
         <div className="relative overflow-hidden bg-linear-to-br from-gray-100 to-gray-200 h-64 w-full">
           <img
             src={displayImage}
@@ -117,24 +121,24 @@ export default function ProductCard({
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
 
-          {/* Overlay on hover */}
+          {}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
 
-          {/* Tag Badge */}
+          {}
           {tag && (
             <div className="absolute top-4 left-4 bg-linear-to-r from-purple-600 to-pink-600 text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
               {tag}
             </div>
           )}
 
-          {/* Discount Badge */}
+          {}
           {discount > 0 && (
             <div className="absolute top-4 right-4 bg-linear-to-r from-red-500 to-pink-500 text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
               -{discount}%
             </div>
           )}
 
-          {/* Action Buttons - Stacked on left */}
+          {}
           <div className="absolute bottom-4 left-4 flex flex-col gap-2 z-10">
             <button
               onClick={handleOrderWhatsApp}
@@ -155,9 +159,9 @@ export default function ProductCard({
           </div>
         </div>
 
-        {/* Content Section */}
+        {}
         <div className="p-5 flex flex-col grow">
-          {/* Rating Row */}
+          {}
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-0.5">
               {[...Array(5)].map((_, i) => (
@@ -176,20 +180,20 @@ export default function ProductCard({
             </span>
           </div>
 
-          {/* Title */}
+          {}
           <h3 className="font-bold text-base text-gray-900 mb-2 group-hover:text-purple-600 transition-colors line-clamp-2 leading-tight">
             {name}
           </h3>
 
-          {/* Description - Hidden on mobile, shown on larger */}
+          {}
           <p className="text-gray-600 text-xs mb-3 line-clamp-1 leading-relaxed hidden sm:block">
             {description}
           </p>
 
-          {/* Spacer */}
+          {}
           <div className="grow"></div>
 
-          {/* Footer - Price & Wishlist */}
+          {}
           <div className="pt-4 border-t-2 border-gray-100">
             <div className="flex items-end justify-between">
               <div className="flex flex-col">
@@ -202,7 +206,7 @@ export default function ProductCard({
                   </span>
                 )}
               </div>
-              {/* Wishlist button */}
+              {}
               <button
                 onClick={handleToggleWishlist}
                 className={`p-2.5 rounded-full transition-all duration-200 shrink-0 shadow-md ${
@@ -213,7 +217,9 @@ export default function ProductCard({
                 aria-label="Toggle wishlist"
                 title="Add to Wishlist"
               >
-                <Heart className={`w-5 h-5 ${wishlisted ? "fill-current" : ""}`} />
+                <Heart
+                  className={`w-5 h-5 ${wishlisted ? "fill-current" : ""}`}
+                />
               </button>
             </div>
           </div>

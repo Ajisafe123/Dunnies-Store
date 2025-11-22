@@ -23,7 +23,7 @@ export async function GET(_: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // Calculate average rating from comments
+
     const ratings = (product.comments as any[]).map((c: any) => c.rating);
     const averageRating = ratings.length > 0 
       ? Math.round((ratings.reduce((a: number, b: number) => a + b, 0) / ratings.length) * 10) / 10

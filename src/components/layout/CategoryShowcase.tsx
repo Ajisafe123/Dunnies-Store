@@ -40,7 +40,7 @@ export default function CategoryShowcase() {
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+        {}
         <div className="mb-16">
           <div className="mb-4">
             <span className="text-sm font-semibold text-slate-500 uppercase tracking-widest">
@@ -55,7 +55,7 @@ export default function CategoryShowcase() {
           </p>
         </div>
 
-        {/* Collections Grid */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {collections.map((collection) => (
             <Link
@@ -66,13 +66,13 @@ export default function CategoryShowcase() {
               <div
                 className={`relative ${collection.bgColor} rounded-2xl p-8 transition-all duration-500 hover:shadow-xl h-full flex flex-col justify-between`}
               >
-                {/* Top accent line */}
+                {}
                 <div
                   className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${collection.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500`}
                 />
 
                 <div>
-                  {/* Count badge */}
+                  {}
                   <div className="inline-block mb-4">
                     <span
                       className={`text-xs font-semibold ${collection.textColor} uppercase tracking-widest`}
@@ -81,18 +81,18 @@ export default function CategoryShowcase() {
                     </span>
                   </div>
 
-                  {/* Title */}
+                  {}
                   <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-gray-900 group-hover:to-gray-700 transition-all duration-300">
                     {collection.name}
                   </h3>
 
-                  {/* Description */}
+                  {}
                   <p className="text-slate-600 text-base leading-relaxed mb-6">
                     {collection.description}
                   </p>
                 </div>
 
-                {/* CTA */}
+                {}
                 <div className="flex items-center gap-2 group-hover:gap-4 transition-all duration-300">
                   <span
                     className={`font-semibold text-sm ${collection.textColor}`}
@@ -110,7 +110,7 @@ export default function CategoryShowcase() {
           ))}
         </div>
 
-        {/* Benefits */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12 border-t border-b border-slate-200">
           <div className="flex items-start gap-4">
             <div className="shrink-0 mt-1">

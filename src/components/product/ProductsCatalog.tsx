@@ -133,7 +133,7 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
         </div>
       </div>
 
-      {/* Category Filter */}
+      {}
       {categories.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-6">
           <button
@@ -162,7 +162,7 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
         </div>
       )}
 
-      {/* Results count */}
+      {}
       <p className="text-sm text-gray-600 mb-4">
         Showing {filteredProducts.length} product
         {filteredProducts.length !== 1 ? "s" : ""}
