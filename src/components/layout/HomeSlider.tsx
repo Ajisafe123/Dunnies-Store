@@ -29,8 +29,7 @@ export default function HeroSlider() {
             title: "Special Holiday Gifts",
             subtitle: "Make every moment memorable",
             description: "Discover unique gifts for your loved ones",
-            image:
-              "https://images.unsplash.com/photo-1606481571361-00f57b9f0e3c?w=1200&q=80",
+            image: "/assets/slide1.jpg",
             cta: "Shop Gifts",
             href: "/gift",
             tag: "New Arrivals",
@@ -39,8 +38,7 @@ export default function HeroSlider() {
             title: "Fresh Groceries & Essentials",
             subtitle: "Quality items delivered fast",
             description: "Shop fresh produce and pantry essentials",
-            image:
-              "https://images.unsplash.com/photo-1607082349250-7a64e88d1e16?w=1200&q=80",
+            image: "/assets/slide2.jpg",
             cta: "Shop Groceries",
             href: "/groceries",
             tag: "Gift Deals",
@@ -49,8 +47,7 @@ export default function HeroSlider() {
             title: "Premium Products",
             subtitle: "Quality you can trust",
             description: "Explore our collection of premium items",
-            image:
-              "https://images.unsplash.com/photo-1606481571361-00f57b9f0e3c?w=1200&q=80",
+            image: "/assets/slide3.jpg",
             cta: "Shop Products",
             href: "/product",
             tag: "Gift Picks",
@@ -65,8 +62,7 @@ export default function HeroSlider() {
             title: "Special Holiday Gifts",
             subtitle: "Make every moment memorable",
             description: "Discover unique gifts for your loved ones",
-            image:
-              "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=1200&q=80",
+            image: "/assets/slide1.jpg",
             cta: "Shop Gifts",
             href: "/gift",
             tag: "New Arrivals",
@@ -75,8 +71,7 @@ export default function HeroSlider() {
             title: "Fresh Groceries & Essentials",
             subtitle: "Quality items delivered fast",
             description: "Shop fresh produce and pantry essentials",
-            image:
-              "https://images.unsplash.com/photo-1488459716781-6518f6050e94?w=1200&q=80",
+            image: "/assets/slide2.jpg",
             cta: "Shop Groceries",
             href: "/groceries",
             tag: "Fresh & Quality",
@@ -85,8 +80,7 @@ export default function HeroSlider() {
             title: "Premium Products",
             subtitle: "Quality you can trust",
             description: "Explore our collection of premium items",
-            image:
-              "https://images.unsplash.com/photo-1543512214-318c7553f230?w=1200&q=80",
+            image: "/assets/slide3.jpg",
             cta: "Shop Products",
             href: "/product",
             tag: "Exclusive",
