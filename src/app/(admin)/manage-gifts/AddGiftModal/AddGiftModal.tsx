@@ -26,7 +26,6 @@ export default function AddGiftModal({
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch categories on mount and fetch gift if editing
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -36,7 +35,6 @@ export default function AddGiftModal({
           setCategories(data.categories || []);
         }
 
-        // Fetch gift data if editing
         if (giftId) {
           const giftResponse = await fetch(`/api/gifts/${giftId}`);
           if (giftResponse.ok) {

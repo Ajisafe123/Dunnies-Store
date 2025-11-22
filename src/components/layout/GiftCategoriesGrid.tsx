@@ -27,7 +27,6 @@ export default function GiftCategoriesGrid() {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        // Add cache-busting parameter to force fresh data
         const response = await fetch(
           `/api/categories?type=gift&t=${Date.now()}`
         );
@@ -44,7 +43,6 @@ export default function GiftCategoriesGrid() {
 
     fetchCategories();
 
-    // Refetch categories every 30 seconds to pick up deletions
     const interval = setInterval(fetchCategories, 30000);
 
     return () => clearInterval(interval);

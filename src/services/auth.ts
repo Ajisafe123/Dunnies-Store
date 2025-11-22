@@ -12,7 +12,6 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       return Promise.reject(new Error("Incorrect email or password"));
     }
-    // Network error (no response from server)
     if (!error.response) {
       return Promise.reject(new Error("Network error. Please check your connection"));
     }

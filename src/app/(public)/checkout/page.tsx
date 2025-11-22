@@ -19,7 +19,6 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [step, setStep] = useState<"form" | "success">("form");
 
-  // Mock cart data (in real app, get from context or URL params)
   const subtotal = 54500;
   const deliveryFee = 2500;
   const total = subtotal + deliveryFee;

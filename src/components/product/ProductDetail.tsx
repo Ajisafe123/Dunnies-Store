@@ -53,7 +53,6 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     typeof window !== "undefined" ? localStorage.getItem("userId") : null
   );
 
-  // Fetch comments on component mount
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -77,7 +76,6 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     fetchComments();
   }, [product.id]);
 
-  // Fetch likes on component mount
   useEffect(() => {
     const fetchLikes = async () => {
       try {
@@ -198,7 +196,6 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         setComment("");
         setRating(5);
 
-        // Recalculate average rating
         const updatedComments = [newComment, ...comments];
         const avgRating =
           updatedComments.length > 0

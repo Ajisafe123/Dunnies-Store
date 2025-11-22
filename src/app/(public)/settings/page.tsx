@@ -121,12 +121,10 @@ export default function ProfileSettingsPage() {
 
   const handleSave = () => {
     setIsEditing(false);
-    // Save logic here
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    // Reset form logic here
   };
 
   if (loading) {

@@ -26,7 +26,6 @@ export default function AddGroceryModal({
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch categories on mount and fetch grocery if editing
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -36,7 +35,6 @@ export default function AddGroceryModal({
           setCategories(data.categories || []);
         }
 
-        // Fetch grocery data if editing
         if (groceryId) {
           const groceryResponse = await fetch(`/api/groceries/${groceryId}`);
           if (groceryResponse.ok) {

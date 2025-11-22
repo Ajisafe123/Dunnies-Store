@@ -11,7 +11,6 @@ export default function GlobalError({
 }) {
   const pathname = usePathname();
 
-  // Don't show global error for login and signup pages
   if (pathname === "/login" || pathname === "/signup") {
     return null;
   }

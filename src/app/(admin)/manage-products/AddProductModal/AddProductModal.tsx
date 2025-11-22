@@ -32,7 +32,6 @@ export default function AddProductModal({
   const [categories, setCategories] = useState<any[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
 
-  // Fetch categories on mount and fetch product if editing
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,7 +41,6 @@ export default function AddProductModal({
           setCategories(data.categories || []);
         }
 
-        // Fetch product data if editing
         if (productId) {
           const productResponse = await fetch(`/api/products/${productId}`);
           if (productResponse.ok) {
@@ -91,7 +89,6 @@ export default function AddProductModal({
     const newImages = [...images, ...files].slice(0, maxImages);
     setImages(newImages);
 
-    // Generate previews
     const previews: string[] = [];
     newImages.forEach((file) => {
       const reader = new FileReader();
@@ -128,7 +125,6 @@ export default function AddProductModal({
       formDataToSend.append("categoryId", formData.categoryId);
       formDataToSend.append("priority", formData.priority);
 
-      // Add images
       images.forEach((image, index) => {
         formDataToSend.append(`images[${index}]`, image);
       });

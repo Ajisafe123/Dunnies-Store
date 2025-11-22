@@ -103,7 +103,6 @@ export default function Header() {
 
     const fetchCategories = async () => {
       try {
-        // Fetch product categories
         const productRes = await fetch(
           `/api/categories?type=product&t=${Date.now()}`,
           {
@@ -115,7 +114,6 @@ export default function Header() {
           setCategories(data.categories || []);
         }
 
-        // Fetch gift categories
         const giftRes = await fetch(
           `/api/categories?type=gift&t=${Date.now()}`,
           {
@@ -127,7 +125,6 @@ export default function Header() {
           setGiftCategories(data.categories || []);
         }
 
-        // Fetch grocery categories
         const groceryRes = await fetch(
           `/api/categories?type=grocery&t=${Date.now()}`,
           {
@@ -145,7 +142,6 @@ export default function Header() {
 
     fetchCategories();
 
-    // Refetch categories every 30 seconds to pick up deletions
     const interval = setInterval(fetchCategories, 30000);
 
     return () => {

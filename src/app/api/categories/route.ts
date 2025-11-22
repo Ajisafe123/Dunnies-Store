@@ -10,7 +10,6 @@ export async function GET(request: NextRequest) {
 
     const where: any = {};
     
-    // Filter by type if provided
     if (type) {
       where.type = type;
     }
@@ -29,14 +28,12 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    // Filter out categories with 0 products on the backend
     const filteredCategories = categories.filter(
       (cat) => (cat._count?.products || 0) > 0
     );
 
     const response = NextResponse.json({ categories: filteredCategories });
     
-    // Prevent caching
     response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
     response.headers.set("Pragma", "no-cache");
     response.headers.set("Expires", "0");
@@ -98,13 +95,11 @@ export async function POST(request: NextRequest) {
 
     let imageUrl: string | null = null;
 
-    // Handle image upload if provided
     if (image && typeof image !== "string") {
       try {
         imageUrl = await saveUploadedFile(image as File, "categories");
       } catch (uploadError) {
         console.error("[CATEGORY_IMAGE_UPLOAD]", uploadError);
-        // Continue without image if upload fails
         imageUrl = null;
       }
     }
@@ -116,7 +111,6 @@ export async function POST(request: NextRequest) {
       imageUrl: imageUrl || null,
     };
 
-    // Only include priority if it's provided
     if (priority) categoryData.priority = priority;
 
     const category = await prisma.category.create({

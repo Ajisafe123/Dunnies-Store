@@ -6,7 +6,6 @@ export async function GET(request: NextRequest) {
     console.log('Testing Prisma connection...')
     console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'Not set')
     
-    // Try a simple query with timeout
     const result = await Promise.race([
       prisma.user.findFirst(),
       new Promise((_, reject) =>

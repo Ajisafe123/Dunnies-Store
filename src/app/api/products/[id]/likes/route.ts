@@ -55,7 +55,6 @@ export async function POST(
       );
     }
 
-    // Check if product exists
     const product = await prisma.product.findUnique({ where: { id } });
     if (!product) {
       return NextResponse.json(
@@ -64,7 +63,6 @@ export async function POST(
       );
     }
 
-    // Check if already liked
     const existingLike = await prisma.productLike.findUnique({
       where: {
         productId_userId: {
@@ -75,7 +73,6 @@ export async function POST(
     });
 
     if (existingLike) {
-      // Unlike
       await prisma.productLike.delete({
         where: {
           productId_userId: {
@@ -94,7 +91,6 @@ export async function POST(
         likeCount,
       });
     } else {
-      // Like
       await prisma.productLike.create({
         data: {
           productId: id,

@@ -40,7 +40,6 @@ export default function LoginPage() {
     try {
       const data = await login(email, password);
 
-      // Store userId in localStorage for authenticated requests
       if (data.user?.id) {
         localStorage.setItem("userId", data.user.id);
       }

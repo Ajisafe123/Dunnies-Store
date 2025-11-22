@@ -32,13 +32,11 @@ export default function GiftCategoryScroll() {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        // Add cache-busting parameter to force fresh data
         const response = await fetch(
           `/api/categories?type=product&t=${Date.now()}`
         );
         if (response.ok) {
           const data = await response.json();
-          // API already filters out empty categories
           setCategories(data.categories || []);
         }
       } catch (error) {
@@ -50,7 +48,6 @@ export default function GiftCategoryScroll() {
 
     fetchCategories();
 
-    // Refetch categories every 30 seconds to pick up deletions
     const interval = setInterval(fetchCategories, 30000);
 
     return () => clearInterval(interval);

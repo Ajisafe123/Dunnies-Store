@@ -68,7 +68,6 @@ export async function POST(request: NextRequest) {
       categoryId: categoryId || null,
     };
     
-    // Only include priority if it's provided
     if (priority) productData.priority = priority;
 
     const product = await prisma.product.create({

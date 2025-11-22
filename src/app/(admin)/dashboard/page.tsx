@@ -23,19 +23,16 @@ export default function AdminDashboard() {
       try {
         setLoading(true);
 
-        // Fetch products
         const productsRes = await fetch("/api/products");
         const productsData = productsRes.ok
           ? await productsRes.json()
           : { products: [] };
 
-        // Fetch orders
         const ordersRes = await fetch("/api/orders");
         const ordersData = ordersRes.ok
           ? await ordersRes.json()
           : { orders: [] };
 
-        // Fetch users
         const usersRes = await fetch("/api/users");
         const usersData = usersRes.ok ? await usersRes.json() : { users: [] };
 
@@ -43,13 +40,11 @@ export default function AdminDashboard() {
         const products = productsData.products || [];
         const users = usersData.users || [];
 
-        // Calculate metrics
         const totalRevenue = orders.reduce(
           (sum: number, order: any) => sum + (order.total || 0),
           0
         );
 
-        // Sort orders by date (most recent first)
         const recentOrders = orders
           .slice(0, 5)
           .sort(
@@ -57,7 +52,6 @@ export default function AdminDashboard() {
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
 
-        // Get best sellers (products with most orders)
         const bestSellers = products
           .sort((a: any, b: any) => (b.ordersCount || 0) - (a.ordersCount || 0))
           .slice(0, 3);

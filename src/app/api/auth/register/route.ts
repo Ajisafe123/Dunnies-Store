@@ -22,7 +22,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Add timeout for database query (10 seconds)
     const existingUserPromise = prisma.user.findUnique({
       where: { email },
     })

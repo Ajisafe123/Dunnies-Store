@@ -21,7 +21,6 @@ export async function GET(
       orderBy: { createdAt: "desc" },
     });
 
-    // Calculate average rating
     const averageRating = 
       comments.length > 0
         ? Math.round((comments.reduce((sum: number, c: any) => sum + c.rating, 0) / comments.length) * 10) / 10
@@ -63,7 +62,6 @@ export async function POST(
       );
     }
 
-    // Check if product exists
     const product = await prisma.product.findUnique({ where: { id } });
     if (!product) {
       return NextResponse.json(
@@ -72,7 +70,6 @@ export async function POST(
       );
     }
 
-    // Create comment
     const comment = await prisma.productComment.create({
       data: {
         productId: id,

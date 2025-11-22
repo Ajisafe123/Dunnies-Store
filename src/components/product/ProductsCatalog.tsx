@@ -41,7 +41,6 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
   useEffect(() => {
     let filtered = products;
 
-    // Filter by search query
     if (searchQuery) {
       filtered = filtered.filter(
         (product) =>
@@ -50,7 +49,6 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
       );
     }
 
-    // Filter by category
     if (selectedCategory) {
       filtered = filtered.filter(
         (product) => product.category === selectedCategory

@@ -71,7 +71,6 @@ export async function PUT(request: NextRequest, { params }: Params) {
     if (priority) updateData.priority = priority;
     if (!Number.isNaN(parsedPrice)) updateData.price = parsedPrice;
 
-    // Handle image uploads
     if (images && Array.isArray(images) && images.length > 0) {
       const processedImages: string[] = [];
       for (const image of images) {
