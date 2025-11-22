@@ -24,11 +24,26 @@ export default function CheckoutPage() {
   const total = subtotal + deliveryFee;
   const formatPrice = (price: number) => `₦${price.toLocaleString()}`;
 
+  const paymentMethods = [
+    {
+      value: "pay-before-delivery",
+      label: "Pay Before Delivery",
+      icon: CreditCard,
+      desc: "Pay with Paystack/Flutterwave",
+    },
+    {
+      value: "pay-on-delivery",
+      label: "Pay On Delivery",
+      icon: Truck,
+      desc: "Cash or POS on delivery",
+    },
+  ];
+
   if (step === "success") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-violet-50 to-fuchsia-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-linear-to-br from-violet-50 to-fuchsia-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-3xl shadow-2xl p-12 text-center max-w-md w-full">
-          <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-24 h-24 bg-linear-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-14 h-14 text-white" />
           </div>
           <h2 className="text-4xl font-black mb-4">Order Confirmed!</h2>
@@ -42,7 +57,7 @@ export default function CheckoutPage() {
           </p>
           <Link
             href="/"
-            className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white py-5 rounded-2xl font-bold inline-block"
+            className="w-full bg-linear-to-r from-violet-600 to-fuchsia-600 text-white py-5 rounded-2xl font-bold inline-block"
           >
             Continue Shopping
           </Link>
@@ -52,7 +67,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 to-fuchsia-50 py-8">
+    <div className="min-h-screen bg-linear-to-br from-violet-50 to-fuchsia-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
         <h1 className="text-4xl font-black text-gray-900 mb-8">Checkout</h1>
 
@@ -103,20 +118,7 @@ export default function CheckoutPage() {
                 Method
               </h2>
               <div className="space-y-4">
-                {[
-                  {
-                    value: "pay-before-delivery",
-                    label: "Pay Before Delivery",
-                    icon: CreditCard,
-                    desc: "Pay with Paystack/Flutterwave",
-                  },
-                  {
-                    value: "pay-on-delivery",
-                    label: "Pay On Delivery",
-                    icon: Truck,
-                    desc: "Cash or POS on delivery",
-                  },
-                ].map((m) => (
+                {paymentMethods.map((m) => (
                   <label
                     key={m.value}
                     className={`block p-6 rounded-2xl border-2 cursor-pointer transition-all ${
@@ -165,12 +167,12 @@ export default function CheckoutPage() {
                 <button
                   onClick={() => setStep("success")}
                   disabled={!paymentMethod}
-                  className="flex-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white py-4 rounded-2xl font-bold disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 bg-linear-to-r from-violet-600 to-fuchsia-600 text-white py-4 rounded-2xl font-bold disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {paymentMethod === "pay-on-delivery"
                     ? "Place Order"
                     : "Pay Now"}{" "}
-                  <ArrowRight />
+                  <ArrowRight className="w-5 h-5" />
                 </button>
               </div>
             </div>
