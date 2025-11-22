@@ -13,7 +13,7 @@ async function fetchBestSellers() {
       take: 18,
     });
 
-    return products.map((product) => ({
+    return products.map((product: any) => ({
       id: product.id,
       name: product.name,
       description: product.description || "",

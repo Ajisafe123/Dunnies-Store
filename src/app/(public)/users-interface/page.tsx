@@ -316,7 +316,7 @@ export default function UsersInterfacePage() {
               </p>
             </div>
             <Link
-              href="/products"
+              href="/product"
               className="inline-flex items-center gap-2 text-purple-600 font-semibold hover:text-purple-700"
             >
               View all products <ArrowRight className="w-4 h-4" />

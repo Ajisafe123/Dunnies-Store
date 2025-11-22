@@ -92,32 +92,32 @@ export default function Sidebar({ user, onNavClick }: SidebarProps) {
   return (
     <aside className="h-full w-72 bg-linear-to-b from-purple-950 via-purple-900 to-purple-800 text-white flex flex-col border-r border-purple-950">
       <div className="px-6 py-6 border-b border-white/10 space-y-4">
-        <p className="text-sm uppercase tracking-[0.3em] text-purple-300">
+        <p className="text-[20px] uppercase tracking-[0.15em] text-purple-300 font-bold">
           Dunnis Admin
         </p>
-        <h1 className="text-2xl font-bold">Control Center</h1>
+        
 
         <div className="flex items-center gap-3 rounded-2xl bg-white/5 border border-white/10 p-3 shadow-inner">
-          <div className="w-12 h-12 rounded-2xl overflow-hidden bg-white/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-2xl overflow-hidden bg-white/10 flex items-center justify-center shrink-0">
             {avatarUrl ? (
               <Image
                 src={avatarUrl}
                 alt={user?.fullName || "Admin avatar"}
-                width={48}
-                height={48}
+                width={58}
+                height={58}
                 className="object-cover"
                 referrerPolicy="no-referrer"
               />
             ) : (
-              <User className="w-5 h-5" />
+              <User className="w-10 h-10" />
             )}
           </div>
-          <div className="text-white">
-            <p className="text-sm text-purple-200">Signed in as</p>
-            <p className="font-semibold leading-tight">
+          <div className="text-white min-w-0">
+            <p className="text-[15px] text-purple-200">Signed in as</p>
+            <p className="font-semibold text-xs leading-tight truncate">
               {user?.fullName || "Admin"}
             </p>
-            <p className="text-xs text-purple-200 truncate max-w-44">
+            <p className="text-[13px] text-purple-200 truncate">
               {user?.email || "admin@dunnis.store"}
             </p>
           </div>

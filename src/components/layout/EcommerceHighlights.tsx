@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ShoppingCart, Truck, Wallet, Headphones } from "lucide-react";
+import {
+  ArrowRight,
+  ShoppingCart,
+  Truck,
+  Wallet,
+  Headphones,
+} from "lucide-react";
 
 const highlights = [
   {
@@ -22,7 +28,8 @@ const highlights = [
   },
   {
     title: "Wallet & Pay Later",
-    description: "Split payments or store cards securely with encrypted vaults.",
+    description:
+      "Split payments or store cards securely with encrypted vaults.",
     icon: Wallet,
     href: "/payment-methods",
     accent: "bg-emerald-100 text-emerald-600",
@@ -50,7 +57,8 @@ export default function EcommerceHighlights() {
             Premium shopping made simple and convenient
           </h2>
           <p className="text-gray-600">
-            Experience seamless transactions, lightning-fast delivery, and dedicated support designed to make every moment special.
+            Experience seamless transactions, lightning-fast delivery, and
+            dedicated support designed to make every moment special.
           </p>
         </div>
 
@@ -83,4 +91,3 @@ export default function EcommerceHighlights() {
     </section>
   );
 }
-

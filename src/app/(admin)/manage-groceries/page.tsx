@@ -5,6 +5,7 @@ import { Trash2, Plus, Edit, Image as ImageIcon } from "lucide-react";
 import Loader from "@/components/ui/Loader";
 import AddGroceryModal from "./AddGroceryModal/AddGroceryModal";
 import DeleteModal from "@/components/ui/DeleteModal";
+import { showToast } from "@/components/ui/Toast";
 
 interface Grocery {
   id: string;
@@ -71,8 +72,15 @@ export default function ManageGroceries() {
       if (!response.ok) throw new Error("Failed to delete grocery");
       setGroceries(groceries.filter((g) => g.id !== deleteModal.groceryId));
       setDeleteModal({ isOpen: false, groceryId: null, groceryName: "" });
+      showToast(
+        `Grocery "${deleteModal.groceryName}" deleted successfully!`,
+        "success"
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete");
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to delete";
+      setError(errorMessage);
+      showToast(errorMessage, "error");
     } finally {
       setIsDeleting(false);
     }

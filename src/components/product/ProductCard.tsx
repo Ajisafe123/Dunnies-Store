@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Heart, ShoppingCart, Star, Eye, Loader2 } from "lucide-react";
+import { Heart, ShoppingCart, Star, MessageCircle } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/hooks/useWishlist";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { getWhatsAppLink } from "@/lib/whatsapp";
 
 interface ProductProps {
   id: number | string;
@@ -35,11 +38,11 @@ export default function ProductCard({
   href = "#",
   className = "",
 }: ProductProps) {
+  const router = useRouter();
   const displayImage =
     image && image.trim() !== ""
       ? image
       : "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600&h=600&fit=crop&auto=format";
-  const [isNavigating, setIsNavigating] = useState(false);
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
@@ -51,13 +54,35 @@ export default function ProductCard({
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart({ id, name, price, image });
+    addToCart({ id, name, price, image: displayImage });
   };
 
   const handleToggleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toggleWishlist({ id, name, price, image, href: computedHref });
+    toggleWishlist({ id, name, price, image: displayImage, href: computedHref });
+  };
+
+  const handleOrderWhatsApp = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "09056453575";
+    const productLink = typeof window !== "undefined" 
+      ? `${window.location.origin}${computedHref}` 
+      : computedHref;
+
+    const whatsappLink = getWhatsAppLink(whatsappNumber, {
+      productName: name,
+      productPrice: price,
+      productQuantity: 1,
+      productImage: displayImage,
+      productLink,
+      customerName: "Customer",
+      whatsappNumber,
+    });
+
+    window.open(whatsappLink, "_blank");
   };
 
   const wishlisted = isInWishlist(id);
@@ -73,123 +98,125 @@ export default function ProductCard({
     if (!computedHref || computedHref === "#")
       return <div className="cursor-default">{children}</div>;
     return (
-      <Link href={computedHref} onClick={() => setIsNavigating(true)}>
+      <Link href={computedHref}>
         {children}
       </Link>
     );
   };
 
-  const WishlistButton = ({ className = "" }: { className?: string }) => (
-    <button
-      onClick={handleToggleWishlist}
-      className={`bg-white p-2.5 rounded-full transition-all duration-200 shadow-lg hover:scale-110 ${
-        wishlisted
-          ? "text-red-500 hover:bg-red-100"
-          : "text-gray-700 hover:bg-violet-600 hover:text-white"
-      } ${className}`}
-      aria-label="Toggle wishlist"
-    >
-      <Heart
-        className={`w-4 h-4 ${
-          wishlisted ? "fill-red-500" : "fill-transparent"
-        }`}
-      />
-    </button>
-  );
-
   return (
     <CardWrapper>
       <div
-        className={`group bg-white/95 backdrop-blur rounded-2xl overflow-hidden shadow-lg hover:shadow-purple-200/80 transition-all duration-500 border border-purple-100 hover:border-purple-300 relative flex flex-col h-full ${className}`}
+        className={`group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-purple-500 relative flex flex-col h-full ${className}`}
       >
-        {isNavigating && (
-          <div className="absolute inset-0 z-50 bg-black/20 backdrop-blur-sm flex items-center justify-center rounded-2xl">
-            <div className="flex flex-col items-center gap-2">
-              <Loader2 className="w-6 h-6 text-white animate-spin" />
-              <span className="text-white text-xs font-semibold">
-                Loading...
-              </span>
-            </div>
-          </div>
-        )}
-        <div className="relative overflow-hidden bg-linear-to-br from-purple-50 via-white to-purple-100/40 h-48">
+        {/* Image Container */}
+        <div className="relative overflow-hidden bg-linear-to-br from-gray-100 to-gray-200 h-64 w-full">
           <img
             src={displayImage}
             alt={name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
 
-          <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          {/* Overlay on hover */}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
 
-          <div className="absolute bottom-3 right-3 z-10 flex gap-2 md:hidden">
-            <WishlistButton />
-          </div>
-
-          {discount > 0 && (
-            <div className="absolute top-3 left-3 bg-linear-to-r from-red-500 to-pink-500 text-white px-3 py-1 text-xs font-bold rounded-full shadow-md">
-              -{discount}% OFF
+          {/* Tag Badge */}
+          {tag && (
+            <div className="absolute top-4 left-4 bg-linear-to-r from-purple-600 to-pink-600 text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
+              {tag}
             </div>
           )}
 
-          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-purple-600 px-3 py-1 text-xs font-bold rounded-full shadow-sm border border-purple-100">
-            {tag}
-          </div>
+          {/* Discount Badge */}
+          {discount > 0 && (
+            <div className="absolute top-4 right-4 bg-linear-to-r from-red-500 to-pink-500 text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
+              -{discount}%
+            </div>
+          )}
 
-          <div className="absolute inset-0 z-10 hidden md:flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100">
-            <WishlistButton />
+          {/* Action Buttons - Stacked on left */}
+          <div className="absolute bottom-4 left-4 flex flex-col gap-2 z-10">
             <button
-              onClick={(e) => e.preventDefault()}
-              className="bg-white text-gray-700 p-2.5 rounded-full hover:bg-violet-600 hover:text-white transition-all shadow-lg hover:scale-110"
-              aria-label="Quick view"
+              onClick={handleOrderWhatsApp}
+              className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full shadow-lg hover:scale-110 transition-all duration-200 flex items-center justify-center backdrop-blur-sm bg-opacity-90"
+              aria-label="Order on WhatsApp"
+              title="Order on WhatsApp"
             >
-              <Eye className="w-4 h-4" />
+              <MessageCircle className="w-5 h-5" />
+            </button>
+            <button
+              onClick={handleAddToCart}
+              className="bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-full shadow-lg hover:scale-110 transition-all duration-200 flex items-center justify-center backdrop-blur-sm bg-opacity-90"
+              aria-label="Add to cart"
+              title="Add to Cart"
+            >
+              <ShoppingCart className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        <div className="p-4 flex flex-col grow">
-          <div className="flex items-center gap-1 mb-2">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-3.5 h-3.5 ${
-                  i < Math.floor(rating)
-                    ? "text-amber-400 fill-amber-400"
-                    : "text-gray-300 fill-gray-300"
-                }`}
-              />
-            ))}
-            <span className="text-xs text-gray-600 ml-1 font-medium">
-              ({reviews})
+        {/* Content Section */}
+        <div className="p-5 flex flex-col grow">
+          {/* Rating Row */}
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`w-4 h-4 ${
+                    i < Math.floor(rating)
+                      ? "text-yellow-400 fill-yellow-400"
+                      : "text-gray-300 fill-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
+            <span className="text-xs font-bold text-gray-700 bg-yellow-50 px-2 py-0.5 rounded-full">
+              {rating.toFixed(1)} ⭐
             </span>
           </div>
 
-          <h3 className="font-semibold text-base text-gray-900 mb-1 group-hover:text-violet-600 transition-colors line-clamp-2 leading-snug">
+          {/* Title */}
+          <h3 className="font-bold text-base text-gray-900 mb-2 group-hover:text-purple-600 transition-colors line-clamp-2 leading-tight">
             {name}
           </h3>
 
-          <p className="text-gray-500 text-xs mb-4 line-clamp-2 leading-tight grow">
+          {/* Description - Hidden on mobile, shown on larger */}
+          <p className="text-gray-600 text-xs mb-3 line-clamp-1 leading-relaxed hidden sm:block">
             {description}
           </p>
 
-          <div className="flex items-baseline gap-2 mb-4">
-            <span className="text-xl font-bold text-gray-900">
-              {formattedPrice}
-            </span>
-            {formattedOriginal && (
-              <span className="text-sm text-gray-400 line-through">
-                {formattedOriginal}
-              </span>
-            )}
-          </div>
+          {/* Spacer */}
+          <div className="grow"></div>
 
-          <button
-            onClick={handleAddToCart}
-            className="w-full bg-linear-to-r from-violet-600 via-purple-600 to-fuchsia-600 text-white py-3 rounded-xl text-sm font-semibold hover:shadow-xl hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-2"
-          >
-            <ShoppingCart className="w-4 h-4" />
-            <span>Add to Cart</span>
-          </button>
+          {/* Footer - Price & Wishlist */}
+          <div className="pt-4 border-t-2 border-gray-100">
+            <div className="flex items-end justify-between">
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold text-purple-600">
+                  {formattedPrice}
+                </span>
+                {formattedOriginal && (
+                  <span className="text-xs text-gray-400 line-through">
+                    {formattedOriginal}
+                  </span>
+                )}
+              </div>
+              {/* Wishlist button */}
+              <button
+                onClick={handleToggleWishlist}
+                className={`p-2.5 rounded-full transition-all duration-200 shrink-0 shadow-md ${
+                  wishlisted
+                    ? "bg-red-500 text-white scale-110"
+                    : "bg-gray-100 text-gray-500 hover:bg-red-100 hover:text-red-600"
+                }`}
+                aria-label="Toggle wishlist"
+                title="Add to Wishlist"
+              >
+                <Heart className={`w-5 h-5 ${wishlisted ? "fill-current" : ""}`} />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </CardWrapper>

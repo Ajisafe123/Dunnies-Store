@@ -13,13 +13,30 @@ export async function GET(_: NextRequest, { params }: Params) {
     const { id } = await params;
     const product = await prisma.product.findUnique({
       where: { id },
+      include: {
+        comments: true,
+        likes: true,
+      },
     });
 
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ product });
+    // Calculate average rating from comments
+    const ratings = (product.comments as any[]).map((c: any) => c.rating);
+    const averageRating = ratings.length > 0 
+      ? Math.round((ratings.reduce((a: number, b: number) => a + b, 0) / ratings.length) * 10) / 10
+      : 0;
+
+    return NextResponse.json({ 
+      product: {
+        ...product,
+        averageRating,
+        totalComments: product.comments.length,
+        totalLikes: product.likes.length,
+      }
+    });
   } catch (error) {
     console.error("[PRODUCT_GET]", error);
     return NextResponse.json(

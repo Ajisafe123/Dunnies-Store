@@ -53,7 +53,9 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
         filtered = filtered.filter(
           (product) =>
             product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.description.toLowerCase().includes(searchQuery.toLowerCase())
+            product.description
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase())
         );
       }
 

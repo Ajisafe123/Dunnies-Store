@@ -43,7 +43,7 @@ async function fetchGroceries(): Promise<ProductRecord[]> {
       orderBy: { createdAt: "desc" },
     });
 
-    return groceries.map((grocery) =>
+    return groceries.map((grocery: any) =>
       adaptProductRecord({
         id: grocery.id,
         name: grocery.name,

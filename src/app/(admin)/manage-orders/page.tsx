@@ -63,19 +63,13 @@ export default function ManageOrders() {
             Orders
           </h1>
           <p className="text-gray-600 text-lg mt-2">
-            Track and manage customer orders
+            Manage {orders.length} customer orders
           </p>
         </div>
-        <div className="flex gap-3">
-          <button className="inline-flex items-center gap-2 rounded-full border border-gray-300 px-6 py-3 text-gray-700 font-semibold hover:bg-gray-50 transition">
-            <Download className="w-5 h-5" />
-            Export
-          </button>
-          <button className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-purple-600 to-pink-600 text-white px-6 py-3 font-semibold hover:shadow-lg transition-all">
-            <Plus className="w-5 h-5" />
-            Create Order
-          </button>
-        </div>
+        <button className="inline-flex items-center gap-2 rounded-full border border-gray-300 px-6 py-3 text-gray-700 font-semibold hover:bg-gray-50 transition">
+          <Download className="w-5 h-5" />
+          Export
+        </button>
       </div>
 
       {error && (
@@ -94,10 +88,7 @@ export default function ManageOrders() {
           <p className="text-gray-600 mb-4 text-lg font-semibold">
             No orders yet
           </p>
-          <button className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-700 transition">
-            <Plus className="w-5 h-5" />
-            Create your first order
-          </button>
+          <p className="text-gray-500">Orders placed by customers will appear here</p>
         </div>
       ) : (
         <div className="space-y-3">

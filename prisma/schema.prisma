@@ -17,9 +17,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  orders         Order[]
-  comments       ProductComment[]
-  likes          ProductLike[]
+  orders            Order[]
+  comments          ProductComment[]
+  likes             ProductLike[]
+  commentReplies    CommentReply[] @relation("CommentReplies")
+  commentLikes      CommentLike[]
 }
 
 model Category {
@@ -76,15 +78,31 @@ model Grocery {
 }
 
 model Order {
-  id          String     @id @default(cuid()) @map("_id")
-  userId      String
-  total       Float
-  status      String     @default("pending")
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id            String     @id @default(cuid()) @map("_id")
+  userId        String?
+  customerName  String
+  customerEmail String
+  customerPhone String
+  total         Float
+  status        String     @default("pending") // "pending", "confirmed", "shipped", "delivered", "cancelled"
+  source        String     @default("site") // "site", "whatsapp", "other"
+  notes         String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 
-  user        User       @relation(fields: [userId], references: [id])
-  orderItems  OrderItem[]
+  user          User?      @relation(fields: [userId], references: [id])
+  orderItems    OrderItem[]
+}
+
+model EmailLog {
+  id        String   @id @default(cuid()) @map("_id")
+  to        String
+  subject   String
+  body      String
+  status    String   @default("sent") // "sent", "failed"
+  error     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model OrderItem {
@@ -106,11 +124,46 @@ model ProductComment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product         Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replies         CommentReply[]
+  likes           CommentLike[]
 
   @@index([productId])
   @@index([userId])
+}
+
+model CommentReply {
+  id        String   @id @default(cuid()) @map("_id")
+  commentId String
+  userId    String
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comment   ProductComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user      User           @relation("CommentReplies", fields: [userId], references: [id], onDelete: Cascade)
+  likes     CommentLike[]
+
+  @@index([commentId])
+  @@index([userId])
+}
+
+model CommentLike {
+  id             String   @id @default(cuid()) @map("_id")
+  userId         String
+  commentId      String?
+  replyId        String?
+  createdAt      DateTime @default(now())
+
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment        ProductComment?   @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  reply          CommentReply?     @relation(fields: [replyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId, replyId])
+  @@index([userId])
+  @@index([commentId])
+  @@index([replyId])
 }
 
 model ProductLike {

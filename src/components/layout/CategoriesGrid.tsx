@@ -168,9 +168,7 @@ export default function CategoriesGrid() {
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
               Popular Categories
             </h2>
-            <p className="text-gray-600 text-sm">
-              Discover gifts for every special moment
-            </p>
+            <p className="text-gray-600 text-sm">Browse our collections</p>
           </div>
 
           <div className="hidden md:flex gap-2">
@@ -228,7 +226,7 @@ export default function CategoriesGrid() {
 
                         <div className="absolute bottom-3 left-3 right-3">
                           <div className="bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 shadow-lg">
-                            <h3 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-1">
+                            <h3 className="font-bold text-gray-900 text-[5px] leading-tight line-clamp-2 mb-1">
                               {cat.name}
                             </h3>
                             <div className="flex items-center justify-between">

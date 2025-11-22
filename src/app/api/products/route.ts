@@ -13,11 +13,30 @@ export async function GET(request: NextRequest) {
 
     const products = await prisma.product.findMany({
       where,
-      include: { category: true },
+      include: { 
+        category: true,
+        comments: true,
+        likes: true,
+      },
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ products });
+    // Add rating calculations
+    const productsWithRatings = products.map((product: any) => {
+      const ratings = product.comments.map((c: any) => c.rating);
+      const averageRating = ratings.length > 0 
+        ? Math.round((ratings.reduce((a: number, b: number) => a + b, 0) / ratings.length) * 10) / 10
+        : 0;
+
+      return {
+        ...product,
+        averageRating,
+        totalComments: product.comments.length,
+        totalLikes: product.likes.length,
+      };
+    });
+
+    return NextResponse.json({ products: productsWithRatings });
   } catch (error) {
     console.error("[PRODUCTS_GET]", error);
     return NextResponse.json(

@@ -43,7 +43,7 @@ async function fetchGifts(): Promise<ProductRecord[]> {
       orderBy: { createdAt: "desc" },
     });
 
-    return gifts.map((gift) =>
+    return gifts.map((gift: any) =>
       adaptProductRecord({
         id: gift.id,
         name: gift.name,

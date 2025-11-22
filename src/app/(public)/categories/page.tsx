@@ -23,7 +23,6 @@ interface Category {
 async function fetchAllCategories(): Promise<Category[]> {
   try {
     const categories = await prisma.category.findMany({
-      where: { isActive: true },
       include: {
         _count: {
           select: { products: true },
@@ -32,26 +31,10 @@ async function fetchAllCategories(): Promise<Category[]> {
       orderBy: [{ type: "asc" }, { createdAt: "desc" }],
     });
 
-    const enrichedCategories: Category[] = [];
-
-    for (const cat of categories) {
-      let count = cat._count.products;
-
-      if (cat.type === "gift") {
-        count = await prisma.gift.count();
-      } else if (cat.type === "grocery") {
-        count = await prisma.grocery.count();
-      }
-
-      enrichedCategories.push({
-        ...cat,
-        _count: {
-          products: count,
-        },
-      });
-    }
-
-    return enrichedCategories;
+    return categories.map((cat: any) => ({
+      ...cat,
+      _count: cat._count,
+    }));
   } catch (error) {
     console.error("Failed to fetch categories:", error);
     return [];
@@ -66,7 +49,13 @@ export default async function CategoriesPage() {
   const giftCategories = categories.filter((c) => c.type === "gift");
   const groceryCategories = categories.filter((c) => c.type === "grocery");
 
-  const CategoryCard = ({ cat, colorAccent }: { cat: Category; colorAccent: string }) => (
+  const CategoryCard = ({
+    cat,
+    colorAccent,
+  }: {
+    cat: Category;
+    colorAccent: string;
+  }) => (
     <Link href={`/product?category=${cat.id}`} className="group">
       <div className="relative h-80 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:scale-105">
         {cat.imageUrl ? (
@@ -80,16 +69,20 @@ export default async function CategoriesPage() {
             priority
           />
         ) : (
-          <div className={`w-full h-full bg-linear-to-br ${colorAccent} flex items-center justify-center`}>
+          <div
+            className={`w-full h-full bg-linear-to-br ${colorAccent} flex items-center justify-center`}
+          >
             <span className="text-gray-400 text-sm">No image</span>
           </div>
         )}
-        
+
         {/* Overlay */}
         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent opacity-70 group-hover:opacity-85 transition-opacity duration-300" />
-        
+
         {/* Gradient accent corner */}
-        <div className={`absolute top-0 right-0 w-32 h-32 bg-linear-to-br ${colorAccent} opacity-0 group-hover:opacity-20 blur-3xl transition-all duration-500`} />
+        <div
+          className={`absolute top-0 right-0 w-32 h-32 bg-linear-to-br ${colorAccent} opacity-0 group-hover:opacity-20 blur-3xl transition-all duration-500`}
+        />
 
         {/* Content */}
         <div className="absolute inset-0 flex flex-col justify-between p-6 text-white">
@@ -100,10 +93,11 @@ export default async function CategoriesPage() {
                 {cat.name}
               </h3>
               <p className="text-white/80 text-sm font-medium">
-                {cat._count?.products || 0} {cat._count?.products === 1 ? "item" : "items"}
+                {cat._count?.products || 0}{" "}
+                {cat._count?.products === 1 ? "item" : "items"}
               </p>
             </div>
-            
+
             <div className="flex items-center gap-2 text-sm font-semibold group-hover:gap-3 transition-all duration-300">
               <span>Explore Collection</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -128,7 +122,8 @@ export default async function CategoriesPage() {
             All Categories
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Explore our complete collection of premium products, gifts, and groceries
+            Explore our complete collection of premium products, gifts, and
+            groceries
           </p>
         </div>
       </section>
@@ -140,7 +135,9 @@ export default async function CategoriesPage() {
             <div className="mb-12">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 mb-4">
                 <div className="w-2 h-2 rounded-full bg-blue-600" />
-                <span className="text-sm font-semibold text-blue-600">CATEGORY</span>
+                <span className="text-sm font-semibold text-blue-600">
+                  CATEGORY
+                </span>
               </div>
               <h2 className="text-4xl font-bold text-gray-900 mb-3">
                 Products
@@ -151,7 +148,11 @@ export default async function CategoriesPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {productCategories.map((cat) => (
-                <CategoryCard key={cat.id} cat={cat} colorAccent="from-purple-500 to-blue-500" />
+                <CategoryCard
+                  key={cat.id}
+                  cat={cat}
+                  colorAccent="from-purple-500 to-blue-500"
+                />
               ))}
             </div>
           </div>
@@ -165,7 +166,9 @@ export default async function CategoriesPage() {
             <div className="mb-12">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-100 mb-4">
                 <div className="w-2 h-2 rounded-full bg-rose-600" />
-                <span className="text-sm font-semibold text-rose-600">CATEGORY</span>
+                <span className="text-sm font-semibold text-rose-600">
+                  CATEGORY
+                </span>
               </div>
               <h2 className="text-4xl font-bold text-gray-900 mb-3">
                 Premium Gifts
@@ -176,7 +179,11 @@ export default async function CategoriesPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {giftCategories.map((cat) => (
-                <CategoryCard key={cat.id} cat={cat} colorAccent="from-rose-500 to-pink-500" />
+                <CategoryCard
+                  key={cat.id}
+                  cat={cat}
+                  colorAccent="from-rose-500 to-pink-500"
+                />
               ))}
             </div>
           </div>
@@ -190,7 +197,9 @@ export default async function CategoriesPage() {
             <div className="mb-12">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-100 mb-4">
                 <div className="w-2 h-2 rounded-full bg-green-600" />
-                <span className="text-sm font-semibold text-green-600">CATEGORY</span>
+                <span className="text-sm font-semibold text-green-600">
+                  CATEGORY
+                </span>
               </div>
               <h2 className="text-4xl font-bold text-gray-900 mb-3">
                 Fresh Groceries
@@ -201,7 +210,11 @@ export default async function CategoriesPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {groceryCategories.map((cat) => (
-                <CategoryCard key={cat.id} cat={cat} colorAccent="from-green-500 to-emerald-500" />
+                <CategoryCard
+                  key={cat.id}
+                  cat={cat}
+                  colorAccent="from-green-500 to-emerald-500"
+                />
               ))}
             </div>
           </div>
@@ -216,7 +229,8 @@ export default async function CategoriesPage() {
               No categories yet
             </p>
             <p className="text-gray-600">
-              Check back soon for our premium collection of products, gifts, and groceries.
+              Check back soon for our premium collection of products, gifts, and
+              groceries.
             </p>
           </div>
         </section>

@@ -1,189 +1,156 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowRight,
-  Sparkles,
-  Gift,
-  ShoppingBag,
-  Home,
-  Star,
-  TrendingUp,
-  Heart,
-} from "lucide-react";
+import { ArrowRight, Zap, Package, Leaf } from "lucide-react";
 
 const collections = [
   {
     id: 1,
     name: "Premium Gifts",
-    description: "Thoughtfully curated gift selections for every occasion",
-    icon: Gift,
-    color: "from-rose-500 to-pink-500",
-    badge: "Popular",
-    items: "500+ Items",
-    rating: "4.9",
+    description: "Curated gift selections crafted for moments that matter",
+    color: "from-orange-600 to-red-600",
+    textColor: "text-orange-600",
+    bgColor: "bg-orange-50",
     href: "/gift",
+    count: "500+ items",
   },
   {
     id: 2,
     name: "Fresh Groceries",
-    description: "Quality essentials delivered straight to your door",
-    icon: ShoppingBag,
-    color: "from-green-500 to-emerald-500",
-    badge: "New",
-    items: "1000+ Items",
-    rating: "4.8",
+    description: "Essential quality produce sourced with care",
+    color: "from-emerald-600 to-green-600",
+    textColor: "text-emerald-600",
+    bgColor: "bg-emerald-50",
     href: "/groceries",
+    count: "1000+ items",
   },
   {
     id: 3,
-    name: "Home & Living",
-    description: "Everything you need to make your space perfect",
-    icon: Home,
-    color: "from-blue-500 to-indigo-500",
-    badge: "Trending",
-    items: "750+ Items",
-    rating: "4.9",
-    href: "/categories",
+    name: "Premium Products",
+    description: "Thoughtfully selected items for modern living",
+    color: "from-slate-700 to-slate-900",
+    textColor: "text-slate-700",
+    bgColor: "bg-slate-50",
+    href: "/product",
+    count: "750+ items",
   },
-];
-
-const features = [
-  { icon: TrendingUp, text: "Fast Delivery" },
-  { icon: Heart, text: "Handpicked Quality" },
-  { icon: Star, text: "Gift Wrapping Available" },
 ];
 
 export default function CategoryShowcase() {
   return (
-    <section className="py-24 bg-linear-to-br from-slate-50 via-purple-50 to-pink-50 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-300/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-blue-300/20 rounded-full blur-3xl animate-pulse delay-500" />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section className="py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-16 text-center">
-          <div className="inline-flex items-center gap-2 mb-5 px-5 py-2.5 rounded-full bg-white shadow-md border border-purple-100">
-            <Sparkles className="w-4 h-4 text-purple-600 animate-pulse" />
-            <span className="text-sm font-bold tracking-wide text-purple-900">
-              SHOP BY COLLECTION
+        <div className="mb-16">
+          <div className="mb-4">
+            <span className="text-sm font-semibold text-slate-500 uppercase tracking-widest">
+              Shop Collections
             </span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-linear-to-r from-purple-600 via-pink-600 to-purple-600 mb-4">
-            Explore Our Curated Collections
+          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+            Discover Our Collections
           </h2>
-          <p className="text-xl text-gray-700 max-w-2xl mx-auto font-medium">
-            Discover carefully selected collections designed to meet all your
-            lifestyle needs
+          <p className="text-lg text-slate-600 max-w-2xl font-light">
+            Handpicked selections tailored to elevate your lifestyle experience
           </p>
-
-          {/* Features Bar */}
-          <div className="flex flex-wrap justify-center gap-6 mt-8">
-            {features.map((feature, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-gray-700">
-                <feature.icon className="w-5 h-5 text-purple-600" />
-                <span className="text-sm font-semibold">{feature.text}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Collections Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          {collections.map((collection, idx) => {
-            const IconComponent = collection.icon;
-            return (
-              <Link
-                key={collection.id}
-                href={collection.href}
-                className="group relative"
-                style={{ animationDelay: `${idx * 100}ms` }}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {collections.map((collection) => (
+            <Link
+              key={collection.id}
+              href={collection.href}
+              className="group relative overflow-hidden"
+            >
+              <div
+                className={`relative ${collection.bgColor} rounded-2xl p-8 transition-all duration-500 hover:shadow-xl h-full flex flex-col justify-between`}
               >
-                {/* Glow Effect */}
+                {/* Top accent line */}
                 <div
-                  className={`absolute -inset-1 bg-linear-to-r ${collection.color} rounded-3xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500`}
+                  className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${collection.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500`}
                 />
 
-                <div className="relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 h-full flex flex-col border border-gray-100 group-hover:border-transparent group-hover:-translate-y-2">
-                  {/* Badge */}
-                  <div className="absolute top-6 right-6">
+                <div>
+                  {/* Count badge */}
+                  <div className="inline-block mb-4">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold text-white bg-linear-to-r ${collection.color} shadow-md`}
+                      className={`text-xs font-semibold ${collection.textColor} uppercase tracking-widest`}
                     >
-                      {collection.badge}
+                      {collection.count}
                     </span>
                   </div>
 
-                  {/* Icon with Floating Animation */}
-                  <div className="relative mb-6">
-                    <div
-                      className={`w-20 h-20 rounded-2xl bg-linear-to-br ${collection.color} flex items-center justify-center shadow-xl group-hover:shadow-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}
-                    >
-                      <IconComponent className="w-10 h-10 text-white" />
-                    </div>
-                    {/* Decorative Circle */}
-                    <div
-                      className={`absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-linear-to-br ${collection.color} opacity-20 group-hover:scale-150 transition-transform duration-500`}
-                    />
-                  </div>
+                  {/* Title */}
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-gray-900 group-hover:to-gray-700 transition-all duration-300">
+                    {collection.name}
+                  </h3>
 
-                  {/* Content */}
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-purple-600 group-hover:to-pink-600 transition-all duration-300">
-                      {collection.name}
-                    </h3>
-                    <p className="text-gray-600 text-base leading-relaxed mb-4">
-                      {collection.description}
-                    </p>
+                  {/* Description */}
+                  <p className="text-slate-600 text-base leading-relaxed mb-6">
+                    {collection.description}
+                  </p>
+                </div>
 
-                    {/* Stats */}
-                    <div className="flex items-center gap-4 mb-6 text-sm">
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="font-semibold text-gray-700">
-                          {collection.rating}
-                        </span>
-                      </div>
-                      <div className="w-1 h-1 rounded-full bg-gray-300" />
-                      <span className="text-gray-600 font-medium">
-                        {collection.items}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* CTA Button */}
-                  <div
-                    className={`flex items-center justify-between px-5 py-3 rounded-xl bg-linear-to-r ${collection.color} text-white font-semibold group-hover:shadow-lg transition-all duration-300`}
+                {/* CTA */}
+                <div className="flex items-center gap-2 group-hover:gap-4 transition-all duration-300">
+                  <span
+                    className={`font-semibold text-sm ${collection.textColor}`}
                   >
-                    <span>Shop Now</span>
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
+                    Explore Collection
+                  </span>
+                  <div
+                    className={`w-5 h-5 rounded-full bg-linear-to-r ${collection.color} flex items-center justify-center group-hover:translate-x-1 transition-transform duration-300`}
+                  >
+                    <ArrowRight className="w-3 h-3 text-white" />
                   </div>
                 </div>
-              </Link>
-            );
-          })}
+              </div>
+            </Link>
+          ))}
         </div>
 
-        {/* Bottom CTA Section */}
-        <div className="text-center bg-white rounded-3xl p-10 shadow-xl border border-gray-100">
-          <h3 className="text-2xl font-bold text-gray-900 mb-3">
-            Can't Find What You're Looking For?
-          </h3>
-          <p className="text-gray-600 mb-6 max-w-xl mx-auto">
-            Browse our complete catalog with hundreds of products across all
-            categories
-          </p>
-          <Link
-            href="/categories"
-            className="inline-flex items-center gap-3 px-10 py-4 bg-linear-to-r from-purple-600 via-pink-600 to-purple-600 text-white font-bold rounded-full hover:shadow-2xl hover:shadow-purple-500/50 hover:scale-105 transition-all duration-300 group text-lg"
-          >
-            Browse All Categories
-            <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
-          </Link>
+        {/* Benefits */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12 border-t border-b border-slate-200">
+          <div className="flex items-start gap-4">
+            <div className="shrink-0 mt-1">
+              <Zap className="w-5 h-5 text-slate-700" />
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-1">
+                Fast Delivery
+              </h4>
+              <p className="text-sm text-slate-600">
+                Quick, reliable shipping to your door
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <div className="shrink-0 mt-1">
+              <Package className="w-5 h-5 text-slate-700" />
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-1">
+                Quality Assured
+              </h4>
+              <p className="text-sm text-slate-600">
+                Every item carefully vetted and checked
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <div className="shrink-0 mt-1">
+              <Leaf className="w-5 h-5 text-slate-700" />
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-1">Sustainable</h4>
+              <p className="text-sm text-slate-600">
+                Eco-conscious choices for conscious buyers
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -28,6 +28,14 @@ export default function AdminDashboard() {
           ? await productsRes.json()
           : { products: [] };
 
+        const giftsRes = await fetch("/api/gifts");
+        const giftsData = giftsRes.ok ? await giftsRes.json() : { gifts: [] };
+
+        const groceriesRes = await fetch("/api/groceries");
+        const groceriesData = groceriesRes.ok
+          ? await groceriesRes.json()
+          : { groceries: [] };
+
         const ordersRes = await fetch("/api/orders");
         const ordersData = ordersRes.ok
           ? await ordersRes.json()
@@ -38,8 +46,11 @@ export default function AdminDashboard() {
 
         const orders = ordersData.orders || [];
         const products = productsData.products || [];
+        const gifts = giftsData.gifts || [];
+        const groceries = groceriesData.groceries || [];
         const users = usersData.users || [];
 
+        const allItems = [...products, ...gifts, ...groceries];
         const totalRevenue = orders.reduce(
           (sum: number, order: any) => sum + (order.total || 0),
           0
@@ -52,12 +63,12 @@ export default function AdminDashboard() {
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
 
-        const bestSellers = products
+        const bestSellers = allItems
           .sort((a: any, b: any) => (b.ordersCount || 0) - (a.ordersCount || 0))
-          .slice(0, 3);
+          .slice(0, 5);
 
         setData({
-          totalProducts: products.length,
+          totalProducts: allItems.length,
           totalOrders: orders.length,
           totalRevenue: totalRevenue,
           totalCustomers: users.length,

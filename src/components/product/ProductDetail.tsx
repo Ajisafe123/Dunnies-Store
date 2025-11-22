@@ -13,6 +13,7 @@ import {
   Share2,
   Star,
   Loader,
+  ThumbsUp,
 } from "lucide-react";
 import { ProductRecord } from "@/Data/products";
 import { useCart } from "@/context/CartContext";
@@ -51,9 +52,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const [likes, setLikes] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [loadingLikes, setLoadingLikes] = useState(true);
+  const [commentLikes, setCommentLikes] = useState<Record<string, { count: number; isLiked: boolean }>>({});
   const [userId] = useState(
     typeof window !== "undefined" ? localStorage.getItem("userId") : null
   );
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -79,6 +82,37 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   }, [product.id]);
 
   useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const response = await fetch(`${getBaseUrl()}/api/auth/current`);
+        if (response.ok) {
+          const data = await response.json();
+          setUserRole(data.user?.role || null);
+        } else {
+          // If response is not ok, user is not authenticated
+          setUserRole(null);
+        }
+      } catch (error) {
+        console.error("Error fetching user role:", error);
+        setUserRole(null);
+      }
+    };
+
+    // Always fetch user role to check current auth status
+    fetchUserRole();
+
+    // Listen for visibility changes to refresh auth when user returns
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchUserRole();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  useEffect(() => {
     const fetchLikes = async () => {
       try {
         setLoadingLikes(true);
@@ -101,6 +135,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   }, [product.id, userId]);
 
   const handleToggleLike = async () => {
+    if (userRole === "admin") {
+      alert("Admin users cannot like products");
+      return;
+    }
+
     if (!userId) {
       router.push("/login");
       return;
@@ -122,6 +161,37 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       }
     } catch (error) {
       console.error("Error toggling like:", error);
+    }
+  };
+
+  const handleToggleCommentLike = async (commentId: string) => {
+    // Get fresh userId from localStorage
+    const currentUserId = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+    
+    if (!currentUserId) {
+      router.push("/login");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${getBaseUrl()}/api/comments/likes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: currentUserId, commentId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCommentLikes((prev) => ({
+          ...prev,
+          [commentId]: {
+            count: data.likeCount || (prev[commentId]?.count || 0) + (data.liked ? 1 : -1),
+            isLiked: data.liked,
+          },
+        }));
+      }
+    } catch (error) {
+      console.error("Error toggling comment like:", error);
     }
   };
 
@@ -172,6 +242,12 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (userRole === "admin") {
+      alert("Admin users cannot comment on products");
+      return;
+    }
+
     if (!userId) {
       router.push("/login");
       return;
@@ -424,6 +500,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           </button>
         </div>
 
+        {userRole !== "admin" && userId ? (
         <form
           onSubmit={handleReviewSubmit}
           className="rounded-2xl border border-gray-200 p-4 space-y-4"
@@ -456,12 +533,26 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           />
           <button
             type="submit"
-            className="inline-flex items-center gap-2 rounded-full bg-purple-600 text-white px-5 py-2.5 font-semibold hover:bg-purple-700 transition"
+            disabled={submittingComment}
+            className="inline-flex items-center gap-2 rounded-full bg-purple-600 text-white px-5 py-2.5 font-semibold hover:bg-purple-700 transition disabled:opacity-50"
           >
             <MessageSquare className="w-4 h-4" />
-            Post comment
+            {submittingComment ? "Posting..." : "Post comment"}
           </button>
         </form>
+        ) : (
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-sm text-blue-700 flex items-center justify-between">
+            <span>{userRole === "admin" ? "Admin users cannot post comments on products." : "Please log in to comment on this product"}</span>
+            {!userId && (
+              <button
+                onClick={() => router.push("/login")}
+                className="ml-4 bg-blue-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-blue-700 transition text-xs"
+              >
+                Login
+              </button>
+            )}
+          </div>
+        )}
 
         <div className="space-y-4">
           {loadingComments ? (
@@ -515,6 +606,17 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       ))}
                     </div>
                     <p className="text-gray-700 text-sm">{review.text}</p>
+                    <button
+                      onClick={() => handleToggleCommentLike(review.id)}
+                      className={`flex items-center gap-1.5 text-xs mt-3 px-3 py-1.5 rounded-full transition font-medium ${
+                        commentLikes[review.id]?.isLiked
+                          ? "text-blue-600 bg-blue-50 hover:bg-blue-100"
+                          : "text-gray-600 bg-gray-100 hover:bg-gray-200"
+                      }`}
+                    >
+                      <ThumbsUp className={`w-4 h-4 ${commentLikes[review.id]?.isLiked ? "fill-current" : ""}`} />
+                      <span>{commentLikes[review.id]?.count || 0}</span>
+                    </button>
                   </div>
                 </div>
               ))}

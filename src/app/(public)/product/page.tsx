@@ -67,7 +67,7 @@ async function fetchProductsByCategory(
           where: {},
           orderBy: { createdAt: "desc" },
         });
-        return gifts.map((gift) =>
+        return gifts.map((gift: any) =>
           adaptProductRecord(
             {
               id: gift.id,
@@ -87,7 +87,7 @@ async function fetchProductsByCategory(
           where: {},
           orderBy: { createdAt: "desc" },
         });
-        return groceries.map((grocery) =>
+        return groceries.map((grocery: any) =>
           adaptProductRecord(
             {
               id: grocery.id,
@@ -109,7 +109,7 @@ async function fetchProductsByCategory(
           include: { category: true },
           orderBy: { createdAt: "desc" },
         });
-        return products.map((product) =>
+        return products.map((product: any) =>
           adaptProductRecord({
             id: product.id,
             name: product.name,
@@ -140,7 +140,7 @@ async function fetchProductsByCategory(
 
     // Add products from Product table
     allProducts.push(
-      ...products.map((product) =>
+      ...products.map((product: any) =>
         adaptProductRecord({
           id: product.id,
           name: product.name,
@@ -154,7 +154,7 @@ async function fetchProductsByCategory(
 
     // Add gifts
     allProducts.push(
-      ...gifts.map((gift) =>
+      ...gifts.map((gift: any) =>
         adaptProductRecord(
           {
             id: gift.id,
@@ -173,7 +173,7 @@ async function fetchProductsByCategory(
 
     // Add groceries
     allProducts.push(
-      ...groceries.map((grocery) =>
+      ...groceries.map((grocery: any) =>
         adaptProductRecord(
           {
             id: grocery.id,
