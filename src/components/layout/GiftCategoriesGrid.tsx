@@ -28,7 +28,9 @@ export default function GiftCategoriesGrid() {
       try {
         setLoading(true);
         // Add cache-busting parameter to force fresh data
-        const response = await fetch(`/api/categories?type=gift&t=${Date.now()}`);
+        const response = await fetch(
+          `/api/categories?type=gift&t=${Date.now()}`
+        );
         if (response.ok) {
           const data = await response.json();
           setCategories(data.categories || []);

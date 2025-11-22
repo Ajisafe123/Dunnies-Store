@@ -3,7 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
-import { ChevronLeft, ChevronRight, ShoppingCart, ArrowRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ShoppingCart,
+  ArrowRight,
+} from "lucide-react";
 import Loader from "@/components/ui/Loader";
 
 interface Category {
@@ -28,7 +33,9 @@ export default function GroceryCategoriesGrid() {
       try {
         setLoading(true);
         // Add cache-busting parameter to force fresh data
-        const response = await fetch(`/api/categories?type=grocery&t=${Date.now()}`);
+        const response = await fetch(
+          `/api/categories?type=grocery&t=${Date.now()}`
+        );
         if (response.ok) {
           const data = await response.json();
           setCategories(data.categories || []);

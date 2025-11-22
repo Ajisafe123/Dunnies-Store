@@ -29,7 +29,19 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ categories });
+    // Filter out categories with 0 products on the backend
+    const filteredCategories = categories.filter(
+      (cat) => (cat._count?.products || 0) > 0
+    );
+
+    const response = NextResponse.json({ categories: filteredCategories });
+    
+    // Prevent caching
+    response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+    response.headers.set("Pragma", "no-cache");
+    response.headers.set("Expires", "0");
+    
+    return response;
   } catch (error) {
     console.error("[CATEGORIES_GET]", error);
     return NextResponse.json(

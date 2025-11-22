@@ -104,27 +104,36 @@ export default function Header() {
     const fetchCategories = async () => {
       try {
         // Fetch product categories
-        const productRes = await fetch(`/api/categories?type=product&t=${Date.now()}`, {
-          cache: "no-store",
-        });
+        const productRes = await fetch(
+          `/api/categories?type=product&t=${Date.now()}`,
+          {
+            cache: "no-store",
+          }
+        );
         if (productRes.ok && isSubscribed) {
           const data = await productRes.json();
           setCategories(data.categories || []);
         }
 
         // Fetch gift categories
-        const giftRes = await fetch(`/api/categories?type=gift&t=${Date.now()}`, {
-          cache: "no-store",
-        });
+        const giftRes = await fetch(
+          `/api/categories?type=gift&t=${Date.now()}`,
+          {
+            cache: "no-store",
+          }
+        );
         if (giftRes.ok && isSubscribed) {
           const data = await giftRes.json();
           setGiftCategories(data.categories || []);
         }
 
         // Fetch grocery categories
-        const groceryRes = await fetch(`/api/categories?type=grocery&t=${Date.now()}`, {
-          cache: "no-store",
-        });
+        const groceryRes = await fetch(
+          `/api/categories?type=grocery&t=${Date.now()}`,
+          {
+            cache: "no-store",
+          }
+        );
         if (groceryRes.ok && isSubscribed) {
           const data = await groceryRes.json();
           setGroceryCategories(data.categories || []);

@@ -33,14 +33,13 @@ export default function GiftCategoryScroll() {
       try {
         setLoading(true);
         // Add cache-busting parameter to force fresh data
-        const response = await fetch(`/api/categories?type=product&t=${Date.now()}`);
+        const response = await fetch(
+          `/api/categories?type=product&t=${Date.now()}`
+        );
         if (response.ok) {
           const data = await response.json();
-          // Filter out categories with 0 products before setting state
-          const filtered = (data.categories || []).filter(
-            (cat: Category) => (cat._count?.products || 0) > 0
-          );
-          setCategories(filtered);
+          // API already filters out empty categories
+          setCategories(data.categories || []);
         }
       } catch (error) {
         console.error("Failed to fetch categories:", error);
@@ -199,46 +198,46 @@ export default function GiftCategoryScroll() {
               categories
                 .filter((cat) => (cat._count?.products || 0) > 0)
                 .map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={`/categories/${cat.id}`}
-                  className="flex-none w-44 sm:w-48 snap-start group/card"
-                >
-                  <div className="relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-violet-300 hover:-translate-y-1">
-                    <div className="w-full h-44 sm:h-48 relative overflow-hidden bg-gray-200">
-                      {cat.imageUrl ? (
-                        <Image
-                          src={cat.imageUrl}
-                          alt={cat.name}
-                          fill
-                          sizes="(max-width: 640px) 44vw, 12rem"
-                          className="object-cover group-hover/card:scale-110 transition-transform duration-700"
-                          unoptimized
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-purple-100 to-pink-100">
-                          <span className="text-gray-400">No image</span>
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent opacity-60 group-hover/card:opacity-80 transition-opacity" />
+                  <Link
+                    key={cat.id}
+                    href={`/categories/${cat.id}`}
+                    className="flex-none w-44 sm:w-48 snap-start group/card"
+                  >
+                    <div className="relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-violet-300 hover:-translate-y-1">
+                      <div className="w-full h-44 sm:h-48 relative overflow-hidden bg-gray-200">
+                        {cat.imageUrl ? (
+                          <Image
+                            src={cat.imageUrl}
+                            alt={cat.name}
+                            fill
+                            sizes="(max-width: 640px) 44vw, 12rem"
+                            className="object-cover group-hover/card:scale-110 transition-transform duration-700"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-purple-100 to-pink-100">
+                            <span className="text-gray-400">No image</span>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent opacity-60 group-hover/card:opacity-80 transition-opacity" />
 
-                      <div className="absolute bottom-3 left-3 right-3">
-                        <div className="bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 shadow-lg">
-                          <h3 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-1">
-                            {cat.name}
-                          </h3>
-                          <div className="flex items-center justify-between">
-                            <p className="text-violet-600 text-xs font-semibold">
-                              {cat._count?.products || 0} items
-                            </p>
-                            <ArrowRight className="w-3.5 h-3.5 text-violet-600 group-hover/card:translate-x-1 transition-transform" />
+                        <div className="absolute bottom-3 left-3 right-3">
+                          <div className="bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 shadow-lg">
+                            <h3 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2 mb-1">
+                              {cat.name}
+                            </h3>
+                            <div className="flex items-center justify-between">
+                              <p className="text-violet-600 text-xs font-semibold">
+                                {cat._count?.products || 0} items
+                              </p>
+                              <ArrowRight className="w-3.5 h-3.5 text-violet-600 group-hover/card:translate-x-1 transition-transform" />
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              ))
+                  </Link>
+                ))
             ) : (
               <div className="w-full text-center py-8 text-gray-500">
                 No categories available

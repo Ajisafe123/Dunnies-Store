@@ -75,7 +75,7 @@ export default async function WorldwideFavoritesPage() {
   const worldFavorites = await fetchWorldwideFavorites();
 
   return (
-    <section className="bg-gradient-to-b from-purple-900 via-purple-800 to-purple-700 text-white py-12 px-4 sm:px-6 lg:px-8">
+    <section className="bg-linear-to-b from-purple-900 via-purple-800 to-purple-700 text-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10">
         <header className="rounded-[48px] border border-white/20 bg-white/5 backdrop-blur p-8 sm:p-12 shadow-2xl space-y-6">
           <p className="text-xs font-semibold uppercase tracking-[0.5em] text-purple-200">
@@ -144,7 +144,7 @@ export default async function WorldwideFavoritesPage() {
           <ProductList products={worldFavorites} cols={4} gap={8} />
         </div>
 
-        <div className="rounded-[32px] border border-white/20 bg-white/10 backdrop-blur p-8 space-y-6">
+        <div className="rounded-4xl border border-white/20 bg-white/10 backdrop-blur p-8 space-y-6">
           <h3 className="text-2xl font-semibold">
             Need a direction? Start here.
           </h3>
