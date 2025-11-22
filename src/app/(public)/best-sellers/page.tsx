@@ -1,23 +1,34 @@
 import type { Metadata } from "next";
 import ProductList from "@/components/product/ProductList";
-import { productsCatalog } from "@/Data/products";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
-const bestSellers = [...productsCatalog]
-  .sort((a, b) => b.reviewsCount - a.reviewsCount)
-  .slice(0, 18)
-  .map((product) => ({
-    id: product.id,
-    name: product.name,
-    description: product.description,
-    price: product.price,
-    originalPrice: product.originalPrice,
-    rating: product.rating,
-    reviews: product.reviewsCount,
-    image: product.image,
-    tag: product.tag,
-    href: product.href,
-  }));
+async function fetchBestSellers() {
+  try {
+    const products = await prisma.product.findMany({
+      include: {
+        category: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 18,
+    });
+
+    return products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description || "",
+      price: product.price,
+      rating: 4.5,
+      reviews: 0,
+      image: product.imageUrl || "",
+      tag: product.category?.name || "Product",
+      href: `/product/${product.id}`,
+    }));
+  } catch (error) {
+    console.error("Failed to fetch best sellers:", error);
+    return [];
+  }
+}
 
 const promiseCards = [
   {
@@ -43,7 +54,9 @@ export const metadata: Metadata = {
     "Shop the most-loved products on Dunnis Stores. Updated daily with verified reviews and repeat purchases.",
 };
 
-export default function BestSellersPage() {
+export default async function BestSellersPage() {
+  const bestSellers = await fetchBestSellers();
+
   return (
     <section className="bg-linear-to-b from-purple-50 via-white to-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10">

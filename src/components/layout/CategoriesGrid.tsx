@@ -32,10 +32,15 @@ export default function GiftCategoryScroll() {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/categories");
+        // Add cache-busting parameter to force fresh data
+        const response = await fetch(`/api/categories?type=product&t=${Date.now()}`);
         if (response.ok) {
           const data = await response.json();
-          setCategories(data.categories || []);
+          // Filter out categories with 0 products before setting state
+          const filtered = (data.categories || []).filter(
+            (cat: Category) => (cat._count?.products || 0) > 0
+          );
+          setCategories(filtered);
         }
       } catch (error) {
         console.error("Failed to fetch categories:", error);
@@ -45,6 +50,11 @@ export default function GiftCategoryScroll() {
     };
 
     fetchCategories();
+
+    // Refetch categories every 30 seconds to pick up deletions
+    const interval = setInterval(fetchCategories, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -186,7 +196,9 @@ export default function GiftCategoryScroll() {
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {categories.length > 0 ? (
-              categories.map((cat) => (
+              categories
+                .filter((cat) => (cat._count?.products || 0) > 0)
+                .map((cat) => (
                 <Link
                   key={cat.id}
                   href={`/categories/${cat.id}`}

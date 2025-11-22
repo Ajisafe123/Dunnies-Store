@@ -8,14 +8,20 @@ type ProductDetailPageProps = {
 
 async function getProductById(id: string) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    const response = await fetch(`${baseUrl}/api/products/${id}`, {
-      cache: "no-store",
-    });
+    const response = await fetch(
+      new URL(
+        `/api/products/${id}`,
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+      ).toString(),
+      {
+        cache: "no-store",
+      }
+    );
     if (!response.ok) return null;
     const data = await response.json();
     return data.product;
-  } catch {
+  } catch (error) {
+    console.error("Failed to fetch product:", error);
     return null;
   }
 }

@@ -6,12 +6,21 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const priority = searchParams.get("priority");
+    const type = searchParams.get("type");
 
     const where: any = {};
-    if (priority) where.priority = priority;
+    
+    // Filter by type if provided
+    if (type) {
+      where.type = type;
+    }
+    
+    if (priority) {
+      where.priority = priority;
+    }
 
     const categories = await prisma.category.findMany({
-      where,
+      where: Object.keys(where).length > 0 ? where : {},
       include: {
         _count: {
           select: { products: true },
@@ -43,6 +52,7 @@ export async function POST(request: NextRequest) {
         name: formData.get("name"),
         description: formData.get("description"),
         priority: formData.get("priority"),
+        type: formData.get("type"),
         image: formData.get("image"),
       };
     } else {
@@ -52,7 +62,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, description, priority, image } = body;
+    const { name, description, priority, type, image } = body;
 
     if (!name) {
       return NextResponse.json(
@@ -61,8 +71,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const categoryType = type || "product";
+
     const existingCategory = await prisma.category.findUnique({
-      where: { name },
+      where: { name_type: { name, type: categoryType } },
     });
 
     if (existingCategory) {
@@ -87,6 +99,7 @@ export async function POST(request: NextRequest) {
 
     const categoryData: any = {
       name,
+      type: categoryType,
       description: description || null,
       imageUrl: imageUrl || null,
     };

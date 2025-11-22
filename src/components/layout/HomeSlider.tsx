@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Gift, ArrowRight } from "lucide-react";
-import Loader from "@/components/ui/Loader";
 
 interface Slide {
   title: string;
@@ -109,12 +108,8 @@ export default function HeroSlider() {
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  if (loading || slides.length === 0) {
-    return (
-      <section className="relative h-[500px] sm:h-[600px] overflow-hidden bg-linear-to-r from-purple-900 to-pink-900 flex items-center justify-center">
-        <Loader text="Loading hero section..." />
-      </section>
-    );
+  if (slides.length === 0) {
+    return null;
   }
 
   return (

@@ -10,6 +10,7 @@ interface Category {
   id: string;
   name: string;
   description: string | null;
+  type: string;
   imageUrl?: string;
   _count?: {
     products: number;
@@ -23,6 +24,9 @@ export default function ManageCategoriesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [selectedType, setSelectedType] = useState<
+    "product" | "gift" | "grocery"
+  >("product");
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     categoryId: string | null;
@@ -34,10 +38,10 @@ export default function ManageCategoriesPage() {
   });
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const fetchCategories = async () => {
+  const fetchCategories = async (type: string = "product") => {
     try {
       setLoading(true);
-      const response = await fetch("/api/categories");
+      const response = await fetch(`/api/categories?type=${type}`);
       if (!response.ok) throw new Error("Failed to fetch categories");
       const data = await response.json();
       setCategories(data.categories || []);
@@ -53,8 +57,8 @@ export default function ManageCategoriesPage() {
   };
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    fetchCategories(selectedType);
+  }, [selectedType]);
 
   const handleEditCategory = (category: Category) => {
     setEditingCategory(category);
@@ -98,7 +102,7 @@ export default function ManageCategoriesPage() {
             Categories
           </h1>
           <p className="text-gray-600 text-lg mt-2">
-            Organize products into categories
+            Organize products, gifts, and groceries into categories
           </p>
         </div>
         <button
@@ -108,6 +112,22 @@ export default function ManageCategoriesPage() {
           <Plus className="w-5 h-5" />
           Add Category
         </button>
+      </div>
+
+      <div className="flex gap-2">
+        {(["product", "gift", "grocery"] as const).map((type) => (
+          <button
+            key={type}
+            onClick={() => setSelectedType(type)}
+            className={`px-4 py-2 rounded-full font-semibold transition-all ${
+              selectedType === type
+                ? "bg-purple-600 text-white shadow-lg"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </button>
+        ))}
       </div>
 
       {error && (
@@ -200,8 +220,9 @@ export default function ManageCategoriesPage() {
           setIsModalOpen(false);
           setEditingCategory(null);
         }}
-        onSuccess={fetchCategories}
+        onSuccess={() => fetchCategories(selectedType)}
         editingCategory={editingCategory}
+        selectedType={selectedType}
       />
 
       <DeleteModal

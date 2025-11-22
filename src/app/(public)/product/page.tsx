@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import ProductsCatalog from "@/components/product/ProductsCatalog";
 import { type ProductRecord } from "@/Data/products";
-import { getBaseUrl } from "@/utils/url";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "All Products – Dunnis Stores",
@@ -38,21 +38,30 @@ const adaptProductRecord = (product: ApiProduct): ProductRecord => ({
 
 async function fetchLiveProducts(): Promise<ProductRecord[]> {
   try {
-    const response = await fetch(`${getBaseUrl()}/api/products`, {
-      cache: "no-store",
+    const products = await prisma.product.findMany({
+      where: {
+        category: {
+          type: "product",
+        },
+      },
+      include: {
+        category: true,
+      },
+      orderBy: { createdAt: "desc" },
     });
 
-    if (!response.ok) {
-      return [];
-    }
-
-    const data = await response.json();
-    if (!Array.isArray(data.products)) {
-      return [];
-    }
-
-    return data.products.map(adaptProductRecord);
-  } catch {
+    return products.map((product) =>
+      adaptProductRecord({
+        id: product.id,
+        name: product.name,
+        description: product.description || "",
+        price: product.price,
+        imageUrl: product.imageUrl || "",
+        category: product.category?.name,
+      })
+    );
+  } catch (error) {
+    console.error("Failed to fetch products:", error);
     return [];
   }
 }
@@ -63,6 +72,17 @@ export default async function ProductListingPage() {
   return (
     <section className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10">
+        <div>
+          <p className="text-sm font-semibold text-purple-600 uppercase tracking-widest">
+            All Products
+          </p>
+          <h1 className="text-4xl font-bold text-gray-900 mt-1">
+            Browse Our Complete Collection
+          </h1>
+          <p className="text-slate-600 mt-2">
+            Discover our full range of products curated for quality and value.
+          </p>
+        </div>
         {catalog.length > 0 ? (
           <ProductsCatalog products={catalog} />
         ) : (

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Heart, ShoppingCart, Star, Eye } from "lucide-react";
+import { useState } from "react";
+import { Heart, ShoppingCart, Star, Eye, Loader2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/hooks/useWishlist";
 
@@ -34,6 +35,7 @@ export default function ProductCard({
   href = "#",
   className = "",
 }: ProductProps) {
+  const [isNavigating, setIsNavigating] = useState(false);
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
@@ -57,12 +59,20 @@ export default function ProductCard({
   const wishlisted = isInWishlist(id);
 
   const computedHref =
-    href && href !== "#" ? href : typeof id === "string" ? `/product/${id}` : "#";
+    href && href !== "#"
+      ? href
+      : typeof id === "string"
+      ? `/product/${id}`
+      : "#";
 
   const CardWrapper = ({ children }: { children: React.ReactNode }) => {
     if (!computedHref || computedHref === "#")
       return <div className="cursor-default">{children}</div>;
-    return <Link href={computedHref}>{children}</Link>;
+    return (
+      <Link href={computedHref} onClick={() => setIsNavigating(true)}>
+        {children}
+      </Link>
+    );
   };
 
   const WishlistButton = ({ className = "" }: { className?: string }) => (
@@ -76,7 +86,9 @@ export default function ProductCard({
       aria-label="Toggle wishlist"
     >
       <Heart
-        className={`w-4 h-4 ${wishlisted ? "fill-red-500" : "fill-transparent"}`}
+        className={`w-4 h-4 ${
+          wishlisted ? "fill-red-500" : "fill-transparent"
+        }`}
       />
     </button>
   );
@@ -86,6 +98,16 @@ export default function ProductCard({
       <div
         className={`group bg-white/95 backdrop-blur rounded-2xl overflow-hidden shadow-lg hover:shadow-purple-200/80 transition-all duration-500 border border-purple-100 hover:border-purple-300 relative flex flex-col h-full ${className}`}
       >
+        {isNavigating && (
+          <div className="absolute inset-0 z-50 bg-black/20 backdrop-blur-sm flex items-center justify-center rounded-2xl">
+            <div className="flex flex-col items-center gap-2">
+              <Loader2 className="w-6 h-6 text-white animate-spin" />
+              <span className="text-white text-xs font-semibold">
+                Loading...
+              </span>
+            </div>
+          </div>
+        )}
         <div className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-white to-purple-100/40 aspect-square">
           <img
             src={image}

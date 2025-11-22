@@ -1,26 +1,34 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ProductList from "@/components/product/ProductList";
-import { productsCatalog } from "@/Data/products";
+import { prisma } from "@/lib/prisma";
 
-const signatureExperiences = [...productsCatalog]
-  .filter((product) =>
-    ["Gifts", "Fashion", "Home", "Experiences"].includes(product.category)
-  )
-  .sort((a, b) => b.rating - a.rating)
-  .slice(0, 9)
-  .map((product) => ({
-    id: product.id,
-    name: product.name,
-    description: product.description,
-    price: product.price,
-    originalPrice: product.originalPrice,
-    rating: product.rating,
-    reviews: product.reviewsCount,
-    image: product.image,
-    tag: product.tag,
-    href: product.href,
-  }));
+async function fetchSignatureExperiences() {
+  try {
+    const products = await prisma.product.findMany({
+      include: {
+        category: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 9,
+    });
+
+    return products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description || "",
+      price: product.price,
+      rating: 4.5,
+      reviews: 0,
+      image: product.imageUrl || "",
+      tag: product.category?.name || "Experience",
+      href: `/product/${product.id}`,
+    }));
+  } catch (error) {
+    console.error("Failed to fetch signature experiences:", error);
+    return [];
+  }
+}
 
 const conciergePromises = [
   "White-glove packaging with handwritten notes on request",
@@ -34,7 +42,9 @@ export const metadata: Metadata = {
     "Let our concierge team do the thinking. Discover curated drops that feel personal, premium, and totally effortless.",
 };
 
-export default function SignatureExperiencesPage() {
+export default async function SignatureExperiencesPage() {
+  const signatureExperiences = await fetchSignatureExperiences();
+
   return (
     <section className="bg-linear-to-b from-purple-900 via-purple-800 to-purple-700 text-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-12">

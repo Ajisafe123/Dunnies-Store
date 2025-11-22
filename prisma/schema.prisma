@@ -27,14 +27,17 @@ model User {
 
 model Category {
   id          String   @id @default(cuid()) @map("_id")
-  name        String   @unique
+  name        String
   description String?
   imageUrl    String?
+  type        String   @default("product") // "product", "gift", "grocery"
   priority    String   @default("normal") // "popular", "trending", "new", "normal"
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
   products    Product[]
+  
+  @@unique([name, type])
 }
 
 model Product {

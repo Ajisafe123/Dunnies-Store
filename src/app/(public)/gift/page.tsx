@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import ProductsCatalog from "@/components/product/ProductsCatalog";
-import { productsCatalog, type ProductRecord } from "@/Data/products";
-import { getBaseUrl } from "@/utils/url";
-import Loader from "@/components/ui/Loader";
+import { type ProductRecord } from "@/Data/products";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Gifts – Dunnis Stores",
@@ -38,30 +37,30 @@ const adaptProductRecord = (product: ApiProduct): ProductRecord => ({
   reviews: [],
 });
 
-async function fetchGifts(): Promise<ProductRecord[] | null> {
+async function fetchGifts(): Promise<ProductRecord[]> {
   try {
-    const response = await fetch(`${getBaseUrl()}/api/gifts`, {
-      cache: "no-store",
+    const gifts = await prisma.gift.findMany({
+      orderBy: { createdAt: "desc" },
     });
 
-    if (!response.ok) {
-      return null;
-    }
-
-    const data = await response.json();
-    if (!Array.isArray(data.gifts)) {
-      return null;
-    }
-
-    return data.gifts.map(adaptProductRecord);
-  } catch {
-    return null;
+    return gifts.map((gift) =>
+      adaptProductRecord({
+        id: gift.id,
+        name: gift.name,
+        description: gift.description || "",
+        price: gift.price,
+        imageUrl: gift.imageUrl || "",
+        category: "Gift",
+      })
+    );
+  } catch (error) {
+    console.error("Failed to fetch gifts:", error);
+    return [];
   }
 }
 
 export default async function GiftPage() {
-  const gifts = await fetchGifts();
-  const catalog = gifts && gifts.length > 0 ? gifts : productsCatalog;
+  const catalog = await fetchGifts();
 
   return (
     <section className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -78,7 +77,15 @@ export default async function GiftPage() {
             collection of unique and meaningful items.
           </p>
         </div>
-        <ProductsCatalog products={catalog} />
+        {catalog.length > 0 ? (
+          <ProductsCatalog products={catalog} />
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">
+              No gifts available yet. Please check back soon!
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

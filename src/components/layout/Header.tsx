@@ -68,6 +68,8 @@ export default function Header() {
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [giftCategories, setGiftCategories] = useState<Category[]>([]);
+  const [groceryCategories, setGroceryCategories] = useState<Category[]>([]);
   const pathname = usePathname();
   const { items: wishlistItems } = useWishlist();
 
@@ -101,12 +103,31 @@ export default function Header() {
 
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/categories", {
+        // Fetch product categories
+        const productRes = await fetch(`/api/categories?type=product&t=${Date.now()}`, {
           cache: "no-store",
         });
-        if (response.ok && isSubscribed) {
-          const data = await response.json();
+        if (productRes.ok && isSubscribed) {
+          const data = await productRes.json();
           setCategories(data.categories || []);
+        }
+
+        // Fetch gift categories
+        const giftRes = await fetch(`/api/categories?type=gift&t=${Date.now()}`, {
+          cache: "no-store",
+        });
+        if (giftRes.ok && isSubscribed) {
+          const data = await giftRes.json();
+          setGiftCategories(data.categories || []);
+        }
+
+        // Fetch grocery categories
+        const groceryRes = await fetch(`/api/categories?type=grocery&t=${Date.now()}`, {
+          cache: "no-store",
+        });
+        if (groceryRes.ok && isSubscribed) {
+          const data = await groceryRes.json();
+          setGroceryCategories(data.categories || []);
         }
       } catch (err) {
         console.error("Failed to fetch categories:", err);
@@ -115,8 +136,12 @@ export default function Header() {
 
     fetchCategories();
 
+    // Refetch categories every 30 seconds to pick up deletions
+    const interval = setInterval(fetchCategories, 30000);
+
     return () => {
       isSubscribed = false;
+      clearInterval(interval);
     };
   }, []);
 
@@ -162,7 +187,7 @@ export default function Header() {
         label: "Gifts",
         href: "/gift",
         icon: <Gift className="w-4 h-4 text-purple-700" />,
-        children: categories.map((cat) => ({
+        children: giftCategories.map((cat) => ({
           label: cat.name,
           href: `/categories/${cat.id}`,
         })),
@@ -171,7 +196,7 @@ export default function Header() {
         label: "Groceries",
         href: "/groceries",
         icon: <ShoppingCart className="w-4 h-4 text-purple-700" />,
-        children: categories.map((cat) => ({
+        children: groceryCategories.map((cat) => ({
           label: cat.name,
           href: `/categories/${cat.id}`,
         })),
@@ -200,7 +225,7 @@ export default function Header() {
         icon: <Phone className="w-4 h-4 text-purple-700" />,
       },
     ],
-    [categories]
+    [categories, giftCategories, groceryCategories]
   );
 
   const toggleMobileMenu = () => {

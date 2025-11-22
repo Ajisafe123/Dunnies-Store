@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import ProductsCatalog from "@/components/product/ProductsCatalog";
-import { productsCatalog, type ProductRecord } from "@/Data/products";
-import { getBaseUrl } from "@/utils/url";
+import { type ProductRecord } from "@/Data/products";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Groceries – Dunnis Stores",
@@ -37,31 +37,30 @@ const adaptProductRecord = (product: ApiProduct): ProductRecord => ({
   reviews: [],
 });
 
-async function fetchGroceries(): Promise<ProductRecord[] | null> {
+async function fetchGroceries(): Promise<ProductRecord[]> {
   try {
-    const response = await fetch(`${getBaseUrl()}/api/groceries`, {
-      cache: "no-store",
+    const groceries = await prisma.grocery.findMany({
+      orderBy: { createdAt: "desc" },
     });
 
-    if (!response.ok) {
-      return null;
-    }
-
-    const data = await response.json();
-    if (!Array.isArray(data.groceries)) {
-      return null;
-    }
-
-    return data.groceries.map(adaptProductRecord);
-  } catch {
-    return null;
+    return groceries.map((grocery) =>
+      adaptProductRecord({
+        id: grocery.id,
+        name: grocery.name,
+        description: grocery.description || "",
+        price: grocery.price,
+        imageUrl: grocery.imageUrl || "",
+        category: "Grocery",
+      })
+    );
+  } catch (error) {
+    console.error("Failed to fetch groceries:", error);
+    return [];
   }
 }
 
 export default async function GroceriesPage() {
-  const groceries = await fetchGroceries();
-  const catalog =
-    groceries && groceries.length > 0 ? groceries : productsCatalog;
+  const catalog = await fetchGroceries();
 
   return (
     <section className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -78,7 +77,15 @@ export default async function GroceriesPage() {
             your doorstep.
           </p>
         </div>
-        <ProductsCatalog products={catalog} />
+        {catalog.length > 0 ? (
+          <ProductsCatalog products={catalog} />
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">
+              No groceries available yet. Please check back soon!
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

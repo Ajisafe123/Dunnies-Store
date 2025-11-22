@@ -7,6 +7,7 @@ interface AddCategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  selectedType: "product" | "gift" | "grocery";
   editingCategory?: {
     id: string;
     name: string;
@@ -19,6 +20,7 @@ export default function AddCategoryModal({
   isOpen,
   onClose,
   onSuccess,
+  selectedType,
   editingCategory = null,
 }: AddCategoryModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -99,6 +101,7 @@ export default function AddCategoryModal({
       formDataToSend.append("name", formData.name);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("priority", formData.priority);
+      formDataToSend.append("type", selectedType);
 
       if (image) {
         formDataToSend.append("image", image);
@@ -156,6 +159,12 @@ export default function AddCategoryModal({
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <p className="text-sm text-blue-900 font-semibold">
+              Category Type: <span className="capitalize">{selectedType}</span>
+            </p>
+          </div>
+
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
               {error}
