@@ -114,35 +114,17 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   useEffect(() => {
     setIsClient(true);
-    setUserId(localStorage.getItem("userId"));
+    const storedUserId = localStorage.getItem("userId");
+    setUserId(storedUserId);
 
-    // Also fetch user data immediately if logged in
-    const fetchUserDataOnMount = async () => {
-      try {
-        const response = await fetch(`${getBaseUrl()}/api/auth/current`);
-        if (response.ok) {
-          const data = await response.json();
-          setUserRole(data.user?.role || null);
-          if (data.user?.fullName) {
-            setCustomerName(data.user.fullName);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching user data on mount:", error);
-      }
-    };
-
-    fetchUserDataOnMount();
-  }, []);
-
-  useEffect(() => {
+    // Fetch user data to get customer name
     const fetchUserData = async () => {
       try {
         const response = await fetch(`${getBaseUrl()}/api/auth/current`);
         if (response.ok) {
           const data = await response.json();
           setUserRole(data.user?.role || null);
-          // Set customer name from user's full name
+          // Always set customer name from fullName if available
           if (data.user?.fullName) {
             setCustomerName(data.user.fullName);
           }
@@ -157,10 +139,31 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       }
     };
 
-    fetchUserData();
+    // Only fetch if user is logged in
+    if (storedUserId) {
+      fetchUserData();
+    }
+  }, []);
 
+  useEffect(() => {
+    if (!isClient) return;
+
+    // Refetch user data when visibility changes (tab comes back to focus)
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
+        const fetchUserData = async () => {
+          try {
+            const response = await fetch(`${getBaseUrl()}/api/auth/current`);
+            if (response.ok) {
+              const data = await response.json();
+              if (data.user?.fullName) {
+                setCustomerName(data.user.fullName);
+              }
+            }
+          } catch (error) {
+            console.error("Error fetching user data on visibility:", error);
+          }
+        };
         fetchUserData();
       }
     };
@@ -168,7 +171,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () =>
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [userId]);
+  }, [isClient]);
 
   useEffect(() => {
     const fetchLikes = async () => {

@@ -120,7 +120,9 @@ export default function ProductCard({
               alt={name}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               onError={(e) => {
-                console.error(`Image failed to load: ${displayImage}`);
+                // Image failed to load - fallback to placeholder
+                const target = e.target as HTMLImageElement;
+                target.src = "https://via.placeholder.com/400x400?text=No+Image";
               }}
             />
           ) : (
