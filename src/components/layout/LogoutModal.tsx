@@ -43,7 +43,7 @@ export default function LogoutModal({ isOpen, onClose }: LogoutModalProps) {
         </button>
 
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-linear-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center">
             <LogOut className="w-8 h-8 text-purple-600" />
           </div>
           <h3 className="text-xl font-bold text-gray-800 mb-2">Logout?</h3>
@@ -61,7 +61,7 @@ export default function LogoutModal({ isOpen, onClose }: LogoutModalProps) {
           <button
             onClick={handleLogout}
             disabled={loading}
-            className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-medium hover:shadow-lg transition flex items-center justify-center gap-2"
+            className="flex-1 py-3 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl font-medium hover:shadow-lg transition flex items-center justify-center gap-2"
           >
             {loading ? (
               <>

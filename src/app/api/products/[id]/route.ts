@@ -29,9 +29,20 @@ export async function GET(_: NextRequest, { params }: Params) {
       ? Math.round((ratings.reduce((a: number, b: number) => a + b, 0) / ratings.length) * 10) / 10
       : 0;
 
+    // Map imageUrls array to image (first) and images (all)
+    // Handle null imageUrl from existing products
+    const imageUrls = Array.isArray(product.imageUrls) && product.imageUrls.length > 0
+      ? product.imageUrls
+      : (product.imageUrl && typeof product.imageUrl === 'string')
+      ? [product.imageUrl]
+      : [];
+
     return NextResponse.json({ 
       product: {
         ...product,
+        image: imageUrls[0] || "",
+        images: imageUrls,
+        imageUrl: imageUrls[0] || product.imageUrl || "",
         averageRating,
         totalComments: product.comments.length,
         totalLikes: product.likes.length,
@@ -84,7 +95,10 @@ export async function PUT(request: NextRequest, { params }: Params) {
     if (name) updateData.name = name;
     if (description) updateData.description = description;
     if (imageUrl) updateData.imageUrl = imageUrl;
-    if (categoryId) updateData.categoryId = categoryId;
+    // Only update categoryId if it's a valid string value (not empty or "null")
+    if (categoryId && String(categoryId).trim() && String(categoryId) !== "null") {
+      updateData.categoryId = categoryId;
+    }
     if (priority) updateData.priority = priority;
     if (!Number.isNaN(parsedPrice)) updateData.price = parsedPrice;
 
@@ -99,9 +113,13 @@ export async function PUT(request: NextRequest, { params }: Params) {
         }
       }
       if (processedImages.length > 0) {
-        updateData.images = processedImages;
+        updateData.imageUrls = processedImages;
+        // Update imageUrl to first image
+        updateData.imageUrl = processedImages[0];
       }
     }
+    // If no new images provided, keep existing imageUrls
+    // (don't set updateData.imageUrls if it's not in the request)
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(

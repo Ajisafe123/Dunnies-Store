@@ -26,7 +26,7 @@ export default function AdminLayout({
 
   useEffect(() => {
     if (!isClient) return;
-    
+
     const fetchAdmin = async () => {
       try {
         const currentUser = await getCurrentUser();

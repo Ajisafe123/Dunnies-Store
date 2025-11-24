@@ -13,6 +13,7 @@ interface Gift {
   description: string;
   price: number;
   imageUrl: string;
+  imageUrls?: string[];
   createdAt: string;
 }
 

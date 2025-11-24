@@ -26,23 +26,25 @@ interface ProductProps {
 
 export default function ProductCard({
   id,
-  name = "Unnamed Product",
-  description = "Discover this amazing product with premium quality and great features.",
-  price = 0,
+  name,
+  description,
+  price,
   originalPrice,
-  rating = 4.5,
-  reviews = 128,
-  image = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600&h=600&fit=crop&auto=format",
-  tag = "New",
+  rating = 0,
+  reviews = 0,
+  image,
+  tag,
   discount = 0,
   href = "#",
   className = "",
 }: ProductProps) {
   const router = useRouter();
-  const displayImage =
-    image && image.trim() !== ""
-      ? image
-      : "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600&h=600&fit=crop&auto=format";
+  // Debug log
+  if (!image) {
+    console.log(`[ProductCard] ${name}: No image provided!`);
+  }
+  // Use image directly - no fallback to default unsplash image
+  const displayImage = image || "";
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
@@ -115,11 +117,20 @@ export default function ProductCard({
       >
         {}
         <div className="relative overflow-hidden bg-linear-to-br from-gray-100 to-gray-200 h-64 w-full">
-          <img
-            src={displayImage}
-            alt={name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-          />
+          {displayImage ? (
+            <img
+              src={displayImage}
+              alt={name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              onError={(e) => {
+                console.error(`Image failed to load: ${displayImage}`);
+              }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-300">
+              <span className="text-gray-500 font-semibold">No Image</span>
+            </div>
+          )}
 
           {}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
@@ -139,22 +150,24 @@ export default function ProductCard({
           )}
 
           {}
-          <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 flex gap-1.5 sm:gap-2 z-10">
+          <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 flex gap-2 sm:gap-3 z-10">
             <button
               onClick={handleOrderWhatsApp}
-              className="bg-green-500 hover:bg-green-600 text-white p-2 sm:p-2.5 md:p-3 rounded-full shadow-lg hover:scale-110 transition-all duration-200 flex items-center justify-center backdrop-blur-sm bg-opacity-90"
+              className="bg-green-500 hover:bg-green-600 text-white px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-full shadow-lg hover:scale-110 transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 backdrop-blur-sm bg-opacity-90 text-sm sm:text-base font-semibold"
               aria-label="Order on WhatsApp"
               title="Order on WhatsApp"
             >
-              <MessageCircle className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5" />
+              <MessageCircle className="w-5 h-5 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+              <span className="hidden sm:inline">Order</span>
             </button>
             <button
               onClick={handleAddToCart}
-              className="bg-purple-600 hover:bg-purple-700 text-white p-2 sm:p-2.5 md:p-3 rounded-full shadow-lg hover:scale-110 transition-all duration-200 flex items-center justify-center backdrop-blur-sm bg-opacity-90"
+              className="bg-purple-600 hover:bg-purple-700 text-white px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-full shadow-lg hover:scale-110 transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 backdrop-blur-sm bg-opacity-90 text-sm sm:text-base font-semibold"
               aria-label="Add to cart"
               title="Add to Cart"
             >
-              <ShoppingCart className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5" />
+              <ShoppingCart className="w-5 h-5 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+              <span className="hidden sm:inline">Cart</span>
             </button>
           </div>
         </div>
@@ -195,7 +208,7 @@ export default function ProductCard({
 
           {}
           <div className="pt-4 border-t-2 border-gray-100">
-            <div className="flex items-end justify-between">
+            <div className="flex items-center justify-between gap-3">
               <div className="flex flex-col">
                 <span className="text-2xl font-bold text-purple-600">
                   {formattedPrice}
@@ -209,17 +222,22 @@ export default function ProductCard({
               {}
               <button
                 onClick={handleToggleWishlist}
-                className={`p-2.5 rounded-full transition-all duration-200 shrink-0 shadow-md ${
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all duration-200 shrink-0 shadow-md whitespace-nowrap ${
                   wishlisted
-                    ? "bg-red-500 text-white scale-110"
+                    ? "bg-red-500 text-white"
                     : "bg-gray-100 text-gray-500 hover:bg-red-100 hover:text-red-600"
                 }`}
                 aria-label="Toggle wishlist"
                 title="Add to Wishlist"
               >
                 <Heart
-                  className={`w-5 h-5 ${wishlisted ? "fill-current" : ""}`}
+                  className={`w-4 h-4 sm:w-5 sm:h-5 ${
+                    wishlisted ? "fill-current" : ""
+                  }`}
                 />
+                <span className="text-xs sm:text-sm font-semibold">
+                  {wishlisted ? "Saved" : "Save"}
+                </span>
               </button>
             </div>
           </div>

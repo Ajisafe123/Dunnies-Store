@@ -7,6 +7,8 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId");
 
     const comments = await prisma.productComment.findMany({
       where: { productId: id },
@@ -17,9 +19,23 @@ export async function GET(
             fullName: true,
           },
         },
+        likes: {
+          select: {
+            id: true,
+            userId: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     });
+
+    // Format comments to include like count and isLiked status
+    const formattedComments = comments.map((comment: any) => ({
+      ...comment,
+      likeCount: comment.likes.length,
+      isLiked: userId ? comment.likes.some((like: any) => like.userId === userId) : false,
+      likes: undefined, // Remove the raw likes array
+    }));
 
     const averageRating = 
       comments.length > 0
@@ -27,7 +43,7 @@ export async function GET(
         : 0;
 
     return NextResponse.json({
-      comments,
+      comments: formattedComments,
       averageRating,
       totalComments: comments.length,
     });

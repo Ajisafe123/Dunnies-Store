@@ -30,3 +30,46 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    const userId = request.headers.get("x-user-id") || request.cookies.get("userId")?.value;
+    
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const { firstName, lastName, phone, dateOfBirth, gender } = body;
+
+    const fullName = [firstName, lastName].filter(Boolean).join(" ");
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        fullName: fullName || undefined,
+        phone: phone || null,
+      },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    return NextResponse.json(updatedUser);
+  } catch (error) {
+    console.error("[USERS_PUT]", error);
+    return NextResponse.json(
+      { error: "Unable to update profile" },
+      { status: 500 }
+    );
+  }
+}

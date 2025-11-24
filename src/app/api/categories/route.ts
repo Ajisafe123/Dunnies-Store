@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     });
 
     const enrichedCategories = await Promise.all(
-      categories.map(async (cat) => {
+      categories.map(async (cat: any) => {
         let count = cat._count.products;
 
         if (cat.type === "gift") {

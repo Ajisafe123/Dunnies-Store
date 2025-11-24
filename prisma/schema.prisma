@@ -45,7 +45,8 @@ model Product {
   name        String
   description String
   price       Float
-  imageUrl    String
+  imageUrl    String?
+  imageUrls   String[]  @default([])
   categoryId  String?
   priority    String   @default("normal") // "bestseller", "featured", "trending", "new", "normal"
   createdAt   DateTime @default(now())
@@ -63,6 +64,7 @@ model Gift {
   description String?
   price       Float
   imageUrl    String?
+  imageUrls   String[]  @default([])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -73,6 +75,7 @@ model Grocery {
   description String?
   price       Float
   imageUrl    String?
+  imageUrls   String[]  @default([])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

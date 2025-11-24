@@ -61,6 +61,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   >({});
   const [userId, setUserId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [customerName, setCustomerName] = useState("");
+  const [showCustomerNameInput, setShowCustomerNameInput] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -71,14 +73,31 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     const fetchComments = async () => {
       try {
         setLoadingComments(true);
-        const response = await fetch(
+        const currentUserId =
+          typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+        const url = new URL(
           `${getBaseUrl()}/api/products/${product.id}/comments`
         );
+        if (currentUserId) {
+          url.searchParams.append("userId", currentUserId);
+        }
+        const response = await fetch(url.toString());
         if (response.ok) {
           const data = await response.json();
           setComments(data.comments || []);
           setAverageRating(data.averageRating || 0);
           setTotalComments(data.totalComments || 0);
+
+          // Initialize commentLikes from the API response
+          const likesMap: Record<string, { count: number; isLiked: boolean }> =
+            {};
+          (data.comments || []).forEach((comment: any) => {
+            likesMap[comment.id] = {
+              count: comment.likeCount || 0,
+              isLiked: comment.isLiked || false,
+            };
+          });
+          setCommentLikes(likesMap);
         }
       } catch (error) {
         console.error("Error fetching comments:", error);
@@ -98,7 +117,6 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           const data = await response.json();
           setUserRole(data.user?.role || null);
         } else {
-
           setUserRole(null);
         }
       } catch (error) {
@@ -107,9 +125,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       }
     };
 
-
     fetchUserRole();
-
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
@@ -133,16 +149,23 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           const data = await response.json();
           setLikes(data.likeCount || 0);
           setIsLiked(data.isLikedByUser || false);
+        } else {
+          setLikes(0);
+          setIsLiked(false);
         }
       } catch (error) {
         console.error("Error fetching likes:", error);
+        setLikes(0);
+        setIsLiked(false);
       } finally {
         setLoadingLikes(false);
       }
     };
 
-    fetchLikes();
-  }, [product.id, userId]);
+    if (isClient) {
+      fetchLikes();
+    }
+  }, [product.id, userId, isClient]);
 
   const handleToggleLike = async () => {
     if (userRole === "admin") {
@@ -166,8 +189,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       );
       if (response.ok) {
         const data = await response.json();
-        setLikes(data.likeCount);
-        setIsLiked(data.liked);
+        setLikes(data.likeCount || 0);
+        setIsLiked(data.liked || false);
+      } else {
+        console.error("Failed to toggle like");
       }
     } catch (error) {
       console.error("Error toggling like:", error);
@@ -175,7 +200,6 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   };
 
   const handleToggleCommentLike = async (commentId: string) => {
-
     const currentUserId =
       typeof window !== "undefined" ? localStorage.getItem("userId") : null;
 
@@ -231,8 +255,14 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   };
 
   const handleOrderWhatsApp = () => {
+    // If not logged in or no customer name, show input modal
+    if (!userId || !customerName.trim()) {
+      setShowCustomerNameInput(true);
+      return;
+    }
+
     const whatsappNumber =
-      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "09056453575";
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2349056453575";
     const productLink =
       typeof window !== "undefined"
         ? `${window.location.origin}${product.href}`
@@ -244,7 +274,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       productQuantity: quantity,
       productImage: selectedImage,
       productLink,
-      customerName: "Customer",
+      customerName: customerName.trim() || "Customer",
       whatsappNumber,
     });
 
@@ -338,9 +368,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     <div className="space-y-8">
       <Link
         href="/product"
-        className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-purple-600"
+        className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-purple-600"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         Back to products
       </Link>
 
@@ -400,22 +430,26 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               </span>
               <span className="text-xs text-gray-500">{product.category}</span>
             </div>
-            <h1 className="text-4xl font-bold text-gray-900">{product.name}</h1>
-            <p className="text-gray-600 mt-3">{product.description}</p>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+              {product.name}
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-600 mt-3">
+              {product.description}
+            </p>
           </div>
 
           <div className="flex flex-wrap items-end gap-3">
-            <p className="text-4xl font-bold text-gray-900">
+            <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
               ₦{Number(product.price).toLocaleString()}
             </p>
             {product.originalPrice && (
-              <p className="text-lg text-gray-400 line-through">
+              <p className="text-sm sm:text-base text-gray-400 line-through">
                 ₦{Number(product.originalPrice).toLocaleString()}
               </p>
             )}
           </div>
 
-          <div className="flex items-center gap-3 text-sm text-gray-600 flex-wrap">
+          <div className="flex items-center gap-3 text-xs sm:text-sm text-gray-600 flex-wrap">
             <div className="flex items-center gap-1 text-amber-500">
               <Star className="w-4 h-4 fill-current" />
               <span>{product.rating.toFixed(1)}</span>
@@ -441,7 +475,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               >
                 –
               </button>
-              <span className="w-5 sm:w-6 text-center font-semibold text-xs">{quantity}</span>
+              <span className="w-5 sm:w-6 text-center font-semibold text-xs">
+                {quantity}
+              </span>
               <button
                 onClick={() => setQuantity((prev) => prev + 1)}
                 className="text-gray-600 px-0.5 sm:px-1 text-xs sm:text-sm md:text-base"
@@ -453,69 +489,76 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           </div>
 
           <div className="flex flex-col gap-2 w-full">
-            <div className="flex flex-row flex-wrap items-center gap-1 sm:gap-2 md:gap-3 w-full">
+            <div className="flex flex-row flex-wrap items-center gap-2 sm:gap-3 md:gap-4 w-full">
               <button
                 onClick={handleAddToCart}
-                className="inline-flex items-center justify-center gap-1 rounded-full bg-purple-600 text-white px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold hover:bg-purple-700 transition whitespace-nowrap"
+                className="inline-flex flex-row items-center justify-center gap-2 rounded-full bg-purple-600 text-white px-3.5 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 text-xs sm:text-sm md:text-base font-semibold hover:bg-purple-700 transition"
                 title="Add this product to your cart"
               >
-                <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span>Add to cart</span>
+                <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 shrink-0" />
+                <span className="shrink-0">Add to cart</span>
               </button>
 
               <button
                 onClick={handleOrderWhatsApp}
-                className="inline-flex items-center justify-center gap-1 rounded-full bg-green-600 text-white px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold hover:bg-green-700 transition whitespace-nowrap"
+                className="inline-flex flex-row items-center justify-center gap-2 rounded-full bg-green-600 text-white px-3.5 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 text-xs sm:text-sm md:text-base font-semibold hover:bg-green-700 transition"
                 title="Order via WhatsApp"
               >
-                <MessageCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span>Order via WhatsApp</span>
+                <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 shrink-0" />
+                <span className="shrink-0">Order via WhatsApp</span>
               </button>
             </div>
 
             <div className="flex flex-row flex-wrap items-center gap-1 sm:gap-2 md:gap-3 w-full">
               <button
                 onClick={handleCopyLink}
-                className="inline-flex items-center justify-center gap-1 rounded-full border border-gray-300 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-gray-50 transition whitespace-nowrap"
+                className="inline-flex flex-row items-center justify-center gap-1 rounded-full border border-gray-300 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
                 title="Copy product link"
               >
                 {copied ? (
                   <>
-                    <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-green-600" />
-                    <span>Copied</span>
+                    <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-green-600 shrink-0" />
+                    <span className="shrink-0">Copied</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                    <span>Share link</span>
+                    <Copy className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                    <span className="shrink-0">Share link</span>
                   </>
                 )}
               </button>
 
               <button
                 onClick={handleToggleLike}
-                className={`inline-flex items-center justify-center rounded-full px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 font-semibold transition ${
+                className={`inline-flex flex-row items-center justify-center gap-1.5 rounded-full px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold transition ${
                   isLiked
                     ? "bg-red-100 text-red-600 hover:bg-red-200"
                     : "border border-gray-300 text-gray-700 hover:bg-gray-50"
                 }`}
                 title="Like this product"
               >
-                <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isLiked ? "fill-current" : ""}`} />
+                <Heart
+                  className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${
+                    isLiked ? "fill-current" : ""
+                  }`}
+                />
+                <span className="shrink-0">{likes}</span>
               </button>
             </div>
           </div>
 
           <div className="rounded-3xl bg-white border border-gray-200 p-6 space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">
               Product details
             </h3>
-            <p className="text-gray-600">{product.longDescription}</p>
+            <p className="text-xs sm:text-sm text-gray-600">
+              {product.longDescription}
+            </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {product.highlights.map((highlight) => (
                 <div
                   key={highlight}
-                  className="flex items-start gap-3 text-sm text-gray-700"
+                  className="flex items-start gap-3 text-xs sm:text-sm text-gray-700"
                 >
                   <Check className="w-4 h-4 text-green-500 mt-1" />
                   <span>{highlight}</span>
@@ -526,7 +569,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               {product.specs.map((spec) => (
                 <div
                   key={spec.label}
-                  className="flex justify-between text-sm text-gray-600 border-b border-gray-100 py-2"
+                  className="flex justify-between text-xs sm:text-sm text-gray-600 border-b border-gray-100 py-2"
                 >
                   <span className="font-medium text-gray-800">
                     {spec.label}
@@ -542,26 +585,26 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       <div className="rounded-3xl bg-white border border-gray-200 p-6 space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <p className="text-sm font-semibold text-purple-600 uppercase tracking-widest">
+            <p className="text-xs sm:text-sm font-semibold text-purple-600 uppercase tracking-widest">
               Community
             </p>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-900">
               Reviews & comments
             </h2>
           </div>
-          <button className="inline-flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">
-            <Share2 className="w-4 h-4" />
-            Share feedback
+          <button className="inline-flex flex-row items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">
+            <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+            <span className="shrink-0">Share feedback</span>
           </button>
         </div>
 
-        {isClient && userRole !== "admin" && userId ? (
+        {isClient && userRole !== "admin" ? (
           <form
             onSubmit={handleReviewSubmit}
             className="rounded-2xl border border-gray-200 p-4 space-y-4"
           >
             <div className="flex flex-wrap items-center gap-4">
-              <p className="text-sm text-gray-600">Your rating:</p>
+              <p className="text-xs sm:text-sm text-gray-600">Your rating:</p>
               <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((value) => (
                   <button
@@ -582,36 +625,26 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Share your experience..."
+              placeholder={
+                userId
+                  ? "Share your experience..."
+                  : "Login to share your experience..."
+              }
               className="w-full rounded-2xl border border-gray-200 p-4 focus:border-purple-500 focus:outline-none"
               rows={3}
             />
             <button
               type="submit"
               disabled={submittingComment}
-              className="inline-flex items-center gap-2 rounded-full bg-purple-600 text-white px-5 py-2.5 font-semibold hover:bg-purple-700 transition disabled:opacity-50"
+              className="inline-flex flex-row items-center gap-2 rounded-full bg-purple-600 text-white px-5 py-2.5 text-xs sm:text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-50"
             >
-              <MessageSquare className="w-4 h-4" />
-              {submittingComment ? "Posting..." : "Post comment"}
+              <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+              <span className="shrink-0">
+                {submittingComment ? "Posting..." : "Post comment"}
+              </span>
             </button>
           </form>
-        ) : (
-          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-sm text-blue-700 flex items-center justify-between">
-            <span>
-              {userRole === "admin"
-                ? "Admin users cannot post comments on products."
-                : "Please log in to comment on this product"}
-            </span>
-            {!userId && (
-              <button
-                onClick={() => router.push("/login")}
-                className="ml-4 bg-blue-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-blue-700 transition text-xs"
-              >
-                Login
-              </button>
-            )}
-          </div>
-        )}
+        ) : null}
 
         <div className="space-y-4">
           {loadingComments ? (
@@ -619,7 +652,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               <Loader />
             </div>
           ) : comments.length === 0 ? (
-            <p className="text-sm text-gray-500">
+            <p className="text-xs sm:text-sm text-gray-500">
               Be the first to leave a review.
             </p>
           ) : (
@@ -631,10 +664,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       <Star key={index} className="w-5 h-5 fill-current" />
                     ))}
                   </div>
-                  <span className="font-semibold text-gray-900">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-900">
                     {averageRating.toFixed(1)}
                   </span>
-                  <span className="text-gray-500">
+                  <span className="text-xs sm:text-sm text-gray-500">
                     ({totalComments}{" "}
                     {totalComments === 1 ? "review" : "reviews"})
                   </span>
@@ -652,33 +685,37 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   </div>
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between flex-wrap gap-2">
-                      <p className="font-semibold text-gray-900">
+                      <p className="text-xs sm:text-sm font-semibold text-gray-900">
                         {review.user?.fullName || "Anonymous"}
                       </p>
                       <span className="text-xs text-gray-500">
                         {new Date(review.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 text-amber-400 text-sm">
+                    <div className="flex items-center gap-1 text-amber-400 text-xs sm:text-sm">
                       {[...Array(review.rating)].map((_, index) => (
                         <Star key={index} className="w-4 h-4 fill-current" />
                       ))}
                     </div>
-                    <p className="text-gray-700 text-sm">{review.text}</p>
+                    <p className="text-xs sm:text-sm text-gray-700">
+                      {review.text}
+                    </p>
                     <button
                       onClick={() => handleToggleCommentLike(review.id)}
-                      className={`flex items-center gap-1.5 text-xs mt-3 px-3 py-1.5 rounded-full transition font-medium ${
+                      className={`inline-flex flex-row items-center gap-1.5 text-xs mt-3 px-3 py-1.5 rounded-full transition font-medium ${
                         commentLikes[review.id]?.isLiked
                           ? "text-blue-600 bg-blue-50 hover:bg-blue-100"
                           : "text-gray-600 bg-gray-100 hover:bg-gray-200"
                       }`}
                     >
                       <ThumbsUp
-                        className={`w-4 h-4 ${
+                        className={`w-3.5 h-3.5 shrink-0 ${
                           commentLikes[review.id]?.isLiked ? "fill-current" : ""
                         }`}
                       />
-                      <span>{commentLikes[review.id]?.count || 0}</span>
+                      <span className="shrink-0">
+                        {commentLikes[review.id]?.count || 0}
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -687,6 +724,54 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           )}
         </div>
       </div>
+
+      {/* Customer Name Modal */}
+      {showCustomerNameInput && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+              Your Name
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-600 mb-6">
+              Please enter your name to proceed with your order via WhatsApp.
+            </p>
+            <input
+              type="text"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              placeholder="Enter your full name"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none mb-6"
+              onKeyPress={(e) => {
+                if (e.key === "Enter" && customerName.trim()) {
+                  setShowCustomerNameInput(false);
+                  setTimeout(handleOrderWhatsApp, 100);
+                }
+              }}
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowCustomerNameInput(false);
+                  setCustomerName("");
+                }}
+                className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowCustomerNameInput(false);
+                  setTimeout(handleOrderWhatsApp, 100);
+                }}
+                disabled={!customerName.trim()}
+                className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,19 +3,19 @@ import { ArrowRight, ShoppingBag, GiftIcon } from "lucide-react";
 
 export default function PromoBanners() {
   return (
-    <section className="py-12 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-12 bg-linear-to-b from-white to-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           <Link
             href="/gifts/premium"
-            className="relative min-h-64 sm:min-h-72 aspect-[4/3] sm:aspect-auto rounded-xl sm:rounded-3xl overflow-hidden group block shadow-xl hover:shadow-2xl transition-all duration-500"
+            className="relative min-h-64 sm:min-h-72 aspect-4/3 sm:aspect-auto rounded-xl sm:rounded-3xl overflow-hidden group block shadow-xl hover:shadow-2xl transition-all duration-500"
           >
             <img
               src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800&q=80"
               alt="Premium Gifts"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-900/95 via-purple-900/90 to-transparent">
+            <div className="absolute inset-0 bg-linear-to-br from-violet-900/95 via-purple-900/90 to-transparent">
               <div className="absolute top-4 left-4 sm:top-6 sm:left-6 bg-white/20 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-white/30">
                 <div className="flex items-center gap-2">
                   <GiftIcon className="w-4 h-4 text-yellow-300" />
@@ -38,7 +38,7 @@ export default function PromoBanners() {
                 </div>
               </div>
 
-              <div className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-gradient-to-br from-yellow-400 to-orange-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl font-black text-lg sm:text-xl shadow-xl transform rotate-3">
+              <div className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-linear-to-br from-yellow-400 to-orange-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl font-black text-lg sm:text-xl shadow-xl transform rotate-3">
                 40% OFF
               </div>
             </div>
@@ -46,14 +46,14 @@ export default function PromoBanners() {
 
           <Link
             href="/groceries/organic"
-            className="relative min-h-64 sm:min-h-72 aspect-[4/3] sm:aspect-auto rounded-xl sm:rounded-3xl overflow-hidden group block shadow-xl hover:shadow-2xl transition-all duration-500"
+            className="relative min-h-64 sm:min-h-72 aspect-4/3 sm:aspect-auto rounded-xl sm:rounded-3xl overflow-hidden group block shadow-xl hover:shadow-2xl transition-all duration-500"
           >
             <img
               src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800&q=80"
               alt="Organic Groceries"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/95 via-green-900/90 to-transparent">
+            <div className="absolute inset-0 bg-linear-to-br from-emerald-900/95 via-green-900/90 to-transparent">
               <div className="absolute top-4 left-4 sm:top-6 sm:left-6 bg-white/20 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-white/30">
                 <div className="flex items-center gap-2">
                   <ShoppingBag className="w-4 h-4 text-green-300" />
@@ -76,7 +76,7 @@ export default function PromoBanners() {
                 </div>
               </div>
 
-              <div className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-gradient-to-br from-green-400 to-emerald-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl font-black text-lg sm:text-xl shadow-xl transform -rotate-3">
+              <div className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-linear-to-br from-green-400 to-emerald-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl font-black text-lg sm:text-xl shadow-xl transform -rotate-3">
                 FRESH
               </div>
             </div>

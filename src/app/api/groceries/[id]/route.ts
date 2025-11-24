@@ -21,7 +21,37 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ grocery });
+    // Fetch comments and likes separately
+    const comments = await prisma.productComment.findMany({
+      where: { productId: id },
+    });
+    const likes = await prisma.productLike.findMany({
+      where: { productId: id },
+    });
+
+    const ratings = (comments as any[]).map((c: any) => c.rating);
+    const averageRating = ratings.length > 0 
+      ? Math.round((ratings.reduce((a: number, b: number) => a + b, 0) / ratings.length) * 10) / 10
+      : 0;
+
+    // Map imageUrls array to image (first) and images (all)
+    const imageUrls = Array.isArray(grocery.imageUrls) && grocery.imageUrls.length > 0
+      ? grocery.imageUrls
+      : (grocery.imageUrl && typeof grocery.imageUrl === 'string')
+      ? [grocery.imageUrl]
+      : [];
+
+    return NextResponse.json({ 
+      grocery: {
+        ...grocery,
+        image: imageUrls[0] || "",
+        images: imageUrls,
+        imageUrl: imageUrls[0] || grocery.imageUrl || "",
+        averageRating,
+        totalComments: comments.length,
+        totalLikes: likes.length,
+      }
+    });
   } catch (error) {
     console.error("[GROCERIES_GET]", error);
     return NextResponse.json(
@@ -37,43 +67,63 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
+    const existing = await prisma.grocery.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      return NextResponse.json({ error: "Grocery not found" }, { status: 404 });
+    }
+
     const contentType = request.headers.get("content-type");
     let body: any = {};
 
     if (contentType?.includes("multipart/form-data")) {
       const formData = await request.formData();
       body = {
-        name: formData.get("name") as string,
-        description: formData.get("description") as string,
-        price: formData.get("price") as string,
-        imageFile: formData.get("image") as File | null,
+        name: formData.get("name"),
+        description: formData.get("description"),
+        price: formData.get("price"),
+        imageUrl: formData.get("imageUrl"),
+        images: formData.getAll("images"),
       };
     } else {
       body = await request.json();
     }
 
-    const { name, description, price, imageFile } = body;
+    const { name, description, price, imageUrl, images } = body;
+    const parsedPrice =
+      typeof price === "string" ? parseFloat(price) : Number(price);
 
-    if (!name || !price) {
+    const updateData: Record<string, unknown> = {};
+
+    if (name) updateData.name = name;
+    if (description) updateData.description = description;
+    if (imageUrl) updateData.imageUrl = imageUrl;
+    if (!Number.isNaN(parsedPrice)) updateData.price = parsedPrice;
+
+    if (images && Array.isArray(images) && images.length > 0) {
+      const processedImages: string[] = [];
+      for (const image of images) {
+        if (image instanceof File) {
+          const uploadedUrl = await saveUploadedFile(image, "groceries");
+          if (uploadedUrl) {
+            processedImages.push(uploadedUrl);
+          }
+        }
+      }
+      if (processedImages.length > 0) {
+        updateData.imageUrls = processedImages;
+        // Update imageUrl to first image
+        updateData.imageUrl = processedImages[0];
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
-        { error: "Name and price are required" },
+        { error: "Nothing to update" },
         { status: 400 }
       );
-    }
-
-    let imageUrl = undefined;
-    if (imageFile) {
-      imageUrl = await saveUploadedFile(imageFile, "groceries");
-    }
-
-    const updateData: any = {
-      name,
-      description: description || "",
-      price: parseFloat(price),
-    };
-
-    if (imageUrl) {
-      updateData.imageUrl = imageUrl;
     }
 
     const grocery = await prisma.grocery.update({

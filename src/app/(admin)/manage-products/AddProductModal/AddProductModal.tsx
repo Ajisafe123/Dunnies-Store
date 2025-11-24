@@ -55,7 +55,10 @@ export default function AddProductModal({
               categoryId: product.categoryId || "",
               priority: product.priority || "normal",
             });
-            if (product.imageUrl) {
+            // Show existing images from imageUrls array
+            if (product.imageUrls && product.imageUrls.length > 0) {
+              setImagePreviews(product.imageUrls);
+            } else if (product.imageUrl) {
               setImagePreviews([product.imageUrl]);
             }
           }
@@ -126,8 +129,11 @@ export default function AddProductModal({
       formDataToSend.append("categoryId", formData.categoryId);
       formDataToSend.append("priority", formData.priority);
 
-      images.forEach((image, index) => {
-        formDataToSend.append(`images[${index}]`, image);
+      // Only send new image files (File objects)
+      images.forEach((image) => {
+        if (image instanceof File) {
+          formDataToSend.append("images", image);
+        }
       });
 
       const url = productId ? `/api/products/${productId}` : "/api/products";

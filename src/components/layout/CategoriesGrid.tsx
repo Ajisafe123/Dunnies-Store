@@ -226,11 +226,11 @@ export default function CategoriesGrid() {
 
                         <div className="absolute bottom-3 left-3 right-3">
                           <div className="bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 shadow-lg">
-                            <h3 className="font-bold text-gray-900 text-[5px] leading-tight line-clamp-2 mb-1">
+                            <h3 className="font-bold text-gray-900 text-xs sm:text-sm leading-tight line-clamp-2 mb-1">
                               {cat.name}
                             </h3>
                             <div className="flex items-center justify-between">
-                              <p className="text-violet-600 text-xs font-semibold">
+                              <p className="text-violet-600 text-[10px] sm:text-xs font-semibold">
                                 {cat._count?.products || 0} items
                               </p>
                               <ArrowRight className="w-3.5 h-3.5 text-violet-600 group-hover/card:translate-x-1 transition-transform" />

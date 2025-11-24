@@ -203,11 +203,11 @@ export default function UsersInterfacePage() {
   return (
     <section className="bg-linear-to-b from-purple-50 via-white to-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-10">
-        <div className="rounded-[36px] bg-linear-to-r from-purple-700 via-purple-600 to-fuchsia-600 p-8 text-white relative overflow-hidden shadow-2xl">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div className="flex items-center gap-5">
-              <div className="relative">
-                <div className="w-20 h-20 rounded-2xl border-2 border-white/30 overflow-hidden shadow-lg">
+        <div className="rounded-2xl sm:rounded-3xl bg-linear-to-r from-purple-700 via-purple-600 to-fuchsia-600 p-4 sm:p-6 lg:p-8 text-white relative overflow-hidden shadow-2xl">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 sm:gap-6">
+            <div className="flex items-start sm:items-center gap-3 sm:gap-4">
+              <div className="relative shrink-0">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl border-2 border-white/30 overflow-hidden shadow-lg">
                   <Image
                     src={avatarUrl}
                     alt={`${greetingName} avatar`}
@@ -219,128 +219,133 @@ export default function UsersInterfacePage() {
                 </div>
                 <Link
                   href="/settings"
-                  className="absolute -bottom-2 -right-2 w-9 h-9 rounded-full bg-white text-purple-600 flex items-center justify-center shadow-lg hover:bg-purple-50 transition"
+                  className="absolute -bottom-1 -right-1 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white text-purple-600 flex items-center justify-center shadow-lg hover:bg-purple-50 transition"
                   title="Account settings"
                 >
-                  <Settings className="w-4 h-4" />
+                  <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </Link>
               </div>
-              <div>
-                <h1 className="text-3xl sm:text-4xl font-bold mb-1">
-                  Hello {greetingName},
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1">
+                  Hello {greetingName}!
                 </h1>
-                <p className="text-base text-purple-100 max-w-2xl">
-                  Everything tied to your Dunnis experience lives here—keep tabs
-                  on orders, wishlist, payment details, and pick up shopping
-                  right where you left it.
+                <p className="text-xs sm:text-sm text-purple-100 max-w-2xl line-clamp-3">
+                  Access orders, wishlist, payment details, and continue
+                  shopping.
                 </p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full lg:w-auto">
               <Link
                 href="/product"
-                className="inline-flex items-center gap-2 rounded-full bg-white/15 px-6 py-3 text-white font-semibold hover:bg-white/25 transition"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-white/15 px-4 sm:px-6 py-2 sm:py-3 text-white text-sm sm:text-base font-semibold hover:bg-white/25 transition"
               >
-                <Store className="w-5 h-5" />
-                Keep Shopping
+                <Store className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>Shop</span>
               </Link>
               <Link
                 href="/gifts"
-                className="inline-flex items-center gap-2 rounded-full bg-white text-purple-600 font-semibold px-6 py-3 hover:bg-purple-50 transition"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-white text-purple-600 font-semibold px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base hover:bg-purple-50 transition"
               >
-                <Gift className="w-5 h-5" />
-                Browse Gifts
+                <Gift className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>Gifts</span>
               </Link>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
           {essentialLinks.map((item) => (
             <Link
               key={item.title}
               href={item.href}
-              className="group rounded-2xl bg-white border border-purple-100 p-6 shadow-sm hover:shadow-lg transition flex items-start gap-4"
+              className="group rounded-xl sm:rounded-2xl bg-white border border-purple-100 p-4 sm:p-5 shadow-sm hover:shadow-lg transition flex items-start gap-3 sm:gap-4"
             >
               <span
-                className={`flex h-12 w-12 items-center justify-center rounded-xl ${item.accent}`}
+                className={`flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl shrink-0 ${item.accent}`}
               >
-                <item.icon className="w-6 h-6" />
+                <item.icon className="w-5 h-5 sm:w-6 sm:h-6" />
               </span>
-              <div>
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 truncate">
                     {item.title}
                   </h3>
-                  <ArrowRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform shrink-0" />
                 </div>
-                <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+                <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
+                  {item.description}
+                </p>
               </div>
             </Link>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           {supportCards.map((card) => (
             <Link
               key={card.title}
               href={card.href}
-              className="rounded-2xl bg-white border border-purple-100 p-5 shadow-sm hover:shadow-lg transition flex items-start gap-4"
+              className="rounded-xl sm:rounded-2xl bg-white border border-purple-100 p-4 sm:p-5 shadow-sm hover:shadow-lg transition flex items-start gap-3"
             >
               <span
-                className={`flex h-11 w-11 items-center justify-center rounded-xl ${card.accent}`}
+                className={`flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg sm:rounded-xl shrink-0 ${card.accent}`}
               >
                 <card.icon className="w-5 h-5" />
               </span>
-              <div>
-                <p className="text-sm font-semibold text-gray-900">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-semibold text-gray-900 truncate">
                   {card.title}
                 </p>
-                <p className="text-sm text-gray-600 mt-1">{card.description}</p>
+                <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
+                  {card.description}
+                </p>
               </div>
             </Link>
           ))}
         </div>
 
-        <div className="rounded-3xl bg-white border border-purple-100 p-8 shadow-lg">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-              <p className="text-sm uppercase tracking-wider text-purple-600 font-semibold mb-1">
-                Keep Shopping
+        <div className="rounded-2xl sm:rounded-3xl bg-white border border-purple-100 p-4 sm:p-6 lg:p-8 shadow-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="min-w-0">
+              <p className="text-xs uppercase tracking-wider text-purple-600 font-semibold mb-1">
+                Continue Shopping
               </p>
-              <h2 className="text-2xl font-bold text-gray-900">
-                Gift ideas waiting for you
+              <h2 className="text-lg sm:text-2xl font-bold text-gray-900">
+                Ideas for you
               </h2>
-              <p className="text-gray-600 mt-1">
-                Stay in the product flow even while you manage your account.
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                Explore more items while managing your account.
               </p>
             </div>
             <Link
               href="/product"
-              className="inline-flex items-center gap-2 text-purple-600 font-semibold hover:text-purple-700"
+              className="inline-flex items-center gap-2 text-purple-600 text-sm sm:text-base font-semibold hover:text-purple-700 whitespace-nowrap"
             >
-              View all products <ArrowRight className="w-4 h-4" />
+              View all <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {giftIdeas.map((idea) => (
               <Link
                 key={idea.title}
                 href={idea.href}
-                className="rounded-2xl border border-gray-200 p-5 hover:border-purple-200 hover:shadow-md transition bg-linear-to-br from-white to-purple-50/30"
+                className="rounded-lg sm:rounded-2xl border border-gray-200 p-3 sm:p-4 hover:border-purple-200 hover:shadow-md transition bg-linear-to-br from-white to-purple-50/30"
               >
-                <p className="inline-flex items-center text-xs font-semibold text-purple-600 bg-purple-100/80 px-3 py-1 rounded-full mb-3">
-                  <Sparkles className="w-3 h-3 mr-1" />
+                <p className="inline-flex items-center text-xs font-semibold text-purple-600 bg-purple-100/80 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full mb-2">
+                  <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1" />
                   {idea.tag}
                 </p>
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1 line-clamp-2">
                   {idea.title}
                 </h3>
-                <p className="text-sm text-gray-600 mb-4">{idea.blurb}</p>
-                <span className="inline-flex items-center text-sm font-semibold text-purple-600">
-                  Shop now
-                  <ArrowRight className="w-4 h-4 ml-1" />
+                <p className="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-2">
+                  {idea.blurb}
+                </p>
+                <span className="inline-flex items-center text-xs sm:text-sm font-semibold text-purple-600">
+                  Shop
+                  <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />
                 </span>
               </Link>
             ))}

@@ -53,6 +53,36 @@ async function getProductFromDatabase(id: string) {
 }
 
 function transformDatabaseProduct(dbProduct: any): ProductRecord {
+  console.log(
+    `[ProductDetail] ${dbProduct.name}: imageUrl="${
+      dbProduct.imageUrl
+    }", imageUrls=${
+      dbProduct.imageUrls ? `[${dbProduct.imageUrls.join(",")}]` : "[]"
+    }`
+  );
+
+  // Prioritize imageUrls array first, then imageUrl, then unsplash default
+  let imageUrls = [];
+  if (
+    dbProduct.imageUrls &&
+    Array.isArray(dbProduct.imageUrls) &&
+    dbProduct.imageUrls.length > 0
+  ) {
+    imageUrls = dbProduct.imageUrls.filter((url: string) => url && url.trim());
+  }
+  if (
+    imageUrls.length === 0 &&
+    dbProduct.imageUrl &&
+    dbProduct.imageUrl.trim()
+  ) {
+    imageUrls = [dbProduct.imageUrl];
+  }
+  if (imageUrls.length === 0) {
+    imageUrls = [
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
+    ];
+  }
+
   return {
     id: dbProduct.id,
     name: dbProduct.name,
@@ -62,12 +92,8 @@ function transformDatabaseProduct(dbProduct: any): ProductRecord {
     originalPrice: undefined,
     rating: 4.5,
     reviewsCount: 0,
-    image: dbProduct.imageUrl || "",
-    images: dbProduct.imageUrl
-      ? [dbProduct.imageUrl]
-      : [
-          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
-        ],
+    image: imageUrls[0],
+    images: imageUrls,
     tag: dbProduct.priority || "New",
     category: dbProduct.category?.name || "Uncategorized",
     href: `/product/${dbProduct.id}`,

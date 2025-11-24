@@ -19,6 +19,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { getCurrentUser } from "@/services/auth";
+import { showToast } from "@/components/ui/Toast";
 
 type CurrentUser = {
   id: string;
@@ -119,8 +120,47 @@ export default function ProfileSettingsPage() {
     { id: "preferences", label: "Preferences", icon: Globe },
   ];
 
-  const handleSave = () => {
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+
+      if (!userId) {
+        router.push("/login");
+        return;
+      }
+
+      const response = await fetch("/api/users", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-user-id": userId,
+        },
+        body: JSON.stringify({
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          phone: profile.phone,
+          dateOfBirth: profile.dateOfBirth,
+          gender: profile.gender,
+        }),
+      });
+
+      if (response.ok) {
+        const updatedUser = await response.json();
+        setUser(updatedUser);
+        setIsEditing(false);
+        showToast("Profile updated successfully!", "success", "right");
+      } else {
+        const error = await response.json();
+        showToast(
+          `Failed to update profile: ${error.error || "Unknown error"}`,
+          "error",
+          "right"
+        );
+      }
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      showToast("Error saving profile", "error", "right");
+    }
   };
 
   const handleCancel = () => {
@@ -144,36 +184,38 @@ export default function ProfileSettingsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
         {}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1 sm:mb-2">
             Account Settings
           </h1>
-          <p className="text-gray-600">
+          <p className="text-xs sm:text-sm text-gray-600">
             Manage your account settings and preferences
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
           {}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
-              <nav className="space-y-1">
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 p-2 sm:p-4 overflow-x-auto lg:overflow-visible">
+              <nav className="flex lg:flex-col gap-1 lg:space-y-1">
                 {sections.map((section) => {
                   const Icon = section.icon;
                   return (
                     <button
                       key={section.id}
                       onClick={() => setActiveSection(section.id)}
-                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${
+                      className={`flex items-center gap-2 lg:gap-3 px-2 sm:px-3 lg:px-4 py-2 sm:py-3 rounded-lg lg:rounded-xl transition-all whitespace-nowrap lg:whitespace-normal shrink-0 lg:shrink ${
                         activeSection === section.id
                           ? "bg-purple-50 text-purple-600 font-semibold"
                           : "text-gray-700 hover:bg-gray-50"
                       }`}
                     >
-                      <Icon className="w-5 h-5" />
-                      <span>{section.label}</span>
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span className="text-xs sm:text-sm">
+                        {section.label}
+                      </span>
                     </button>
                   );
                 })}
@@ -185,31 +227,31 @@ export default function ProfileSettingsPage() {
           <div className="lg:col-span-3">
             {}
             {activeSection === "profile" && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">
+              <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6">
+                  <h2 className="text-lg sm:text-2xl font-bold text-gray-900">
                     Profile Information
                   </h2>
                   {!isEditing ? (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition-all"
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 bg-purple-600 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-semibold hover:bg-purple-700 transition-all"
                     >
                       <Edit2 className="w-4 h-4" />
                       <span>Edit Profile</span>
                     </button>
                   ) : (
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                       <button
                         onClick={handleCancel}
-                        className="flex items-center space-x-2 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-all"
+                        className="flex items-center justify-center gap-2 bg-gray-200 text-gray-700 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-semibold hover:bg-gray-300 transition-all"
                       >
                         <X className="w-4 h-4" />
                         <span>Cancel</span>
                       </button>
                       <button
                         onClick={handleSave}
-                        className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-all"
+                        className="flex items-center justify-center gap-2 bg-green-600 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-semibold hover:bg-green-700 transition-all"
                       >
                         <Save className="w-4 h-4" />
                         <span>Save</span>
@@ -219,14 +261,14 @@ export default function ProfileSettingsPage() {
                 </div>
 
                 {}
-                <div className="flex items-center space-x-6 mb-8 pb-8 border-b border-gray-200">
-                  <div className="relative">
+                <div className="flex flex-col sm:flex-row items-center sm:gap-6 mb-8 pb-8 border-b border-gray-200 gap-4">
+                  <div className="relative shrink-0">
                     <Image
                       src={avatar}
                       alt={userFullName}
                       width={96}
                       height={96}
-                      className="w-24 h-24 rounded-full object-cover border-4 border-gray-200"
+                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-gray-200"
                       referrerPolicy="no-referrer"
                     />
                     {isEditing && (
@@ -235,13 +277,15 @@ export default function ProfileSettingsPage() {
                       </button>
                     )}
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">
+                  <div className="text-center sm:text-left flex-1 min-w-0">
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900">
                       {userFullName}
                     </h3>
-                    <p className="text-gray-600">{profile.email}</p>
+                    <p className="text-xs sm:text-sm text-gray-600 truncate">
+                      {profile.email}
+                    </p>
                     {isEditing && (
-                      <button className="mt-2 text-sm text-purple-600 hover:text-purple-700 font-semibold">
+                      <button className="mt-2 text-xs sm:text-sm text-purple-600 hover:text-purple-700 font-semibold">
                         Change Profile Picture
                       </button>
                     )}
@@ -393,44 +437,44 @@ export default function ProfileSettingsPage() {
 
             {}
             {activeSection === "security" && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                <h2 className="text-lg sm:text-2xl font-bold text-gray-900 mb-6">
                   Security Settings
                 </h2>
 
-                <div className="space-y-6">
-                  <div className="border border-gray-200 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="border border-gray-200 rounded-lg sm:rounded-xl p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                       Password
                     </h3>
-                    <p className="text-gray-600 mb-4">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-4">
                       Last changed 3 months ago
                     </p>
-                    <button className="bg-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-purple-700 transition-all">
+                    <button className="bg-purple-600 text-white px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg font-semibold hover:bg-purple-700 transition-all">
                       Change Password
                     </button>
                   </div>
 
-                  <div className="border border-gray-200 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <div className="border border-gray-200 rounded-lg sm:rounded-xl p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                       Two-Factor Authentication
                     </h3>
-                    <p className="text-gray-600 mb-4">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-4">
                       Add an extra layer of security to your account
                     </p>
-                    <button className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition-all">
+                    <button className="bg-green-600 text-white px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg font-semibold hover:bg-green-700 transition-all">
                       Enable 2FA
                     </button>
                   </div>
 
-                  <div className="border border-gray-200 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <div className="border border-gray-200 rounded-lg sm:rounded-xl p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                       Active Sessions
                     </h3>
-                    <p className="text-gray-600 mb-4">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-4">
                       Manage devices where you're currently logged in
                     </p>
-                    <button className="border-2 border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-all">
+                    <button className="border-2 border-gray-300 text-gray-700 px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg font-semibold hover:bg-gray-50 transition-all">
                       View Sessions
                     </button>
                   </div>
@@ -440,22 +484,22 @@ export default function ProfileSettingsPage() {
 
             {}
             {activeSection === "notifications" && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                <h2 className="text-lg sm:text-2xl font-bold text-gray-900 mb-6">
                   Notification Preferences
                 </h2>
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border border-gray-200 rounded-xl">
-                    <div>
-                      <h3 className="font-semibold text-gray-900">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg sm:rounded-xl">
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-gray-900">
                         Order Updates
                       </h3>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-xs sm:text-sm text-gray-600">
                         Get notified about your order status
                       </p>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
+                    <label className="relative inline-flex items-center cursor-pointer ml-2 shrink-0">
                       <input
                         type="checkbox"
                         checked={notifications.orderUpdates}
@@ -467,20 +511,20 @@ export default function ProfileSettingsPage() {
                         }
                         className="sr-only peer"
                       />
-                      <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
+                      <div className="w-11 h-6 sm:w-14 sm:h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-1 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 sm:after:h-6 after:w-5 sm:after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
                     </label>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 border border-gray-200 rounded-xl">
-                    <div>
-                      <h3 className="font-semibold text-gray-900">
+                  <div className="flex items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg sm:rounded-xl">
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-gray-900">
                         Promotions & Offers
                       </h3>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-xs sm:text-sm text-gray-600">
                         Receive exclusive deals and discounts
                       </p>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
+                    <label className="relative inline-flex items-center cursor-pointer ml-2 shrink-0">
                       <input
                         type="checkbox"
                         checked={notifications.promotions}
@@ -492,20 +536,20 @@ export default function ProfileSettingsPage() {
                         }
                         className="sr-only peer"
                       />
-                      <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
+                      <div className="w-11 h-6 sm:w-14 sm:h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-1 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 sm:after:h-6 after:w-5 sm:after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
                     </label>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 border border-gray-200 rounded-xl">
-                    <div>
-                      <h3 className="font-semibold text-gray-900">
+                  <div className="flex items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg sm:rounded-xl">
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-gray-900">
                         Newsletter
                       </h3>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-xs sm:text-sm text-gray-600">
                         Weekly updates and tips
                       </p>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
+                    <label className="relative inline-flex items-center cursor-pointer ml-2 shrink-0">
                       <input
                         type="checkbox"
                         checked={notifications.newsletter}
@@ -517,20 +561,20 @@ export default function ProfileSettingsPage() {
                         }
                         className="sr-only peer"
                       />
-                      <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
+                      <div className="w-11 h-6 sm:w-14 sm:h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-1 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 sm:after:h-6 after:w-5 sm:after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
                     </label>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 border border-gray-200 rounded-xl">
-                    <div>
-                      <h3 className="font-semibold text-gray-900">
+                  <div className="flex items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg sm:rounded-xl">
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-gray-900">
                         SMS Notifications
                       </h3>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-xs sm:text-sm text-gray-600">
                         Receive text messages for important updates
                       </p>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
+                    <label className="relative inline-flex items-center cursor-pointer ml-2 shrink-0">
                       <input
                         type="checkbox"
                         checked={notifications.smsNotifications}
@@ -542,7 +586,7 @@ export default function ProfileSettingsPage() {
                         }
                         className="sr-only peer"
                       />
-                      <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
+                      <div className="w-11 h-6 sm:w-14 sm:h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-1 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 sm:after:h-6 after:w-5 sm:after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
                     </label>
                   </div>
                 </div>
@@ -551,44 +595,44 @@ export default function ProfileSettingsPage() {
 
             {}
             {activeSection === "privacy" && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                <h2 className="text-lg sm:text-2xl font-bold text-gray-900 mb-6">
                   Privacy Settings
                 </h2>
 
-                <div className="space-y-6">
-                  <div className="border border-gray-200 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="border border-gray-200 rounded-lg sm:rounded-xl p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                       Data Privacy
                     </h3>
-                    <p className="text-gray-600 mb-4">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-4">
                       Manage how your data is collected and used
                     </p>
-                    <button className="text-purple-600 hover:text-purple-700 font-semibold">
+                    <button className="text-purple-600 hover:text-purple-700 text-sm sm:text-base font-semibold">
                       View Privacy Policy →
                     </button>
                   </div>
 
-                  <div className="border border-gray-200 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <div className="border border-gray-200 rounded-lg sm:rounded-xl p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                       Download Your Data
                     </h3>
-                    <p className="text-gray-600 mb-4">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-4">
                       Request a copy of your personal data
                     </p>
-                    <button className="border-2 border-purple-600 text-purple-600 px-6 py-2 rounded-lg font-semibold hover:bg-purple-50 transition-all">
+                    <button className="border-2 border-purple-600 text-purple-600 px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg font-semibold hover:bg-purple-50 transition-all">
                       Request Data
                     </button>
                   </div>
 
-                  <div className="border border-red-200 rounded-xl p-6 bg-red-50">
-                    <h3 className="text-lg font-semibold text-red-900 mb-2">
+                  <div className="border border-red-200 rounded-lg sm:rounded-xl p-4 sm:p-6 bg-red-50">
+                    <h3 className="text-base sm:text-lg font-semibold text-red-900 mb-2">
                       Delete Account
                     </h3>
-                    <p className="text-red-700 mb-4">
+                    <p className="text-xs sm:text-sm text-red-700 mb-4">
                       Permanently delete your account and all data
                     </p>
-                    <button className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition-all">
+                    <button className="bg-red-600 text-white px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg font-semibold hover:bg-red-700 transition-all">
                       Delete Account
                     </button>
                   </div>
@@ -598,17 +642,17 @@ export default function ProfileSettingsPage() {
 
             {}
             {activeSection === "preferences" && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                <h2 className="text-lg sm:text-2xl font-bold text-gray-900 mb-6">
                   Preferences
                 </h2>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                       Language
                     </label>
-                    <select className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none">
+                    <select className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg sm:rounded-xl text-sm sm:text-base focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none">
                       <option>English</option>
                       <option>Spanish</option>
                       <option>French</option>
@@ -617,10 +661,10 @@ export default function ProfileSettingsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                       Currency
                     </label>
-                    <select className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none">
+                    <select className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg sm:rounded-xl text-sm sm:text-base focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none">
                       <option>USD ($)</option>
                       <option>NGN (₦)</option>
                       <option>EUR (€)</option>
@@ -629,10 +673,10 @@ export default function ProfileSettingsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                       Time Zone
                     </label>
-                    <select className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none">
+                    <select className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg sm:rounded-xl text-sm sm:text-base focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none">
                       <option>WAT (West Africa Time)</option>
                       <option>GMT (Greenwich Mean Time)</option>
                       <option>EST (Eastern Standard Time)</option>
@@ -640,7 +684,7 @@ export default function ProfileSettingsPage() {
                     </select>
                   </div>
 
-                  <button className="w-full bg-purple-600 text-white py-3 rounded-xl font-semibold hover:bg-purple-700 transition-all">
+                  <button className="w-full bg-purple-600 text-white py-2 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl font-semibold hover:bg-purple-700 transition-all">
                     Save Preferences
                   </button>
                 </div>

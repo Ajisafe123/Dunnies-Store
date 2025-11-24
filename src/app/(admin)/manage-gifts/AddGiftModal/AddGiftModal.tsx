@@ -53,6 +53,12 @@ export default function AddGiftModal({
             if (gift.imageUrl) {
               setImagePreviews([gift.imageUrl]);
             }
+            // Load existing imageUrls
+            if (gift.imageUrls && gift.imageUrls.length > 0) {
+              setImagePreviews((prev) => [
+                ...new Set([...prev, ...gift.imageUrls]),
+              ]);
+            }
           }
         }
       } catch (err) {
@@ -119,8 +125,11 @@ export default function AddGiftModal({
       formDataToSend.append("imageUrl", formData.imageUrl);
       formDataToSend.append("categoryId", formData.categoryId);
 
-      images.forEach((image, index) => {
-        formDataToSend.append(`images[${index}]`, image);
+      // Only send new image files (File objects)
+      images.forEach((image) => {
+        if (image instanceof File) {
+          formDataToSend.append("images", image);
+        }
       });
 
       const url = giftId ? `/api/gifts/${giftId}` : "/api/gifts";

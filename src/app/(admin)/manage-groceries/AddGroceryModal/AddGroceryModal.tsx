@@ -53,6 +53,12 @@ export default function AddGroceryModal({
             if (grocery.imageUrl) {
               setImagePreviews([grocery.imageUrl]);
             }
+            // Load existing imageUrls
+            if (grocery.imageUrls && grocery.imageUrls.length > 0) {
+              setImagePreviews((prev) => [
+                ...new Set([...prev, ...grocery.imageUrls]),
+              ]);
+            }
           }
         }
       } catch (err) {
@@ -119,8 +125,11 @@ export default function AddGroceryModal({
       formDataToSend.append("imageUrl", formData.imageUrl);
       formDataToSend.append("categoryId", formData.categoryId);
 
-      images.forEach((image, index) => {
-        formDataToSend.append(`images[${index}]`, image);
+      // Only send new image files (File objects)
+      images.forEach((image) => {
+        if (image instanceof File) {
+          formDataToSend.append("images", image);
+        }
       });
 
       const url = groceryId ? `/api/groceries/${groceryId}` : "/api/groceries";

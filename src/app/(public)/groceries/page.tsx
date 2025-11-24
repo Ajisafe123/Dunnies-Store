@@ -14,28 +14,44 @@ type ApiProduct = {
   description: string;
   price: number;
   imageUrl: string;
+  imageUrls?: string[];
   category?: string | null;
 };
 
-const adaptProductRecord = (product: ApiProduct): ProductRecord => ({
-  id: product.id,
-  name: product.name,
-  description: product.description,
-  longDescription: product.description,
-  price: product.price,
-  originalPrice: undefined,
-  rating: 0,
-  reviewsCount: 0,
-  image: product.imageUrl,
-  images: [product.imageUrl],
-  tag: "Grocery",
-  category: product.category ?? "Grocery",
-  href: `/product/${product.id}`,
-  stockStatus: "in-stock",
-  highlights: [],
-  specs: [],
-  reviews: [],
-});
+const adaptProductRecord = (
+  product: ApiProduct,
+  tag?: string
+): ProductRecord => {
+  // Prioritize imageUrls array, fallback to imageUrl, then default
+  const imageUrls =
+    product.imageUrls && product.imageUrls.length > 0
+      ? product.imageUrls
+      : product.imageUrl
+      ? [product.imageUrl]
+      : [
+          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
+        ];
+
+  return {
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    longDescription: product.description,
+    price: product.price,
+    originalPrice: undefined,
+    rating: 0,
+    reviewsCount: 0,
+    image: imageUrls[0],
+    images: imageUrls,
+    tag: tag ?? product.category ?? "Grocery",
+    category: product.category ?? "Grocery",
+    href: `/product/${product.id}`,
+    stockStatus: "in-stock",
+    highlights: [],
+    specs: [],
+    reviews: [],
+  };
+};
 
 async function fetchGroceries(): Promise<ProductRecord[]> {
   try {
@@ -44,14 +60,21 @@ async function fetchGroceries(): Promise<ProductRecord[]> {
     });
 
     return groceries.map((grocery: any) =>
-      adaptProductRecord({
-        id: grocery.id,
-        name: grocery.name,
-        description: grocery.description || "",
-        price: grocery.price,
-        imageUrl: grocery.imageUrl || "",
-        category: "Grocery",
-      })
+      adaptProductRecord(
+        {
+          id: grocery.id,
+          name: grocery.name,
+          description: grocery.description || "",
+          price: grocery.price,
+          imageUrl: grocery.imageUrl || "",
+          imageUrls:
+            grocery.imageUrls && grocery.imageUrls.length > 0
+              ? grocery.imageUrls
+              : undefined,
+          category: "Grocery",
+        },
+        "Grocery"
+      )
     );
   } catch (error) {
     console.error("Failed to fetch groceries:", error);

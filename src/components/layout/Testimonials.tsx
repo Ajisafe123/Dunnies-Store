@@ -32,7 +32,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="py-16 bg-gradient-to-b from-violet-50 via-white to-violet-50">
+    <section className="py-16 bg-linear-to-b from-violet-50 via-white to-violet-50">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14 max-w-7xl mx-auto">
           <div className="inline-block bg-violet-100 text-violet-700 px-4 py-2 rounded-full text-sm font-bold mb-4">
@@ -52,7 +52,7 @@ export default function Testimonials() {
               key={t.name}
               className="bg-white rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-violet-200 hover:-translate-y-2 relative overflow-hidden group"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-violet-100 to-purple-100 rounded-bl-full opacity-50 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-violet-100 to-purple-100 rounded-bl-full opacity-50 group-hover:opacity-100 transition-opacity" />
 
               <Quote className="w-10 h-10 text-violet-200 mb-4 relative z-10" />
 
@@ -76,7 +76,7 @@ export default function Testimonials() {
                     alt={t.name}
                     className="w-14 h-14 rounded-full object-cover border-4 border-white shadow-md"
                   />
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full border-2 border-white" />
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-linear-to-br from-green-400 to-emerald-500 rounded-full border-2 border-white" />
                 </div>
                 <div>
                   <h4 className="font-bold text-gray-900 text-lg">{t.name}</h4>
@@ -89,7 +89,7 @@ export default function Testimonials() {
           ))}
         </div>
 
-        <div className="mt-12 text-center max-w-7xl mx-auto">
+        <div className="mt-12 text-center px-4 sm:px-6 lg:px-8">
           <div className="inline-flex flex-wrap justify-center items-center gap-6 sm:gap-8 bg-white rounded-2xl px-6 sm:px-8 py-6 shadow-lg border border-gray-100 max-w-full">
             <div className="text-center min-w-[120px]">
               <div className="text-3xl font-black text-violet-600">5,000+</div>

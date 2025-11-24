@@ -14,28 +14,44 @@ type ApiProduct = {
   description: string;
   price: number;
   imageUrl: string;
+  imageUrls?: string[];
   category?: string | null;
 };
 
-const adaptProductRecord = (product: ApiProduct): ProductRecord => ({
-  id: product.id,
-  name: product.name,
-  description: product.description,
-  longDescription: product.description,
-  price: product.price,
-  originalPrice: undefined,
-  rating: 0,
-  reviewsCount: 0,
-  image: product.imageUrl,
-  images: [product.imageUrl],
-  tag: "Gift",
-  category: product.category ?? "Gift",
-  href: `/product/${product.id}`,
-  stockStatus: "in-stock",
-  highlights: [],
-  specs: [],
-  reviews: [],
-});
+const adaptProductRecord = (
+  product: ApiProduct,
+  tag?: string
+): ProductRecord => {
+  // Prioritize imageUrls array, fallback to imageUrl, then default
+  const imageUrls =
+    product.imageUrls && product.imageUrls.length > 0
+      ? product.imageUrls
+      : product.imageUrl
+      ? [product.imageUrl]
+      : [
+          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
+        ];
+
+  return {
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    longDescription: product.description,
+    price: product.price,
+    originalPrice: undefined,
+    rating: 0,
+    reviewsCount: 0,
+    image: imageUrls[0],
+    images: imageUrls,
+    tag: tag ?? product.category ?? "Gift",
+    category: product.category ?? "Gift",
+    href: `/product/${product.id}`,
+    stockStatus: "in-stock",
+    highlights: [],
+    specs: [],
+    reviews: [],
+  };
+};
 
 async function fetchGifts(): Promise<ProductRecord[]> {
   try {
@@ -44,14 +60,21 @@ async function fetchGifts(): Promise<ProductRecord[]> {
     });
 
     return gifts.map((gift: any) =>
-      adaptProductRecord({
-        id: gift.id,
-        name: gift.name,
-        description: gift.description || "",
-        price: gift.price,
-        imageUrl: gift.imageUrl || "",
-        category: "Gift",
-      })
+      adaptProductRecord(
+        {
+          id: gift.id,
+          name: gift.name,
+          description: gift.description || "",
+          price: gift.price,
+          imageUrl: gift.imageUrl || "",
+          imageUrls:
+            gift.imageUrls && gift.imageUrls.length > 0
+              ? gift.imageUrls
+              : undefined,
+          category: "Gift",
+        },
+        "Gift"
+      )
     );
   } catch (error) {
     console.error("Failed to fetch gifts:", error);

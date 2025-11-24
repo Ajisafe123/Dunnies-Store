@@ -14,36 +14,61 @@ type ApiProduct = {
   description: string;
   price: number;
   imageUrl: string;
+  imageUrls?: string[];
   category?: string | null;
+  rating?: number;
+  reviewsCount?: number;
+  likesCount?: number;
 };
 
 const adaptProductRecord = (
   product: ApiProduct,
   tag?: string
-): ProductRecord => ({
-  id: product.id,
-  name: product.name,
-  description: product.description,
-  longDescription: product.description,
-  price: product.price,
-  originalPrice: undefined,
-  rating: 0,
-  reviewsCount: 0,
-  image:
-    product.imageUrl ||
-    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
-  images: [
-    product.imageUrl ||
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
-  ],
-  tag: tag ?? product.category ?? "New",
-  category: product.category ?? "General",
-  href: `/product/${product.id}`,
-  stockStatus: "in-stock",
-  highlights: [],
-  specs: [],
-  reviews: [],
-});
+): ProductRecord => {
+  // Prioritize imageUrls array, fallback to imageUrl, then default
+  const imageUrls =
+    product.imageUrls && product.imageUrls.length > 0
+      ? product.imageUrls
+      : product.imageUrl
+      ? [product.imageUrl]
+      : [
+          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
+        ];
+
+  // Debug log
+  if (
+    !product.imageUrl &&
+    (!product.imageUrls || product.imageUrls.length === 0)
+  ) {
+    console.log(
+      `[ProductPage] ${product.name}: Using fallback image (no imageUrl or imageUrls)`
+    );
+  } else if (product.imageUrls && product.imageUrls.length > 0) {
+    console.log(
+      `[ProductPage] ${product.name}: Using ${product.imageUrls.length} images from imageUrls`
+    );
+  }
+
+  return {
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    longDescription: product.description,
+    price: product.price,
+    originalPrice: undefined,
+    rating: product.rating ?? 0,
+    reviewsCount: product.reviewsCount ?? 0,
+    image: imageUrls[0],
+    images: imageUrls,
+    tag: tag ?? product.category ?? "New",
+    category: product.category ?? "General",
+    href: `/product/${product.id}`,
+    stockStatus: "in-stock",
+    highlights: [],
+    specs: [],
+    reviews: [],
+  };
+};
 
 type ProductPageProps = {
   searchParams: Promise<{ category?: string }>;
@@ -74,9 +99,11 @@ async function fetchProductsByCategory(
               name: gift.name,
               description: gift.description || "",
               price: gift.price,
-              imageUrl:
-                gift.imageUrl ||
-                "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
+              imageUrl: gift.imageUrl || "",
+              imageUrls:
+                gift.imageUrls && gift.imageUrls.length > 0
+                  ? gift.imageUrls
+                  : undefined,
               category: category.name,
             },
             category.name
@@ -94,38 +121,55 @@ async function fetchProductsByCategory(
               name: grocery.name,
               description: grocery.description || "",
               price: grocery.price,
-              imageUrl:
-                grocery.imageUrl ||
-                "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
+              imageUrl: grocery.imageUrl || "",
+              imageUrls:
+                grocery.imageUrls && grocery.imageUrls.length > 0
+                  ? grocery.imageUrls
+                  : undefined,
               category: category.name,
             },
             category.name
           )
         );
       } else {
-
         const products = await prisma.product.findMany({
           where: { categoryId },
-          include: { category: true },
+          include: { category: true, comments: true },
           orderBy: { createdAt: "desc" },
         });
-        return products.map((product: any) =>
-          adaptProductRecord({
+        return products.map((product: any) => {
+          // Calculate average rating from comments
+          const ratings = product.comments.map((c: any) => c.rating);
+          const averageRating =
+            ratings.length > 0
+              ? Math.round(
+                  (ratings.reduce((a: number, b: number) => a + b, 0) /
+                    ratings.length) *
+                    10
+                ) / 10
+              : 0;
+
+          return adaptProductRecord({
             id: product.id,
             name: product.name,
             description: product.description || "",
             price: product.price,
             imageUrl: product.imageUrl || "",
+            imageUrls:
+              product.imageUrls && product.imageUrls.length > 0
+                ? product.imageUrls
+                : undefined,
             category: product.category?.name,
-          })
-        );
+            rating: averageRating,
+            reviewsCount: product.comments.length,
+          });
+        });
       }
     }
 
-
     const [products, gifts, groceries] = await Promise.all([
       prisma.product.findMany({
-        include: { category: true },
+        include: { category: true, comments: true },
         orderBy: { createdAt: "desc" },
       }),
       prisma.gift.findMany({
@@ -138,20 +182,35 @@ async function fetchProductsByCategory(
 
     const allProducts: ProductRecord[] = [];
 
-
     allProducts.push(
-      ...products.map((product: any) =>
-        adaptProductRecord({
+      ...products.map((product: any) => {
+        // Calculate average rating from comments
+        const ratings = product.comments.map((c: any) => c.rating);
+        const averageRating =
+          ratings.length > 0
+            ? Math.round(
+                (ratings.reduce((a: number, b: number) => a + b, 0) /
+                  ratings.length) *
+                  10
+              ) / 10
+            : 0;
+
+        return adaptProductRecord({
           id: product.id,
           name: product.name,
           description: product.description || "",
           price: product.price,
           imageUrl: product.imageUrl || "",
+          imageUrls:
+            product.imageUrls && product.imageUrls.length > 0
+              ? product.imageUrls
+              : undefined,
           category: product.category?.name,
-        })
-      )
+          rating: averageRating,
+          reviewsCount: product.comments.length,
+        });
+      })
     );
-
 
     allProducts.push(
       ...gifts.map((gift: any) =>
@@ -161,16 +220,17 @@ async function fetchProductsByCategory(
             name: gift.name,
             description: gift.description || "",
             price: gift.price,
-            imageUrl:
-              gift.imageUrl ||
-              "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
+            imageUrl: gift.imageUrl || "",
+            imageUrls:
+              gift.imageUrls && gift.imageUrls.length > 0
+                ? gift.imageUrls
+                : undefined,
             category: "Gifts",
           },
           "Gifts"
         )
       )
     );
-
 
     allProducts.push(
       ...groceries.map((grocery: any) =>
@@ -180,9 +240,11 @@ async function fetchProductsByCategory(
             name: grocery.name,
             description: grocery.description || "",
             price: grocery.price,
-            imageUrl:
-              grocery.imageUrl ||
-              "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
+            imageUrl: grocery.imageUrl || "",
+            imageUrls:
+              grocery.imageUrls && grocery.imageUrls.length > 0
+                ? grocery.imageUrls
+                : undefined,
             category: "Groceries",
           },
           "Groceries"

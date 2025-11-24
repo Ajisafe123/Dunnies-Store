@@ -55,8 +55,8 @@ export default function LoginPage() {
 
       const destination = resolveRoleDestination(data.user?.role);
       console.log("Redirecting to:", destination);
-      
-      await new Promise(resolve => setTimeout(resolve, 500));
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
       router.refresh();
       router.push(destination);
     } catch (err: any) {

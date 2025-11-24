@@ -7,12 +7,6 @@ export async function saveUploadedFile(
   folder: string
 ): Promise<string> {
   try {
-    if (process.env.NODE_ENV === "production") {
-      const bytes = await file.arrayBuffer();
-      const base64 = Buffer.from(bytes).toString("base64");
-      return `data:${file.type};base64,${base64.substring(0, 1000)}...`;
-    }
-
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
@@ -25,7 +19,6 @@ export async function saveUploadedFile(
     const random = Math.random().toString(36).substring(7);
     
     const filename = `${timestamp}-${random}.${
-
       (file as File).name?.split(".").pop() || "jpg"
     }`;
 

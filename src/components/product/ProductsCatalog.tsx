@@ -5,7 +5,7 @@ import Link from "next/link";
 import ProductList from "@/components/product/ProductList";
 import Loader from "@/components/ui/Loader";
 import { ProductRecord } from "@/Data/products";
-import { Search, SlidersHorizontal, Grid, List } from "lucide-react";
+import { Search, SlidersHorizontal, Grid, List, ChevronDown } from "lucide-react";
 
 interface Category {
   id: string;
@@ -24,6 +24,7 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -135,30 +136,56 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
 
       {}
       {categories.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="mb-6 relative inline-block w-full sm:w-64">
           <button
-            onClick={() => setSelectedCategory(null)}
-            className={`px-4 py-2 rounded-full font-medium transition ${
-              selectedCategory === null
-                ? "bg-purple-600 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="w-full px-4 py-3 rounded-full font-medium transition bg-white border-2 border-purple-200 text-gray-700 hover:bg-purple-50 flex items-center justify-between"
           >
-            All Products
-          </button>
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.name)}
-              className={`px-4 py-2 rounded-full font-medium transition ${
-                selectedCategory === category.name
-                  ? "bg-purple-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            <span>
+              {selectedCategory ? `${selectedCategory}` : "All Products"}
+            </span>
+            <ChevronDown
+              className={`w-4 h-4 transition-transform ${
+                dropdownOpen ? "rotate-180" : ""
               }`}
-            >
-              {category.name}
-            </button>
-          ))}
+            />
+          </button>
+
+          {dropdownOpen && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-purple-200 rounded-2xl shadow-lg z-10">
+              <button
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setDropdownOpen(false);
+                }}
+                className={`w-full px-4 py-3 text-left font-medium transition rounded-t-xl ${
+                  selectedCategory === null
+                    ? "bg-purple-600 text-white"
+                    : "text-gray-700 hover:bg-purple-50"
+                }`}
+              >
+                All Products
+              </button>
+              {categories.map((category, index) => (
+                <button
+                  key={category.id}
+                  onClick={() => {
+                    setSelectedCategory(category.name);
+                    setDropdownOpen(false);
+                  }}
+                  className={`w-full px-4 py-3 text-left font-medium transition ${
+                    selectedCategory === category.name
+                      ? "bg-purple-600 text-white"
+                      : "text-gray-700 hover:bg-purple-50"
+                  } ${
+                    index === categories.length - 1 ? "rounded-b-xl" : ""
+                  }`}
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
