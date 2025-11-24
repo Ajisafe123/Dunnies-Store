@@ -16,7 +16,7 @@ interface Product {
 
 interface ProductListProps {
   products: Product[];
-  cols?: 1 | 3 | 4 | 5 | 6;
+  cols?: 2 | 3 | 4 | 5 | 6;
   gap?: 4 | 6 | 8;
 }
 
@@ -28,7 +28,7 @@ export default function ProductList({
   const gapClass = gap === 4 ? "gap-4" : gap === 8 ? "gap-8" : "gap-6";
 
   const gridCols = {
-    1: "grid-cols-1",
+    2: "grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4",
     3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
     4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
     5: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5",
