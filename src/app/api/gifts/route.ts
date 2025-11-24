@@ -60,7 +60,13 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    return NextResponse.json({ gifts: giftsWithProcessedImages });
+    return NextResponse.json({ gifts: giftsWithProcessedImages }, {
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      }
+    });
   } catch (error) {
     console.error("[GIFTS_GET]", error);
     return NextResponse.json(

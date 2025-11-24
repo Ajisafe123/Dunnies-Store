@@ -59,6 +59,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const [commentLikes, setCommentLikes] = useState<
     Record<string, { count: number; isLiked: boolean }>
   >({});
+  const [animatingCommentId, setAnimatingCommentId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [customerName, setCustomerName] = useState("");
@@ -110,26 +111,37 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   }, [product.id]);
 
   useEffect(() => {
-    const fetchUserRole = async () => {
+    setIsClient(true);
+    setUserId(localStorage.getItem("userId"));
+  }, []);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
       try {
         const response = await fetch(`${getBaseUrl()}/api/auth/current`);
         if (response.ok) {
           const data = await response.json();
           setUserRole(data.user?.role || null);
+          // Set customer name from user's full name
+          if (data.user?.fullName) {
+            setCustomerName(data.user.fullName);
+          }
         } else {
           setUserRole(null);
+          setCustomerName("");
         }
       } catch (error) {
-        console.error("Error fetching user role:", error);
+        console.error("Error fetching user data:", error);
         setUserRole(null);
+        setCustomerName("");
       }
     };
 
-    fetchUserRole();
+    fetchUserData();
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        fetchUserRole();
+        fetchUserData();
       }
     };
 
@@ -187,6 +199,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           body: JSON.stringify({ userId }),
         }
       );
+      if (response.status === 401) {
+        // Token expired or invalid
+        router.push("/login");
+        return;
+      }
       if (response.ok) {
         const data = await response.json();
         setLikes(data.likeCount || 0);
@@ -208,6 +225,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       return;
     }
 
+    // Trigger animation
+    setAnimatingCommentId(commentId);
+    setTimeout(() => setAnimatingCommentId(null), 600);
+
     try {
       const response = await fetch(`${getBaseUrl()}/api/comments/likes`, {
         method: "POST",
@@ -215,14 +236,18 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         body: JSON.stringify({ userId: currentUserId, commentId }),
       });
 
+      if (response.status === 401) {
+        // Token expired or invalid
+        router.push("/login");
+        return;
+      }
+
       if (response.ok) {
         const data = await response.json();
         setCommentLikes((prev) => ({
           ...prev,
           [commentId]: {
-            count:
-              data.likeCount ||
-              (prev[commentId]?.count || 0) + (data.liked ? 1 : -1),
+            count: data.likeCount || 0,
             isLiked: data.liked,
           },
         }));
@@ -335,6 +360,12 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           }),
         }
       );
+
+      if (response.status === 401) {
+        // Token expired or invalid
+        router.push("/login");
+        return;
+      }
 
       if (response.ok) {
         const newComment = await response.json();
@@ -711,6 +742,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       <ThumbsUp
                         className={`w-3.5 h-3.5 shrink-0 ${
                           commentLikes[review.id]?.isLiked ? "fill-current" : ""
+                        } ${
+                          animatingCommentId === review.id ? "thumbs-up-animate" : ""
                         }`}
                       />
                       <span className="shrink-0">

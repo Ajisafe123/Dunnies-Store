@@ -56,7 +56,13 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    return NextResponse.json({ products: productsWithRatings });
+    return NextResponse.json({ products: productsWithRatings }, {
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      }
+    });
   } catch (error) {
     console.error("[PRODUCTS_GET]", error);
     return NextResponse.json(

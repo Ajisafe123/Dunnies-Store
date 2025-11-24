@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { verifyUserAuth, unauthorizedResponse } from "@/lib/authMiddleware";
 
 export async function GET(
   request: NextRequest,
@@ -45,15 +46,14 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
   try {
-    const { id } = await params;
-    const { userId } = await request.json();
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Missing userId" },
-        { status: 400 }
-      );
+    // Verify user is authenticated
+    const auth = await verifyUserAuth(request);
+    if (!auth.isAuthenticated || !auth.user) {
+      return unauthorizedResponse("You must be logged in to like products");
     }
+
+    const { id } = await params;
+    const userId = auth.user.id;
 
     let product = await prisma.product.findUnique({ where: { id } });
     if (!product) {

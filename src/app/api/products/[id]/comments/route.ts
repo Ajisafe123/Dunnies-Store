@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { verifyUserAuth, unauthorizedResponse } from "@/lib/authMiddleware";
 
 export async function GET(
   request: NextRequest,
@@ -61,12 +62,19 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
-    const { userId, text, rating } = await request.json();
+    // Verify user is authenticated
+    const auth = await verifyUserAuth(request);
+    if (!auth.isAuthenticated || !auth.user) {
+      return unauthorizedResponse("You must be logged in to comment");
+    }
 
-    if (!userId || !text || !rating) {
+    const { id } = await params;
+    const { text, rating } = await request.json();
+    const userId = auth.user.id;
+
+    if (!text || !rating) {
       return NextResponse.json(
-        { error: "Missing required fields: userId, text, rating" },
+        { error: "Missing required fields: text, rating" },
         { status: 400 }
       );
     }
