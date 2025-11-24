@@ -48,6 +48,17 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  rewrites: async () => {
+    return {
+      beforeFiles: [
+        // Serve local uploads directly from public folder (dev only)
+        {
+          source: '/uploads/:path*',
+          destination: '/uploads/:path*',
+        },
+      ],
+    };
+  },
   env: {
     API_URL: process.env.API_URL, 
   },

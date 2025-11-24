@@ -59,7 +59,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const [commentLikes, setCommentLikes] = useState<
     Record<string, { count: number; isLiked: boolean }>
   >({});
-  const [animatingCommentId, setAnimatingCommentId] = useState<string | null>(null);
+  const [animatingCommentId, setAnimatingCommentId] = useState<string | null>(
+    null
+  );
   const [userId, setUserId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [customerName, setCustomerName] = useState("");
@@ -113,7 +115,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   useEffect(() => {
     setIsClient(true);
     setUserId(localStorage.getItem("userId"));
-    
+
     // Also fetch user data immediately if logged in
     const fetchUserDataOnMount = async () => {
       try {
@@ -129,7 +131,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         console.error("Error fetching user data on mount:", error);
       }
     };
-    
+
     fetchUserDataOnMount();
   }, []);
 
@@ -761,7 +763,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                         className={`w-3.5 h-3.5 shrink-0 ${
                           commentLikes[review.id]?.isLiked ? "fill-current" : ""
                         } ${
-                          animatingCommentId === review.id ? "thumbs-up-animate" : ""
+                          animatingCommentId === review.id
+                            ? "thumbs-up-animate"
+                            : ""
                         }`}
                       />
                       <span className="shrink-0">

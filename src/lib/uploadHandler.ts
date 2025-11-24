@@ -10,9 +10,10 @@ export async function saveUploadedFile(
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // On Render, use the project root. On local, use public folder
+    // On Render production, use .uploads folder (persistent storage)
+    // On local/dev, use public/uploads folder
     const baseDir = process.env.NODE_ENV === 'production' 
-      ? join(process.cwd(), '.uploads')  // Render persistent storage
+      ? join(process.cwd(), '.uploads')
       : join(process.cwd(), 'public', 'uploads');
     
     const uploadDir = join(baseDir, folder);
@@ -30,7 +31,10 @@ export async function saveUploadedFile(
     const filepath = join(uploadDir, filename);
     await writeFile(filepath, buffer);
 
-    return `/uploads/${folder}/${filename}`;
+    // Return API route URL that works on both local and production
+    // On production (Render), files are served via /api/uploads/[...path]
+    // On local dev, files are served directly from public folder
+    return `/api/uploads/${folder}/${filename}`;
   } catch (error) {
     console.error("Error saving file:", error);
     throw new Error("Failed to save uploaded file");

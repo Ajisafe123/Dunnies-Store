@@ -1,8 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { saveUploadedFile } from "@/lib/uploadHandler";
+import { mkdir } from "fs/promises";
+import { join } from "path";
+import { existsSync } from "fs";
+
+// Ensure uploads directories exist on startup
+async function ensureDirectories() {
+  if (process.env.NODE_ENV === 'production') {
+    const baseDir = join(process.cwd(), '.uploads');
+    if (!existsSync(baseDir)) {
+      try {
+        await mkdir(baseDir, { recursive: true });
+        console.log('[UPLOAD] Created .uploads directory');
+      } catch (error) {
+        console.error('[UPLOAD] Failed to create .uploads directory:', error);
+      }
+    }
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
+    // Ensure directories exist
+    await ensureDirectories();
+
     const formData = await request.formData();
     const file = formData.get("file") as File;
     const folder = (formData.get("folder") as string) || "products";
@@ -31,6 +52,7 @@ export async function POST(request: NextRequest) {
     }
 
     const url = await saveUploadedFile(file, folder);
+    console.log(`[UPLOAD] File uploaded: ${url}`);
 
     return NextResponse.json({ url }, { status: 200 });
   } catch (error) {

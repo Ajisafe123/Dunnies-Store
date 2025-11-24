@@ -18,35 +18,48 @@ export async function GET(
       );
     }
 
-    // Construct full file path
-    const baseDir = process.env.NODE_ENV === 'production'
-      ? join(process.cwd(), '.uploads')
-      : join(process.cwd(), 'public', 'uploads');
-    
-    const fullPath = join(baseDir, filepath);
+    // Try multiple possible locations
+    const locations = [
+      // Production Render location
+      join(process.cwd(), '.uploads', filepath),
+      // Local development location
+      join(process.cwd(), 'public', 'uploads', filepath),
+    ];
 
-    // Check if file exists
-    try {
-      await stat(fullPath);
-    } catch {
+    let fileBuffer = null;
+    let foundPath = null;
+
+    for (const location of locations) {
+      try {
+        await stat(location);
+        fileBuffer = await readFile(location);
+        foundPath = location;
+        break;
+      } catch {
+        // Try next location
+        continue;
+      }
+    }
+
+    if (!fileBuffer || !foundPath) {
+      console.warn(`[UPLOADS_GET] File not found in any location: ${filepath}`);
       return NextResponse.json(
         { error: "File not found" },
         { status: 404 }
       );
     }
 
-    // Read and serve the file
-    const fileBuffer = await readFile(fullPath);
-    
+    console.log(`[UPLOADS_GET] Serving file from: ${foundPath}`);
+
     // Determine content type
     let contentType = 'application/octet-stream';
-    if (fullPath.endsWith('.jpg') || fullPath.endsWith('.jpeg')) {
+    if (filepath.endsWith('.jpg') || filepath.endsWith('.jpeg')) {
       contentType = 'image/jpeg';
-    } else if (fullPath.endsWith('.png')) {
+    } else if (filepath.endsWith('.png')) {
       contentType = 'image/png';
-    } else if (fullPath.endsWith('.gif')) {
+    } else if (filepath.endsWith('.gif')) {
       contentType = 'image/gif';
-    } else if (fullPath.endsWith('.webp')) {
+    } else if (filepath.endsWith('.webp')) {
       contentType = 'image/webp';
     }
 

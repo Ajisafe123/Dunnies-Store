@@ -9,5 +9,5 @@ services:
         value: production
     disk:
       - name: uploads
-        mountPath: /opt/render/project/.next/static/uploads
-        sizeGB: 1
+        mountPath: /opt/render/project/.uploads
+        sizeGB: 2
