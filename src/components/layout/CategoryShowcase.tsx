@@ -38,10 +38,10 @@ const collections = [
 
 export default function CategoryShowcase() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-10 sm:py-14 lg:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {}
-        <div className="mb-16">
+        <div className="mb-10 sm:mb-12 lg:mb-16">
           <div className="mb-4">
             <span className="text-sm font-semibold text-slate-500 uppercase tracking-widest">
               Shop Collections
@@ -56,7 +56,7 @@ export default function CategoryShowcase() {
         </div>
 
         {}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 sm:mb-10 lg:mb-12">
           {collections.map((collection) => (
             <Link
               key={collection.id}
@@ -111,7 +111,7 @@ export default function CategoryShowcase() {
         </div>
 
         {}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12 border-t border-b border-slate-200">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-6 sm:py-8 lg:py-12 border-t border-b border-slate-200">
           <div className="flex items-start gap-4">
             <div className="shrink-0 mt-1">
               <Zap className="w-5 h-5 text-slate-700" />

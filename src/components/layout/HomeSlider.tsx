@@ -131,28 +131,28 @@ export default function HeroSlider() {
                     {slide.tag}
                   </span>
                 </div>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
                   {slide.title}
                 </h1>
-                <p className="text-xl sm:text-2xl text-purple-100 mb-2">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-purple-100 mb-2">
                   {slide.subtitle}
                 </p>
-                <p className="text-lg text-gray-200 mb-8">
+                <p className="text-sm sm:text-base md:text-lg text-gray-200 mb-8">
                   {slide.description}
                 </p>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-3 sm:gap-4">
                   <Link
                     href={slide.href}
-                    className="bg-white text-purple-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl flex items-center space-x-2"
+                    className="bg-white text-purple-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl flex items-center space-x-2 text-sm sm:text-base"
                   >
                     <span>{slide.cta}</span>
-                    <ArrowRight className="w-5 h-5" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </Link>
                   <Link
                     href="/product"
-                    className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-purple-600 transition-all"
+                    className="bg-transparent border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold hover:bg-white hover:text-purple-600 transition-all text-sm sm:text-base"
                   >
-                    Shop All Products
+                    Shop All
                   </Link>
                 </div>
               </div>

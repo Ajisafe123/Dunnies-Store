@@ -289,10 +289,10 @@ export default function Header() {
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full border-2 border-white"></div>
               </div>
               <div className="hidden sm:block">
-                <span className="font-bold text-xl text-gray-800 group-hover:text-purple-600 transition-colors">
+                <span className="font-bold text-lg sm:text-xl md:text-2xl text-gray-800 group-hover:text-purple-600 transition-colors">
                   Dunnis Stores
                 </span>
-                <p className="text-xs text-gray-500">Your one-stop shop</p>
+                <p className="text-xs sm:text-sm text-gray-500">Your one-stop shop</p>
               </div>
             </Link>
 

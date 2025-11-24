@@ -162,8 +162,8 @@ export default function CategoriesGrid() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-10">
-        <div className="flex items-center justify-between mb-8">
+      <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8 lg:py-10">
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
               Popular Categories

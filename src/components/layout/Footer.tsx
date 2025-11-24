@@ -255,54 +255,73 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="bg-gray-800/50 rounded-2xl p-6 mb-10 backdrop-blur-sm border border-gray-700">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div>
-              <h5 className="text-white font-bold text-lg mb-1">
+        <div className="bg-gray-800/50 rounded-2xl p-3 sm:p-4 md:p-6 mb-10 backdrop-blur-sm border border-gray-700">
+          <div className="flex flex-col gap-4">
+            <div className="text-center sm:text-left">
+              <h5 className="text-white font-bold text-base sm:text-lg md:text-xl mb-1">
                 Subscribe to Our Newsletter
               </h5>
-              <p className="text-sm text-gray-400">
+              <p className="text-xs sm:text-sm text-gray-400">
                 Get exclusive deals and updates delivered to your inbox
               </p>
             </div>
 
-            {/* Mobile: Icon inside input */}
-            <form onSubmit={handleSubscribe} className="md:hidden w-full">
+            {/* Mobile (xs to sm): Full width with icon inside */}
+            <form onSubmit={handleSubscribe} className="sm:hidden w-full">
               <div className="relative">
                 <input
                   type="email"
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 pr-14 rounded-xl bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-violet-500 transition-colors"
+                  className="w-full px-3 py-2.5 pr-12 rounded-lg text-sm bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-violet-500 transition-colors"
                   required
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-600 rounded-lg transition-colors"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 hover:bg-gray-600 rounded-lg transition-colors"
                   aria-label="Subscribe"
                 >
-                  <Send className="w-5 h-5 text-violet-400" />
+                  <Send className="w-4 h-4 text-violet-400" />
                 </button>
               </div>
             </form>
 
-            {/* Desktop: Side by side */}
-            <form onSubmit={handleSubscribe} className="hidden md:flex gap-2">
+            {/* Tablet (sm to md): Full width stacked */}
+            <form onSubmit={handleSubscribe} className="hidden sm:flex md:hidden w-full flex-col gap-2">
               <input
                 type="email"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-64 px-4 py-3 rounded-xl bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-violet-500 transition-colors"
+                className="w-full px-4 py-2.5 text-sm rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-violet-500 transition-colors"
                 required
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-linear-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2"
+                className="w-full px-4 py-2.5 text-sm bg-linear-to-r from-violet-600 to-fuchsia-600 text-white rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
               >
                 <Send className="w-4 h-4" />
                 <span>Subscribe</span>
+              </button>
+            </form>
+
+            {/* Desktop (md and up): Side by side */}
+            <form onSubmit={handleSubscribe} className="hidden md:flex gap-2 lg:gap-3">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 px-4 py-3 text-sm lg:text-base rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-violet-500 transition-colors"
+                required
+              />
+              <button
+                type="submit"
+                className="px-4 lg:px-6 py-3 text-sm lg:text-base bg-linear-to-r from-violet-600 to-fuchsia-600 text-white rounded-lg font-bold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
+              >
+                <Send className="w-4 h-4" />
+                <span className="hidden lg:inline">Subscribe</span>
               </button>
             </form>
           </div>
