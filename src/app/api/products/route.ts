@@ -1,7 +1,6 @@
 ﻿import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { saveUploadedFile } from "@/lib/uploadHandler";
 
 export async function GET(request: NextRequest) {
   try {
@@ -74,41 +73,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const contentType = request.headers.get("content-type");
-    let body: any = {};
-
-    if (contentType?.includes("application/json")) {
-      body = await request.json();
-    } else if (contentType?.includes("multipart/form-data")) {
-      const formData = await request.formData();
-      body = {
-        name: formData.get("name"),
-        description: formData.get("description"),
-        price: formData.get("price"),
-        imageUrl: formData.get("imageUrl"),
-        categoryId: formData.get("categoryId"),
-        priority: formData.get("priority"),
-        images: formData.getAll("images"),
-      };
-    } else {
-      return NextResponse.json(
-        { error: "Invalid content type" },
-        { status: 400 }
-      );
-    }
-
-    const { name, description, price, imageUrl, categoryId, priority, images } = body;
-
-    console.log("[PRODUCTS_POST] Received:", {
-      name,
-      imageUrl,
-      imagesCount: images?.length || 0,
-      images: images?.map((img: any) => ({
-        name: img.name || img.filename,
-        size: img.size,
-        type: img.type,
-      })),
-    });
+    const body = await request.json();
+    const { name, description, price, imageUrl, imageUrls, categoryId, priority } = body;
 
     if (!name || !description || !price) {
       return NextResponse.json(
@@ -130,29 +96,14 @@ export async function POST(request: NextRequest) {
     
     if (priority) productData.priority = priority;
 
-    // Handle multiple images
-    if (images && Array.isArray(images) && images.length > 0) {
-      const processedImages: string[] = [];
-      for (const image of images) {
-        if (image instanceof File) {
-          const uploadedUrl = await saveUploadedFile(image, "products");
-          console.log(`[PRODUCTS_POST] Uploaded image: ${image.name} -> ${uploadedUrl}`);
-          if (uploadedUrl) {
-            processedImages.push(uploadedUrl);
-          }
-        }
-      }
-      if (processedImages.length > 0) {
-        productData.imageUrls = processedImages;
-        // Set imageUrl to first image for backward compatibility
-        productData.imageUrl = processedImages[0];
-        console.log("[PRODUCTS_POST] Setting imageUrls:", processedImages);
-      }
+    // Handle imageUrls array from frontend
+    if (imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0) {
+      productData.imageUrls = imageUrls;
+      productData.imageUrl = imageUrls[0] || imageUrl;
     } else if (imageUrl && String(imageUrl).trim()) {
-      // If no images uploaded but imageUrl provided, use it
       productData.imageUrl = imageUrl;
+      productData.imageUrls = [imageUrl];
     }
-    // imageUrl is now optional, so we don't set it to empty string as fallback
 
     const product = await prisma.product.create({
       data: productData,

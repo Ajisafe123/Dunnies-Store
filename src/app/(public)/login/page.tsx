@@ -47,16 +47,17 @@ export default function LoginPage() {
         localStorage.setItem("userId", data.user.id);
       }
 
+      const destination = resolveRoleDestination(data.user?.role);
+      console.log("Redirecting to:", destination);
+
+      // Show toast but don't wait - redirect immediately
       showToast(
         `Welcome back, ${data.user?.fullName || "User"}!`,
         "success",
         "right"
       );
 
-      const destination = resolveRoleDestination(data.user?.role);
-      console.log("Redirecting to:", destination);
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Redirect without delay to avoid page load delays
       router.refresh();
       router.push(destination);
     } catch (err: any) {

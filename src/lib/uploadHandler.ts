@@ -10,7 +10,12 @@ export async function saveUploadedFile(
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const uploadDir = join(process.cwd(), "public", "uploads", folder);
+    // On Render, use the project root. On local, use public folder
+    const baseDir = process.env.NODE_ENV === 'production' 
+      ? join(process.cwd(), '.uploads')  // Render persistent storage
+      : join(process.cwd(), 'public', 'uploads');
+    
+    const uploadDir = join(baseDir, folder);
     if (!existsSync(uploadDir)) {
       await mkdir(uploadDir, { recursive: true });
     }

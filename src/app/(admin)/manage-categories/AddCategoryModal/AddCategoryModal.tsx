@@ -98,15 +98,34 @@ export default function AddCategoryModal({
         throw new Error("Please select an image");
       }
 
-      const formDataToSend = new FormData();
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("priority", formData.priority);
-      formDataToSend.append("type", selectedType);
+      let imageUrl = imagePreview;
 
+      // Upload image if it's a new file
       if (image) {
-        formDataToSend.append("image", image);
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", image);
+        uploadFormData.append("folder", "categories");
+
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          body: uploadFormData,
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error("Failed to upload image");
+        }
+
+        const uploadData = await uploadResponse.json();
+        imageUrl = uploadData.url;
       }
+
+      // For both POST and PUT, send JSON
+      const payload = {
+        name: formData.name,
+        description: formData.description,
+        imageUrl,
+        type: selectedType,
+      };
 
       const url = editingCategory
         ? `/api/categories/${editingCategory.id}`
@@ -115,7 +134,10 @@ export default function AddCategoryModal({
 
       const response = await fetch(url, {
         method,
-        body: formDataToSend,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {

@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { saveUploadedFile } from "@/lib/uploadHandler";
 
 export async function GET(request: NextRequest) {
   try {
@@ -73,32 +72,19 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const contentType = request.headers.get("content-type");
-    let body: any = {};
-
-    if (contentType?.includes("application/json")) {
-      body = await request.json();
-    } else if (contentType?.includes("multipart/form-data")) {
-      const formData = await request.formData();
-      body = {
-        name: formData.get("name"),
-        description: formData.get("description"),
-        priority: formData.get("priority"),
-        type: formData.get("type"),
-        image: formData.get("image"),
-      };
-    } else {
-      return NextResponse.json(
-        { error: "Invalid content type" },
-        { status: 400 }
-      );
-    }
-
-    const { name, description, priority, type, image } = body;
+    const body = await request.json();
+    const { name, description, priority, type, imageUrl } = body;
 
     if (!name) {
       return NextResponse.json(
         { error: "Category name is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!imageUrl) {
+      return NextResponse.json(
+        { error: "Category image URL is required" },
         { status: 400 }
       );
     }
@@ -114,17 +100,6 @@ export async function POST(request: NextRequest) {
         { error: "Category already exists" },
         { status: 409 }
       );
-    }
-
-    let imageUrl: string | null = null;
-
-    if (image && typeof image !== "string") {
-      try {
-        imageUrl = await saveUploadedFile(image as File, "categories");
-      } catch (uploadError) {
-        console.error("[CATEGORY_IMAGE_UPLOAD]", uploadError);
-        imageUrl = null;
-      }
     }
 
     const categoryData: any = {

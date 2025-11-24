@@ -113,6 +113,24 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   useEffect(() => {
     setIsClient(true);
     setUserId(localStorage.getItem("userId"));
+    
+    // Also fetch user data immediately if logged in
+    const fetchUserDataOnMount = async () => {
+      try {
+        const response = await fetch(`${getBaseUrl()}/api/auth/current`);
+        if (response.ok) {
+          const data = await response.json();
+          setUserRole(data.user?.role || null);
+          if (data.user?.fullName) {
+            setCustomerName(data.user.fullName);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user data on mount:", error);
+      }
+    };
+    
+    fetchUserDataOnMount();
   }, []);
 
   useEffect(() => {
@@ -148,7 +166,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () =>
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     const fetchLikes = async () => {

@@ -121,27 +121,54 @@ export default function AddProductModal({
     setError(null);
 
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("price", formData.price);
-      formDataToSend.append("imageUrl", formData.imageUrl);
-      formDataToSend.append("categoryId", formData.categoryId);
-      formDataToSend.append("priority", formData.priority);
+      // Upload new images first
+      const uploadedImageUrls: string[] = [];
 
-      // Only send new image files (File objects)
-      images.forEach((image) => {
+      for (const image of images) {
         if (image instanceof File) {
-          formDataToSend.append("images", image);
+          const uploadFormData = new FormData();
+          uploadFormData.append("file", image);
+          uploadFormData.append("folder", "products");
+
+          const uploadResponse = await fetch("/api/upload", {
+            method: "POST",
+            body: uploadFormData,
+          });
+
+          if (!uploadResponse.ok) {
+            throw new Error("Failed to upload image");
+          }
+
+          const uploadData = await uploadResponse.json();
+          uploadedImageUrls.push(uploadData.url);
         }
-      });
+      }
+
+      // Combine existing previews with new uploaded URLs
+      const allImageUrls = [
+        ...imagePreviews.filter((p) => !p.startsWith("data:")), // Keep existing URLs
+        ...uploadedImageUrls, // Add new uploaded URLs
+      ];
+
+      const payload = {
+        name: formData.name,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        imageUrl: formData.imageUrl || allImageUrls[0] || "",
+        imageUrls: allImageUrls,
+        categoryId: formData.categoryId,
+        priority: formData.priority,
+      };
 
       const url = productId ? `/api/products/${productId}` : "/api/products";
       const method = productId ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
-        body: formDataToSend,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {

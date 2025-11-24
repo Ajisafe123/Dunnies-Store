@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { saveUploadedFile } from "@/lib/uploadHandler";
 
 export async function GET(request: NextRequest) {
   try {
@@ -78,28 +77,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const contentType = request.headers.get("content-type");
-    let body: any = {};
-
-    if (contentType?.includes("application/json")) {
-      body = await request.json();
-    } else if (contentType?.includes("multipart/form-data")) {
-      const formData = await request.formData();
-      body = {
-        name: formData.get("name"),
-        description: formData.get("description"),
-        price: formData.get("price"),
-        imageUrl: formData.get("imageUrl"),
-        images: formData.getAll("images"),
-      };
-    } else {
-      return NextResponse.json(
-        { error: "Invalid content type" },
-        { status: 400 }
-      );
-    }
-
-    const { name, description, price, imageUrl, images } = body;
+    const body = await request.json();
+    const { name, description, price, imageUrl, imageUrls, categoryId } = body;
 
     if (!name || !description || !price) {
       return NextResponse.json(
@@ -114,25 +93,17 @@ export async function POST(request: NextRequest) {
       price: parseFloat(price),
     };
 
-    // Handle multiple images
-    if (images && Array.isArray(images) && images.length > 0) {
-      const processedImages: string[] = [];
-      for (const image of images) {
-        if (image instanceof File) {
-          const uploadedUrl = await saveUploadedFile(image, "gifts");
-          if (uploadedUrl) {
-            processedImages.push(uploadedUrl);
-          }
-        }
-      }
-      if (processedImages.length > 0) {
-        giftData.imageUrls = processedImages;
-        // Set imageUrl to first image for display
-        giftData.imageUrl = processedImages[0];
-      }
+    // Handle imageUrls array from frontend
+    if (imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0) {
+      giftData.imageUrls = imageUrls;
+      giftData.imageUrl = imageUrls[0] || imageUrl;
     } else if (imageUrl && String(imageUrl).trim()) {
-      // If no images uploaded but imageUrl provided, use it
       giftData.imageUrl = imageUrl;
+      giftData.imageUrls = [imageUrl];
+    }
+
+    if (categoryId && String(categoryId).trim() && String(categoryId) !== "null") {
+      giftData.categoryId = categoryId;
     }
 
     const gift = await prisma.gift.create({
