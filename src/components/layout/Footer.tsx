@@ -288,7 +288,10 @@ export default function Footer() {
             </form>
 
             {/* Tablet (sm to md): Full width stacked */}
-            <form onSubmit={handleSubscribe} className="hidden sm:flex md:hidden w-full flex-col gap-2">
+            <form
+              onSubmit={handleSubscribe}
+              className="hidden sm:flex md:hidden w-full flex-col gap-2"
+            >
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -307,7 +310,10 @@ export default function Footer() {
             </form>
 
             {/* Desktop (md and up): Side by side */}
-            <form onSubmit={handleSubscribe} className="hidden md:flex gap-2 lg:gap-3">
+            <form
+              onSubmit={handleSubscribe}
+              className="hidden md:flex gap-2 lg:gap-3"
+            >
               <input
                 type="email"
                 placeholder="Enter your email"

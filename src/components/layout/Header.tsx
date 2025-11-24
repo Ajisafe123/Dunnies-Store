@@ -292,7 +292,9 @@ export default function Header() {
                 <span className="font-bold text-lg sm:text-xl md:text-2xl text-gray-800 group-hover:text-purple-600 transition-colors">
                   Dunnis Stores
                 </span>
-                <p className="text-xs sm:text-sm text-gray-500">Your one-stop shop</p>
+                <p className="text-xs sm:text-sm text-gray-500">
+                  Your one-stop shop
+                </p>
               </div>
             </Link>
 
