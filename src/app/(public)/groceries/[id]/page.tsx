@@ -43,9 +43,14 @@ function transformDatabaseGrocery(dbGrocery: any): ProductRecord {
 
   // Calculate average rating from comments
   const ratings = (dbGrocery.comments as any[]).map((c: any) => c.rating);
-  const averageRating = ratings.length > 0 
-    ? Math.round((ratings.reduce((a: number, b: number) => a + b, 0) / ratings.length) * 10) / 10
-    : 0;
+  const averageRating =
+    ratings.length > 0
+      ? Math.round(
+          (ratings.reduce((a: number, b: number) => a + b, 0) /
+            ratings.length) *
+            10
+        ) / 10
+      : 0;
 
   // Prioritize imageUrls array first, then imageUrl, then unsplash default
   let imageUrls = [];

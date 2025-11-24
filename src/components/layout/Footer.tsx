@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import {
   Facebook,
   Twitter,
@@ -11,6 +14,16 @@ import {
 } from "lucide-react";
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      console.log("Subscribing:", email);
+      setEmail("");
+    }
+  };
+
   return (
     <footer className="bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -252,17 +265,46 @@ export default function Footer() {
                 Get exclusive deals and updates delivered to your inbox
               </p>
             </div>
-            <div className="flex gap-2 w-full md:w-auto">
+
+            {/* Mobile: Icon inside input */}
+            <form onSubmit={handleSubscribe} className="md:hidden w-full">
+              <div className="relative">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 pr-14 rounded-xl bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-violet-500 transition-colors"
+                  required
+                />
+                <button
+                  type="submit"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-600 rounded-lg transition-colors"
+                  aria-label="Subscribe"
+                >
+                  <Send className="w-5 h-5 text-violet-400" />
+                </button>
+              </div>
+            </form>
+
+            {/* Desktop: Side by side */}
+            <form onSubmit={handleSubscribe} className="hidden md:flex gap-2">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 md:w-64 px-4 py-3 rounded-xl bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-violet-500 transition-colors"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-64 px-4 py-3 rounded-xl bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-violet-500 transition-colors"
+                required
               />
-              <button className="px-6 py-3 bg-linear-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2">
+              <button
+                type="submit"
+                className="px-6 py-3 bg-linear-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2"
+              >
                 <Send className="w-4 h-4" />
-                <span className="hidden sm:inline">Subscribe</span>
+                <span>Subscribe</span>
               </button>
-            </div>
+            </form>
           </div>
         </div>
 

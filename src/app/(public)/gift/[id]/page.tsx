@@ -34,18 +34,21 @@ async function getGiftFromDatabase(id: string) {
 
 function transformDatabaseGift(dbGift: any): ProductRecord {
   console.log(
-    `[GiftDetail] ${dbGift.name}: imageUrl="${
-      dbGift.imageUrl
-    }", imageUrls=${
+    `[GiftDetail] ${dbGift.name}: imageUrl="${dbGift.imageUrl}", imageUrls=${
       dbGift.imageUrls ? `[${dbGift.imageUrls.join(",")}]` : "[]"
     }`
   );
 
   // Calculate average rating from comments
   const ratings = (dbGift.comments as any[]).map((c: any) => c.rating);
-  const averageRating = ratings.length > 0 
-    ? Math.round((ratings.reduce((a: number, b: number) => a + b, 0) / ratings.length) * 10) / 10
-    : 0;
+  const averageRating =
+    ratings.length > 0
+      ? Math.round(
+          (ratings.reduce((a: number, b: number) => a + b, 0) /
+            ratings.length) *
+            10
+        ) / 10
+      : 0;
 
   // Prioritize imageUrls array first, then imageUrl, then unsplash default
   let imageUrls = [];
@@ -56,11 +59,7 @@ function transformDatabaseGift(dbGift: any): ProductRecord {
   ) {
     imageUrls = dbGift.imageUrls.filter((url: string) => url && url.trim());
   }
-  if (
-    imageUrls.length === 0 &&
-    dbGift.imageUrl &&
-    dbGift.imageUrl.trim()
-  ) {
+  if (imageUrls.length === 0 && dbGift.imageUrl && dbGift.imageUrl.trim()) {
     imageUrls = [dbGift.imageUrl];
   }
   if (imageUrls.length === 0) {
@@ -93,9 +92,7 @@ function transformDatabaseGift(dbGift: any): ProductRecord {
   };
 }
 
-export default async function GiftDetailPage({
-  params,
-}: GiftDetailPageProps) {
+export default async function GiftDetailPage({ params }: GiftDetailPageProps) {
   const { id } = await params;
 
   let dbGift = await getGiftFromDatabase(id);

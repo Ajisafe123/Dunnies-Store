@@ -5,7 +5,13 @@ import Link from "next/link";
 import ProductList from "@/components/product/ProductList";
 import Loader from "@/components/ui/Loader";
 import { ProductRecord } from "@/Data/products";
-import { Search, SlidersHorizontal, Grid, List, ChevronDown } from "lucide-react";
+import {
+  Search,
+  SlidersHorizontal,
+  Grid,
+  List,
+  ChevronDown,
+} from "lucide-react";
 
 interface Category {
   id: string;
@@ -177,9 +183,7 @@ export default function ProductsCatalog({ products }: ProductsCatalogProps) {
                     selectedCategory === category.name
                       ? "bg-purple-600 text-white"
                       : "text-gray-700 hover:bg-purple-50"
-                  } ${
-                    index === categories.length - 1 ? "rounded-b-xl" : ""
-                  }`}
+                  } ${index === categories.length - 1 ? "rounded-b-xl" : ""}`}
                 >
                   {category.name}
                 </button>
